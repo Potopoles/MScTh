@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+#SBATCH --job-name="fortran"
+#SBATCH --time=04:00:00
+#SBATCH --nodes=1
+##SBATCH --cpus-per-task=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --output=fortran.%j.o
+#SBATCH --error=fortran.%j.e
+##SBATCH --mem=64000
+##SBATCH --partition=postproc
+#======START=====
+  echo start
+  WORKDIR="$HOME/skripte/fortran/"
+  echo "- WORKDIR $WORKDIR"
+  cd $WORKDIR
+  #./lwp.sh
+  prog=/users/lindasc/skripte/fortran/cloud_cluster
+  startcountdd=15
+  endcountdd=39
+  startcounthh=00
+  endcounthh=23
+  startcountmm=00
+  endcountmm=50
+
+##################################################################
+#case_names=(nico)
+echo -e "\033[32;1m script: cloud_cluster \033[0m"
+case_names=(0k_lr 0k_lr_ens1 0k_lr_ens2 0k_lr_ens3 0k_lr_ens4 0k_lr_ens5)
+for case in ${case_names[*]}; do
+    echo -e "\033[35;1m experiment: "$case"\033[0m"
+
+#    filedir=/scratch/daint/lindasc/cosmo/${case}/output/
+    filedir=/scratch/daint/lindasc/equilibrium_cscs/${case}/output/out/
+    cd ${filedir}
+
+    echo -e "\033[34;1m" `pwd` "\033[0m"
+
+    countmm=${startcountmm}
+    counthh=${startcounthh}
+    countdd=${startcountdd}
+
+    for d in $(seq $startcountdd 1 $endcountdd); do
+	countdd=$(printf %02d $d)
+        echo ${countdd}${startcounthh}${startcountmm}00
+        for h in $(seq $startcounthh 1 $endcounthh); do
+            counthh=$(printf %02d $h)
+            for m in $(seq $startcountmm 10 $endcountmm); do
+                countmm=$(printf %02d $m)
+
+#                echo ${countdd}${counthh}${countmm}00
+
+#                aprun ${prog} lwp${countdd}${counthh}${countmm}00.nc cloud${countdd}${counthh}${countmm}00.nc
+                ${prog} lwp${countdd}${counthh}${countmm}00.nc cloud${countdd}${counthh}${countmm}00.nc
+
+            done
+        done
+    done
+#    countmm=00
+#    counthh=00
+#    countdd=10
+		
+#    echo ${countdd}${counthh}${countmm}00
+
+#    aprun ${prog} lwp${countdd}${counthh}${countmm}00.nc cloud${countdd}${counthh}${countmm}00.nc
+
+done
+
+  echo stop
+  #=====END=====

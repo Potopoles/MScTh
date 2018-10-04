@@ -10,4 +10,5 @@ Session.vim
 bOut
 bErr
 *.grib*
-*.done
+*.done*
+*.o
