@@ -1,0 +1,13 @@
+*.pyc
+*.swp
+*.nc
+*.pkl
+00_plots
+02_fields
+Session.vim
+*.out
+*.err
+bOut
+bErr
+*.grib*
+*.done
