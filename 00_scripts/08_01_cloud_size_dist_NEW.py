@@ -6,12 +6,15 @@ day0 = 11
 day1 = 19 
 #day1 = 12 
 ress = [4.4, 2.2, 1.1]
-#ress = [2.2]
+#ress = [4.4, 2.2]
+#ress = [4.4]
+
 modes = ['', 'f']
-i_plot = 1
+i_plot = 3
 plotOutDir = '00_plots/08_cloud_cluster'
 plotName = 'cloud_size_absFreq_dist_and_diff_NEW'
 nbins = 40
+minNClouds = 30
 i_subdomain = 1
 from ncClasses.subdomains import setSSI
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
@@ -29,11 +32,14 @@ days = np.repeat(np.arange(day0,day1+1),24)
 hours = np.tile(np.arange(0,24),day1-day0+1)
 
 
-allSizes = []
+allSizes = {}
 outRess = []
 outModes = []
 labels = []
 
+########################################################################
+# 
+########################################################################
 for res in ress:
     xmin = ssI[str(res)]['rlon'][0]
     xmax = ssI[str(res)]['rlon'][-1]
@@ -66,93 +72,77 @@ for res in ress:
             sizes.extend(size)
         sizes = np.asarray(sizes)
         print('n clouds: ' + str(sizes.shape[0]))
-        allSizes.append(sizes)
+        #allSizes.append(sizes)
+        allSizes[str(res)+mode] = sizes
         outRess.append(str(res))
         outModes.append(mode)
         labels.append(str(res)+mode)
 
-bins = np.logspace(0,5,num=nbins)
-binsCentred = bins[0:(len(bins)-1)] + np.diff(bins)/2
 
-# CREATE HISTOGRAMS
-nclouds = []
-freqs = []
-for sizes in allSizes:
-    hist = np.histogram(sizes, bins=bins)
-    ncloud = hist[0]
-    freq = ncloud/len(sizes)
-    nclouds.append(ncloud)
-    freqs.append(freq)
+########################################################################
+# GENERATE BINS
+########################################################################
+# old way (same bins for every resolution)
+#bins = np.logspace(0,5,num=nbins)
+#binsCentred = bins[0:(len(bins)-1)] + np.diff(bins)/2
 
+# new way (specific bins for every resolution)
+bins_res = {}
+bins_centred_res = {}
+for res in ress:
+    bins = np.logspace(0,5,num=nbins)
+    thresh_ind = np.argwhere(np.diff(bins) >= float(res)**2)[0][0]
+    thresh_val = bins[thresh_ind]
+    linear_spacing = []
+    i = 1
+    while float(res)**2*i <= thresh_val:
+        linear_spacing.append(float(res)**2*i - float(res)**2/2)
+        i += 1
+    bins = bins[thresh_ind:]
+    both = []; both.extend(linear_spacing); both.extend(bins)
+    bins_centred = both[0:(len(both)-1)] + np.diff(both)/2
+    bins_res[str(res)] = both
+    bins_centred_res[str(res)] = bins_centred
 
-#### Relative cloud size frequency distribution
-#fig = plt.figure(figsize=(6,7))
-#handles = []
-#for i in range(0,len(freqs)):
-#    if outModes[i] == 'f':
-#        lstyle = '--'
-#    else:
-#        lstyle = '-'
-#    line, = plt.loglog(binsCentred, freqs[i], lstyle) 
-#    handles.append(line)
-#plt.legend(handles, labels)
-#plt.xlabel('cloud size [$km^2$]')
-#plt.ylabel('relative frequency')
-#plt.xlim((2E0,1E5))
-#plt.ylim((5E-6,2E-1))
-#plt.title('Relative Cloud Size Frequency Distribution')
-#plt.grid()
-#if i_save:
-#    outName = 'cloud_size_relFreq_dist.png'
-#    plt.savefig(outPath + outName)
-#else:
-#    plt.show()
-#plt.close(fig)
+#print(bins_res)
+#print()
+#print(bins_centred_res)
+#quit()
 
+########################################################################
+# CALCULATE HISTOGRAMS
+########################################################################
+nclouds = {}
+for res in ress:
+    for mode in modes:
+        hist = np.histogram(allSizes[str(res)+mode], bins=bins_res[str(res)])
+        ncloud = hist[0]
+        nclouds[str(res)+mode] = ncloud
+
+########################################################################
+#  CREATE PLOTS
+########################################################################
 ### Absolute cloud number distribution
 colrs = [(0,0,0), (0,0,1), (1,0,0)]
 fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(11,4))
 handles = []
 modeStrings = ['SM', 'RAW', '(RAW - SM)/SM']
-#modes.append('d')
-#for mI,mode in enumerate(modes):
-#    for rI,res in enumerate(ress):
-#        print(str(res)+mode)
-#        ax = axes[mI]
 
-for i in range(0,len(ress)):
 
+for rI,res in enumerate(ress):
 
     # ABSOLUTE VALUES
-    nClRaw = nclouds[i*2]
-    nClSmo = nclouds[i*2+1]
-    line, = axes[0].loglog(binsCentred, nClSmo, '-', color=colrs[i]) 
-    axes[1].loglog(binsCentred, nClRaw, '-', color=colrs[i]) 
+    nClRaw = nclouds[str(res)+'']
+    nClSmo = nclouds[str(res)+'f']
+    line, = axes[0].loglog(bins_centred_res[str(res)], nClSmo, '-', color=colrs[rI]) 
+    axes[1].loglog(bins_centred_res[str(res)], nClRaw, '-', color=colrs[rI]) 
     handles.append(line)
 
-    if i == 2:
+    if rI == len(ress)-1:
         axes[0].legend(handles, ress)
 
 
-    for j in range(0,3):
-        ax = axes[j]
-        ax.set_xlabel('Cloud Size [$km^2$]',fontsize=labelsize)
-        if j == 0:
-            ax.set_ylabel('Number of Clouds',fontsize=labelsize)
-        #elif j == 2:
-        #    ax.set_ylabel('Ratio',fontsize=labelsize)
-        ax.set_xlim((1E0,1E5))
-        if j < 2:
-            ax.set_ylim((1E0,1E5))
-        elif j == 2:
-            ax.set_ylim((-0.6,0.6))
-            #ax.set_ylim((-1,1))
-            ax.axhline(y=0, color='k', lineWidth=0.5)
-        ax.set_title(modeStrings[j],fontsize=titlesize)
-        ax.grid()
-
     # MASKING OF VALUES WITH SMALL AMOUNT OF CLOUDS
-    minNClouds = 30
     mask = np.full(len(nClRaw),1)
     mask[nClRaw < minNClouds] = 0
     mask[nClSmo < minNClouds] = 0
@@ -160,15 +150,15 @@ for i in range(0,len(ress)):
 
     # RELATIVE DIFFERENCE 
     ax = axes[2]
-    raw = nclouds[i*2].astype(np.float)
-    sm = nclouds[i*2+1].astype(np.float)
+    raw = nClRaw.astype(np.float)
+    sm = nClSmo.astype(np.float)
     raw[raw == 0] = np.nan
     sm[sm == 0] = np.nan
     ratio = (raw - sm)/sm
     ratio[mask == 0] = np.nan
-    line, = ax.semilogx(binsCentred, ratio, '-', color=colrs[i]) 
-    sumRaw = np.sum(nclouds[i*2])
-    sumSmoothed = np.sum(nclouds[i*2+1])
+    line, = ax.semilogx(bins_centred_res[str(res)], ratio, '-', color=colrs[rI]) 
+    sumRaw = np.nansum(raw)
+    sumSmoothed = np.nansum(sm)
     sumRatio = sumRaw/sumSmoothed
     #ax.text(2E0, 0.8, 'raw/smoothed: '+str(np.round(sumRatio,2)))
 
@@ -181,13 +171,32 @@ for i in range(0,len(ress)):
     if i == 0:
         ax.text(x, yTop, 'RAW/SM:', size=size,
                 bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
-    ax.text(x, yTop*(ry**(i+1)), '{:3.2f}'.format(sumRatio,2), size=size, color=colrs[i],
+    ax.text(x, yTop*(ry**(rI+1)), '{:3.2f}'.format(sumRatio,2), size=size, color=colrs[rI],
             bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+
+
+for j in range(0,3):
+    ax = axes[j]
+    ax.set_xlabel('Cloud Size [$km^2$]',fontsize=labelsize)
+    if j == 0:
+        ax.set_ylabel('Number of Clouds',fontsize=labelsize)
+    elif j == 2:
+        ax.set_ylabel('Relative Difference',fontsize=labelsize)
+    ax.set_xlim((1E0,1E5))
+    if j < 2:
+        ax.set_ylim((1E0,1E6))
+    elif j == 2:
+        ax.set_ylim((-0.6,0.6))
+        #ax.set_ylim((-1,1))
+        ax.axhline(y=0, color='k', lineWidth=0.5)
+    ax.set_title(modeStrings[j],fontsize=titlesize)
+    ax.grid()
+
 
 
 #plt.suptitle('Absolute Cloud Size Distribution and Relative Difference')
 #plt.subplots_adjust(left=0.07, right=0.95, top=0.92, bottom=0.08, wspace=0.27, hspace=0.33)
-fig.subplots_adjust(wspace=0.23,left=0.07, right=0.95, bottom=0.15, top=0.85)
+fig.subplots_adjust(wspace=0.30,left=0.07, right=0.95, bottom=0.15, top=0.85)
 
 if i_plot == 1:
 	plt.show()

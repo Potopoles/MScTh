@@ -7,11 +7,11 @@ from functions import loadObj
 
 ress = ['4.4', '2.2', '1.1']
 #ress = ['4.4', '2.2']
-ress = ['4.4']
+#ress = ['4.4']
 modes = ['f', '', 'd']
 #i_variables = 'QV' # 'QV' or 'T'
 #i_variables = 'T' # 'QV' or 'T'
-i_plot = 1
+i_plot = 2
 addLabel = '_HOR'
 #addLabel = ''
 
@@ -216,6 +216,8 @@ if i_plot == 1:
     plt.show()
     plt.close(fig)
 elif i_plot == 2:
+    print('save plot')
+    print(plotName)
     plotOutDir = '../00_plots/06_bulk'
     plotPath = plotOutDir + '/' + plotName
     plt.savefig(plotPath, format='png', bbox_inches='tight')

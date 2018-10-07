@@ -4,9 +4,9 @@ import numpy as np
 day0 = 11
 day1 = 19 
 ress = [4.4, 2.2, 1.1]
-#ress = [2.2]
+ress = [4.4]
 modes = ['', 'f']
-i_save = 1
+i_save = 0
 outPath = '00_plots/08_cloud_cluster/'
 nbins = 50
 i_subdomain = 1

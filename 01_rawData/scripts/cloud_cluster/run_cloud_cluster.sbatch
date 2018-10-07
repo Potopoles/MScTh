@@ -1,13 +1,13 @@
 #!/bin/bash -l
 #
 #SBATCH --job-name="cloud_cluster"
-#SBATCH --time=0:30:00
+#SBATCH --time=8:00:00
 #SBATCH --ntasks=1
 #SBATCH --account='pr04'
 #SBATCH --constraint=gpu
-#SBATCH --partition=debug
-#SBATCH --output=sbatch.out
-#SBATCH --error=sbatch.err
+#SBATCH --partition=normal
+#SBATCH --output=sbatch0.out
+#SBATCH --error=sbatch0.err
 
 # for 4.4 & 4.4f took 5 min
 # for 2.2 & 2.2f took 45 min
