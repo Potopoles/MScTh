@@ -1,14 +1,14 @@
 #!/bin/bash -l
 #
-#SBATCH --job-name="06_06"
-#SBATCH --time=4:00:00
+#SBATCH --job-name="06_02"
+#SBATCH --time=5:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --account='pr04'
 #SBATCH --constraint=gpu
 #SBATCH --partition=normal
-#SBATCH --output=bOut/sbatch0.out
-#SBATCH --error=bOut/sbatch0.err
+#SBATCH --output=bOut/sbatch1.out
+#SBATCH --error=bOut/sbatch1.err
 
 
 source load_miniconda.sh

@@ -43,7 +43,9 @@ class ncField:
         for key in self.fdks:
             selInds.append(self.dims[key].inds)
         self.vals = self.ncFile[self.fieldName][selInds] 
-        self.vals[self.vals == self.missing_value] = np.nan
+        if self.vals.count() == self.vals.shape[1]*self.vals.shape[2]*self.vals.shape[3]:
+            raise ValueError('Array has Topography values not set to nan')
+        #self.vals[self.vals == self.missing_value] = np.nan
         self.calcMaxMin()
          
 

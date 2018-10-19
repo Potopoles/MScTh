@@ -6,26 +6,33 @@ os.chdir('00_newScripts/')
 from functions import loadObj 
 
 ress = ['4.4', '2.2', '1.1']
-#ress = ['4.4', '2.2']
+ress = ['4.4', '2.2']
 #ress = ['4.4']
 modes = ['f', '', 'd']
 
-i_plot = 3
+i_plot = 1
 
 path = 'alts_0_2500_Alpine_Region'
+path = 'alts_0_2000_Northern_Italy'
+path = 'alts_0_10000_Northern_Italy'
+#path = 'alts_0_10000_Alpine_Region'
+
 #path = 'alts_3000_7000_Northern_Italy'
 #path = 'alts_0_2000_Alpine_Region'
 #path = 'alts_0_3000_Alpine_Region'
-#path = 'alts_0_2000_Northern_Italy'
 #vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_HADV', 'AQVT_ZADV', 'AQVT_TURB', 'AQVT_MIC'] 
 
-##########################################
+###########################################
 #varGroup = 'AQVT'
 #plotName = 'AQVT'
-#vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC']
-#ltypes = ['-', '-', ':', '--']
-#lwidths = [1.8,0.8,1,1]
-#varLabels = ['TOT', 'ADV', 'TURB', 'MIC']
+##vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC']
+#vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC', 'AQVT_HADV']
+##ltypes = ['-', '-', ':', '--']
+#ltypes = ['-', '-', ':', '--', ':']
+##lwidths = [1.8,0.8,1,1]
+#lwidths = [1.8,0.8,1,1,2]
+##varLabels = ['TOT', 'ADV', 'TURB', 'MIC']
+#varLabels = ['TOT', 'ADV', 'TURB', 'MIC', 'HADV']
 #unit = r'$[h^{-1}]$'
 #ylabel = 'Net Moistening '+unit
 #fact = 3600
@@ -33,20 +40,20 @@ path = 'alts_0_2500_Alpine_Region'
 #maxm = 6E-8*fact
 #mind = -1E-8*fact
 #maxd = 1E-8*fact
-##########################################
-varGroup = 'ATT'
-plotName = 'ATT'
-vars = ['ATT_TOT', 'ATT_ADV', 'ATT_TURB', 'ATT_MIC']
-ltypes = ['-', '-', ':', '--']
-lwidths = [1.8,0.8,1,1]
-varLabels = ['TOT', 'ADV', 'TURB', 'MIC']
-unit = r'$[K$ $h^{-1}]$'
-ylabel = 'Net Heating '+unit
-fact = 3600
-minm = -1E-4*fact
-maxm = 2E-4*fact
-mind = -2E-5*fact
-maxd = 2E-5*fact
+###########################################
+#varGroup = 'ATT'
+#plotName = 'ATT'
+#vars = ['ATT_TOT', 'ATT_ADV', 'ATT_TURB', 'ATT_MIC']
+#ltypes = ['-', '-', ':', '--']
+#lwidths = [1.8,0.8,1,1]
+#varLabels = ['TOT', 'ADV', 'TURB', 'MIC']
+#unit = r'$[K$ $h^{-1}]$'
+#ylabel = 'Net Heating '+unit
+#fact = 3600
+#minm = -1E-4*fact
+#maxm = 2E-4*fact
+#mind = -2E-5*fact
+#maxd = 2E-5*fact
 ##########################################
 #varGroup = 'AQVT'
 #plotName = 'AQVT_ADVSEP'
@@ -107,6 +114,29 @@ maxd = 2E-5*fact
 #maxd = 4E-8*fact
 
 
+
+##########################################
+varGroup = 'AQVT'
+plotName = 'AQVT'
+#vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC']
+vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC', 'AQVT_HADV']
+#ltypes = ['-', '-', ':', '--']
+ltypes = ['-', '-', ':', '--', ':']
+#lwidths = [1.8,0.8,1,1]
+lwidths = [1.8,0.8,1,1,2]
+#varLabels = ['TOT', 'ADV', 'TURB', 'MIC']
+varLabels = ['TOT', 'ADV', 'TURB', 'MIC', 'HADV']
+unit = r'$[h^{-1}]$'
+ylabel = 'Net Moistening '+unit
+fact = 1
+minm = -1*fact
+maxm = 1*fact
+mind = -1*fact
+maxd = 1*fact
+##########################################
+
+
+
 folder = '../06_bulk/' + path
 plotOutDir = '../00_plots/06_bulk/'+path
 if not os.path.exists(plotOutDir):
@@ -140,6 +170,9 @@ for varI,var in enumerate(vars):
             name = varGroup+'_'+res+mode
             obj = loadObj(folder,name)  
             dates = obj['time'].astype(datetime)
+
+            #print(len(obj[var]))
+            #quit()
 
             # MEAN DIURNAL
             vals = obj[var]*fact

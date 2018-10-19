@@ -5,25 +5,33 @@ from datetime import datetime, timedelta
 import numpy as np
 os.chdir('00_newScripts/')
 import matplotlib.pyplot as plt
+import multiprocessing as mp
 
 #from functions import unstaggerZ_1D, unstaggerZ_4D, saveObj 
 from functions import saveObj 
 
 ress = ['4.4', '2.2', '1.1']
+#ress = ['2.2', '1.1']
 #ress = ['4.4', '2.2']
+#ress = ['4.4']
+#ress = ['2.2']
+#ress = ['1.1']
 modes = ['', 'f']
-#modes = ['f']
+#modes = ['']
 i_subdomain = 2
 i_variables = 'QV' # 'QV' or 'T'
 #i_variables = 'T' # 'QV' or 'T'
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
-altInds = list(range(25,61))
-altInds = list(range(0,26))
+
 altInds = list(range(0,21))
-altInds = list(range(30,62))
+altInds = list(range(0,26))
+altInds = list(range(0,65))
+
+#altInds = list(range(25,61))
+#altInds = list(range(0,21))
+#altInds = list(range(30,62))
 #altInds = list(range(0,41))
 #altInds = list(range(0,15))
-#altInds = list(range(0,21))
 print(altInds)
 ssI['4.4']['altitude'] = altInds 
 ssI['2.2']['altitude'] = altInds 
@@ -34,7 +42,14 @@ altI = np.asarray(altInds)
 alts = np.asarray(altInds)
 alts[altI <= 60] = altI[altI <= 60]*100
 alts[altI > 60] = (altI[altI > 60] - 60)*1000 + 6000
-dz = np.diff(alts)
+#dz = np.diff(alts)
+dz = []
+for i in range(0,len(alts)):
+    im1 = max(i-1,0)
+    ip1 = min(i+1,len(alts)-1)
+    dz.append( (alts[ip1] - alts[i])/2 + (alts[i] - alts[im1])/2 )
+dz = np.asarray(dz)
+    
 #altsu = unstaggerZ_1D(alts)
 
 nameString = 'alts_'+str(alts[0])+'_'+str(alts[-1])+'_'+domainName
@@ -49,6 +64,18 @@ dt1 = datetime(2006,7,20,0)
 dts = np.arange(dt0,dt1,timedelta(hours=1))
 inpPath = '../01_rawData/topocut/'
 
+#try:
+#    njobs = int(sys.argv[1])
+#    print('number of jobs is ' + str(njobs))
+#except:
+#    print('Number of Jobs not given. Assume 1')
+#    njobs = 1
+# TODO
+njobs = 1
+print('njobs MANUALLY SET TO ' + str(njobs))
+
+
+
 if i_variables == 'QV': 
     vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_HADV', 'AQVT_ZADV', 'AQVT_TURB', 'AQVT_MIC'] 
     #vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC'] 
@@ -56,6 +83,35 @@ if i_variables == 'QV':
     #vars = ['AQVT_TURB']
 elif i_variables == 'T':
     vars = ['ATT_TOT', 'ATT_ADV', 'ATT_HADV', 'ATT_ZADV', 'ATT_RAD', 'ATT_TURB', 'ATT_MIC'] 
+
+
+def calc_bulk(out, tCount, VOL, Atot):
+    ncFileName = 'lffd{0:%Y%m%d%H}z.nc'.format(dts[tCount].astype(datetime))
+    #if tCount % 24 == 0:
+    #    print('\t\t'+ncFileName)
+    print('\t\t'+ncFileName)
+
+    srcNCPath = inpPath + res + mode + '/' + ncFileName
+
+    RHOncf = ncField.ncField('RHO', srcNCPath, ssI[res])
+    RHOncf.loadValues()
+    rho = RHOncf.vals
+
+    # CALCULATE TENDENCIES
+    #Mtot = np.nansum(rho*100*A)
+    MASS = rho * VOL
+    for var in vars:
+        NCF = ncField.ncField(var, srcNCPath, ssI[res])
+        NCF.loadValues()
+        vals = NCF.vals
+        if i_variables == 'QV':
+            # unit is domain average mm/h precipitation
+            out[var][tCount] = np.sum(MASS*vals*3600)/Atot
+            #print(out[var][tCount])
+        else:
+            raise NotImplementedError()
+        #out[var][tCount] = np.nansum(vals*rho*100*A)/Mtot
+
 
 print('#########################')
 print(nameString)
@@ -71,31 +127,47 @@ for res in ress:
         out = {}
         for var in vars:
             out[var] = np.full(len(dts), np.nan)
+        out['domainName'] = domainName
         out['Mtot'] = np.full(len(dts), np.nan)
         out['time'] = dts
         out['alts'] = alts
-        #out['altsu'] = altsu
-        out['domainName'] = domainName
+        out['dz'] = dz
+        # CALCULATE CELL VOLUME
+        VOL = np.zeros(( 1, len(dz), len(ssI[res]['rlat']), len(ssI[res]['rlon']) ))
+        Atot = len(ssI[res]['rlat'])*len(ssI[res]['rlon'])*A
+        for k in range(0,len(dz)):
+            VOL[0,k,:,:] = A * dz[k]
+        out['VOL_k'] = A * dz
 
-        for tCount in range(0,len(dts)):
-            ncFileName = 'lffd{0:%Y%m%d%H}z.nc'.format(dts[tCount].astype(datetime))
-            if tCount % 24 == 0:
-                print('\t\t'+ncFileName)
+            
+            #ncFileName = 'lffd{0:%Y%m%d%H}z.nc'.format(dts[tCount].astype(datetime))
+            ##if tCount % 24 == 0:
+            ##    print('\t\t'+ncFileName)
             #print('\t\t'+ncFileName)
 
-            srcNCPath = inpPath + res + mode + '/' + ncFileName
+            #srcNCPath = inpPath + res + mode + '/' + ncFileName
 
-            RHOncf = ncField.ncField('RHO', srcNCPath, ssI[res])
-            RHOncf.loadValues()
-            rho = RHOncf.vals
+            #RHOncf = ncField.ncField('RHO', srcNCPath, ssI[res])
+            #RHOncf.loadValues()
+            #rho = RHOncf.vals
 
-            # CALCULATE TENDENCIES
-            Mtot = np.nansum(rho*100*A)
-            for var in vars:
-                NCF = ncField.ncField(var, srcNCPath, ssI[res])
-                NCF.loadValues()
-                vals = NCF.vals
-                out[var][tCount] = np.nansum(vals*rho*100*A)/Mtot
+            ## CALCULATE TENDENCIES
+            #Mtot = np.nansum(rho*100*A)
+            #for var in vars:
+            #    NCF = ncField.ncField(var, srcNCPath, ssI[res])
+            #    NCF.loadValues()
+            #    vals = NCF.vals
+            #    out[var][tCount] = np.nansum(vals*rho*100*A)/Mtot
+
+
+        if njobs == 1:
+            for tCount in range(0,len(dts)):
+                calc_bulk(out, tCount, VOL, Atot)
+        else:
+            pool = mp.Pool(processes=njobs)
+            input = [ ( out, c ) for c in range(0,len(dts))]
+            result = pool.starmap(calc_bulk, input, VOL, Atot)
+
 
         if i_variables == 'QV': 
             name = 'AQVT_'+res+mode

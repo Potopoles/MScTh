@@ -2,9 +2,11 @@ def setSSI(i_subdomain, ssI):
     if i_subdomain == 0:
         domainName = 'Whole_Domain'
         lon0 = 0
-        lon1 = 261 
+        #lon1 = 261 
+        lon1 = 262 
         lat0 = 0
-        lat1 = 245
+        #lat1 = 245
+        lat1 = 246
     elif i_subdomain == 1:
         domainName = 'Alpine_Region'
         lon0 = 50

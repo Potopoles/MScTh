@@ -7,7 +7,7 @@ import os
 os.chdir('00_scripts/')
 
 i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 3 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 1 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -16,24 +16,29 @@ import matplotlib.pyplot as plt
 
 
 import ncClasses.analysis as analysis
+from ncClasses.subdomains import setSSI
 from datetime import datetime
 from functions import *
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-inpPath = '../02_fields/subDomDiur'
+#inpPath = '../02_fields/subDomDiur'
+inpPath = '../02_fields/topocut'
+inpPath = '../02_fields/diurnal'
 fieldNames = ['nTOT_PREC', 'cHSURF']
 #####################################################################		
 
 ####################### NAMELIST DIMENSIONS #######################
-subDomain = 0 # 0: full domain, 1: alpine region, 2: zoom in
+subDomain = 2 # 0: full domain, 1: alpine region, 2: zoom in
 # SUBSPACE
+#subSpaceIndsIN = {'4.4':{},'2.2':{},'1.1':{}}
+#subSpaceIndsIN = setSSI(subDomain, subSpaceIndsIN)
 subSpaceIndsIN = {}
 if subDomain == 1: # alpine region
 	subSpaceIndsIN['rlon'] = [50,237]
 	subSpaceIndsIN['rlat'] = [41,155]
 elif subDomain == 2: # zoom in subdomain
-	subSpaceIndsIN['rlon'] = [70,100]
-	subSpaceIndsIN['rlat'] = [70,100]
+	subSpaceIndsIN['rlon'] = [95,160]
+	subSpaceIndsIN['rlat'] = [60,100]
 	
 #subSpaceIndsIN['rlat'] = (90,91)
 #subSpaceIndsIN['rlon'] = (50,237)
@@ -60,7 +65,8 @@ ag_commnds['rlon'] = 'MEAN'
 nDPlot = 1 # How many dimensions should plot have (1 or 2)
 i_diffPlot = 0 # Draw plot showing difference filtered - unfiltered # TODO
 plotOutDir = '../00_plots'
-plotName = 'domAv_diurnal_TOT_PREC'
+#plotName = 'domAv_diurnal_TOT_PREC'
+plotName = 'domAv_diurnal_TOT_PREC_Northern_Italy'
 ##### 1D PLOT #########
 
 ##### 2D Contour ######
@@ -133,34 +139,34 @@ else:
 	raise ValueError('ERROR: CANNOT MAKE ' + str(nDPlot) + 'D-PLOT WITH ' +
 	str(someField.nNoneSingleton) + ' NON-SINGLETON DIMS!')
 
-# PRECIP MEAN DAILY SUM
-x = 1
-yTop = 0.85
-dy = 0.15
-size = 14
-for rowInd,mode in enumerate(an.modes):
-    if ncs.orientation == 'VER':
-        ax = ncs.axes[rowInd,0]
-    elif ncs.orientation == 'HOR':
-        ax = ncs.axes[0,rowInd]
-    if mode != 'D':
-        ax.text(x, yTop+dy, 'Sum:', size=size,
-                bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
-    # PLOT ADJUSTMENTS
-    ax.set_xlabel('Hour',fontsize=12)
-    if mode == '':
-        #ax.legend_.remove()
-        ax.set_ylabel('',fontsize=12)
-    else:
-        ax.set_ylabel(r'Rain Rate $[mm$ $h^{-1}]$',fontsize=12)
-    ax.set_ylim(0,1.7)
-    for rI,res in enumerate(ncs.ress):
-        # GET VALUES AND DIMENSIONS				
-        fld = an.vars['nTOT_PREC'].ncos[str(res+mode)].field
-        if mode != 'd':
-            sum = str(round(np.sum(fld.vals),2)) + ' mm' 
-            ax.text(x, yTop-dy*rI, sum, color=ncs.colrs[rI], size=size,
-                    bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+## PRECIP MEAN DAILY SUM
+#x = 1
+#yTop = 0.85
+#dy = 0.15
+#size = 14
+#for rowInd,mode in enumerate(an.modes):
+#    if ncs.orientation == 'VER':
+#        ax = ncs.axes[rowInd,0]
+#    elif ncs.orientation == 'HOR':
+#        ax = ncs.axes[0,rowInd]
+#    if mode != 'D':
+#        ax.text(x, yTop+dy, 'Sum:', size=size,
+#                bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+#    # PLOT ADJUSTMENTS
+#    ax.set_xlabel('Hour',fontsize=12)
+#    if mode == '':
+#        #ax.legend_.remove()
+#        ax.set_ylabel('',fontsize=12)
+#    else:
+#        ax.set_ylabel(r'Rain Rate $[mm$ $h^{-1}]$',fontsize=12)
+#    ax.set_ylim(0,1.7)
+#    for rI,res in enumerate(ncs.ress):
+#        # GET VALUES AND DIMENSIONS				
+#        fld = an.vars['nTOT_PREC'].ncos[str(res+mode)].field
+#        if mode != 'd':
+#            sum = str(round(np.sum(fld.vals),2)) + ' mm' 
+#            ax.text(x, yTop-dy*rI, sum, color=ncs.colrs[rI], size=size,
+#                    bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
         
 	
 if i_plot == 1:
