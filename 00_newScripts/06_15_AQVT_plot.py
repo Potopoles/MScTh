@@ -6,140 +6,97 @@ os.chdir('00_newScripts/')
 from functions import loadObj 
 
 ress = ['4.4', '2.2', '1.1']
-ress = ['4.4', '2.2']
-ress = ['2.2']
-ress = ['4.4']
+#ress = ['4.4', '2.2']
+#ress = ['2.2']
+#ress = ['4.4']
+#ress = ['1.1']
 modes = ['f', '', 'd']
 
-i_plot = 1
+i_plot = 3
+i_var_plot_mode = 2
+i_print_values = 0
 
-path = 'alts_0_2500_Alpine_Region'
-path = 'alts_0_2000_Northern_Italy'
-#path = 'alts_0_10000_Northern_Italy'
-#path = 'alts_0_10000_Alpine_Region'
+subdomain = 'Alpine_Region'
+subdomain = 'Northern_Italy'
 
-#path = 'alts_3000_7000_Northern_Italy'
-#path = 'alts_0_2000_Alpine_Region'
-#path = 'alts_0_3000_Alpine_Region'
-#vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_HADV', 'AQVT_ZADV', 'AQVT_TURB', 'AQVT_MIC'] 
+if subdomain == 'Alpine_Region':
+    alts = 'alts_0_2500'
+    #alts = 'alts_2000_4000'
+    #alts = 'alts_0_10000'
+    #alts = 'alts_2500_10000'
+elif subdomain == 'Northern_Italy':
+    alts = 'alts_0_2000'
+    #alts = 'alts_2000_4000'
+    #alts = 'alts_0_10000'
+    #alts = 'alts_2000_10000'
 
-###########################################
-#varGroup = 'AQVT'
-#plotName = 'AQVT'
-##vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC']
-#vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC', 'AQVT_HADV']
-##ltypes = ['-', '-', ':', '--']
-#ltypes = ['-', '-', ':', '--', ':']
-##lwidths = [1.8,0.8,1,1]
-#lwidths = [1.8,0.8,1,1,2]
-##varLabels = ['TOT', 'ADV', 'TURB', 'MIC']
-#varLabels = ['TOT', 'ADV', 'TURB', 'MIC', 'HADV']
-#unit = r'$[h^{-1}]$'
-#ylabel = 'Net Moistening '+unit
-#fact = 3600
-#minm = -5E-8*fact
-#maxm = 6E-8*fact
-#mind = -1E-8*fact
-#maxd = 1E-8*fact
-###########################################
-#varGroup = 'ATT'
-#plotName = 'ATT'
-#vars = ['ATT_TOT', 'ATT_ADV', 'ATT_TURB', 'ATT_MIC']
-#ltypes = ['-', '-', ':', '--']
-#lwidths = [1.8,0.8,1,1]
-#varLabels = ['TOT', 'ADV', 'TURB', 'MIC']
-#unit = r'$[K$ $h^{-1}]$'
-#ylabel = 'Net Heating '+unit
-#fact = 3600
-#minm = -1E-4*fact
-#maxm = 2E-4*fact
-#mind = -2E-5*fact
-#maxd = 2E-5*fact
-##########################################
-#varGroup = 'AQVT'
-#plotName = 'AQVT_ADVSEP'
-#vars = ['AQVT_ADV', 'AQVT_HADV', 'AQVT_ZADV']
-#ltypes = ['-', '--', ':']
-#lwidths = [1,1,1]
-#varLabels = ['ADV', 'HADV', 'ZADV']
-#unit = r'$[h^{-1}]$'
-#ylabel = 'Net Moistening '+unit
-#fact = 3600
-#minm = -12E-8*fact
-#maxm = 8E-8*fact
-#mind = -3E-8*fact
-#maxd = 3E-8*fact
-##########################################
-#varGroup = 'ATT'
-#plotName = 'ATT_ADVSEP'
-#vars = ['ATT_ADV', 'ATT_HADV', 'ATT_ZADV']
-#ltypes = ['-', '--', ':']
-#lwidths = [1,1,1]
-#varLabels = ['ADV', 'HADV', 'ZADV']
-#unit = r'$[K$ $h^{-1}]$'
-#ylabel = 'Net Heating '+unit
-#fact = 3600
-#minm = -3E-4*fact
-#maxm = 3E-4*fact
-#mind = -1E-4*fact
-#maxd = 1E-4*fact
-##########################################
-## NORTHERN ITALY PLAINS
-#varGroup = 'AQVT'
-#plotName = 'AQVT_Northern_Italy'
-#vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC']
-#ltypes = ['-', '-', ':', '--']
-#lwidths = [1.8,0.8,1,1]
-#varLabels = ['TOT', 'ADV', 'TURB', 'MIC']
-#unit = r'$[h^{-1}]$'
-#ylabel = 'Net Moistening '+unit
-#fact = 3600
-#minm = -7E-8*fact
-#maxm = 7E-8*fact
-#mind = -4E-8*fact
-#maxd = 4E-8*fact
-##########################################
-## NORTHERN ITALY PLAINS SEPARATION
-#varGroup = 'AQVT'
-#plotName = 'AQVT_ADVSEP_Northern_Italy'
-#vars = ['AQVT_ADV', 'AQVT_HADV', 'AQVT_ZADV']
-#ltypes = ['-', '--', ':']
-#lwidths = [1,1,1]
-#varLabels = ['ADV', 'HADV', 'ZADV']
-#unit = r'$[h^{-1}]$'
-#ylabel = 'Net Moistening '+unit
-#fact = 3600
-#minm = -12E-8*fact
-#maxm = 8E-8*fact
-#mind = -4E-8*fact
-#maxd = 4E-8*fact
+path = alts + '_' + subdomain
 
-
-
-##########################################
-varGroup = 'AQVT'
-plotName = 'AQVT'
-#vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC']
-vars = ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC', 'AQVT_HADV']
-#ltypes = ['-', '-', ':', '--']
-ltypes = ['-', '-', ':', '--', ':']
-#lwidths = [1.8,0.8,1,1]
-lwidths = [1.8,0.8,1,1,2]
-#varLabels = ['TOT', 'ADV', 'TURB', 'MIC']
-varLabels = ['TOT', 'ADV', 'TURB', 'MIC', 'HADV']
-unit = r'$[h^{-1}]$'
-ylabel = 'Net Moistening '+unit
 fact = 1
-minm = -1*fact
-maxm = 1*fact
-mind = -1*fact
-maxd = 1*fact
-##########################################
+
+varGroup = 'AQVT'
+plotName = 'AQVT_' +subdomain + '_' + alts +'_' + str(i_var_plot_mode)
+if i_var_plot_mode == 0:
+    vars =      ['AQVT_TOT', 'AQVT_ADV', 'AQVT_TURB', 'AQVT_MIC']
+    varLabels = ['TOT'     , 'ADV'     , 'TURB'     , 'MIC'     ]
+    ltypes = ['-', '-', ':', '-.']
+    lwidths = [1.8,0.8,1,1]
+elif i_var_plot_mode == 1:
+    vars =      ['AQVT_TOT', 'AQVT_ADV', 'AQVT_ZADV', 'AQVT_MIC', 'AQVT_HADV']
+    varLabels = ['TOT'     , 'ADV'     , 'ZADV'     , 'MIC'     , 'HADV']
+    ltypes = ['-', '-', ':', '-.', '--']
+    lwidths = [1.8,0.8,1,1,2]
+elif i_var_plot_mode == 2:
+    vars =      ['AQVT_TOT', 'AQVT_ADV', 'AQVT_ZADV', 'AQVT_HADV']
+    varLabels = ['TOT'     , 'ADV'     , 'ZADV'     , 'HADV']
+    ltypes = ['-', '-', ':', '-.']
+    lwidths = [1.8,0.8,1,1]
+    fact = fact*2
+unit = r'$[mm$ $h^{-1}]$'
+ylabel = 'Net Moistening '+unit
 
 
+###########################################
+if subdomain == 'Alpine_Region':
+    fact = fact*0.5
+#    # ALPINE REGION
+#    minm = -1.0
+#    maxm = 1.0
+#    mind = -0.5
+#    maxd = 0.5
+###########################################
+if subdomain == 'Northern_Italy':
+    fact = fact*1
+#    # NORTHERN ITALY PLAINS
+#    minm = -0.5
+#    maxm = 0.5
+#    mind = -0.25
+#    maxd = 0.25
+###########################################
+
+minm = -1.0*fact
+maxm =  1.0*fact
+mind = -0.5*fact
+maxd =  0.5*fact
+
+if i_plot == 3:
+    if (subdomain == 'Alpine_Region') and (alts == 'alts_0_2500'):
+        minm = -0.75
+        maxm =  0.5
+        mind = -0.2
+        maxd =  0.2
+    if (subdomain == 'Northern_Italy') and (alts == 'alts_0_2000'):
+        minm = -0.75
+        maxm =  0.5
+        mind = -0.2
+        maxd =  0.2
+
+
+    
 
 folder = '../06_bulk/' + path
-plotOutDir = '../00_plots/06_bulk/'+path
+#plotOutDir = '../00_plots/06_bulk/'+path
+plotOutDir = '../00_plots/06_bulk/'
 if not os.path.exists(plotOutDir):
     os.mkdir(plotOutDir)
 modeNames = ['SM', 'RAW', 'RAW - SM']
@@ -167,7 +124,8 @@ for varI,var in enumerate(vars):
     max = -np.Inf
     min = np.Inf
     for res in ress:
-        print(res)
+        if i_print_values:
+            print(res)
         for mode in modes[0:2]:
             name = varGroup+'_'+res+mode
             obj = loadObj(folder,name)  
@@ -175,7 +133,7 @@ for varI,var in enumerate(vars):
 
 
             # MEAN DIURNAL
-            vals = obj[var]*fact
+            vals = obj[var]
             hrs = np.arange(0,24)
             hrVals = np.full(len(hrs), np.nan)
             for hr in hrs:
@@ -189,28 +147,29 @@ for varI,var in enumerate(vars):
 
         # CALCUALTE DIFFERENCE
         out[res+'d'] = out[res+''] - out[res+'f']
-        print(np.nanmean(out[res+'d']))
-        print(np.nanmean(out[res+'']))
-        print(np.nanmean(out[res+'f']))
+        if i_print_values:
+            print('RAW ' + str(np.nanmean(out[res+'f'])))
+            print('RAW ' + str(np.nanmean(out[res+''])))
+            print('RAW ' + str(np.nanmean(out[res+'d'])))
+            print()
 
+    # PLOT
+    for axI,mode in enumerate(modes):
+        #print(mode)
+        ax = axes[axI]
+        lines = []
+        for resI,res in enumerate(ress):
+            if mode == 'd' and res == '4.4':
+                pass
+            else:
+                line, = ax.plot(out['hrs'], out[res+mode], linestyle=ltypes[varI],
+                                color=colrs[resI], lineWidth=lwidths[varI])
+            lines.append(line)
+            #if (axI == 0) and (resI == 0):
+            if varI == 0:
+                varLegendLines.append(line)
 
-
-    ## PLOT
-    #for axI,mode in enumerate(modes):
-    #    print(mode)
-    #    ax = axes[axI]
-    #    lines = []
-    #    for resI,res in enumerate(ress):
-    #        if mode == 'd' and res == '4.4':
-    #            pass
-    #        else:
-    #            line, = ax.plot(out['hrs'], out[res+mode], linestyle=ltypes[varI],
-    #                            color=colrs[resI], lineWidth=lwidths[varI])
-    #        lines.append(line)
-    #        if (axI == 0) and (resI == 0):
-    #            varLegendLines.append(line)
-
-quit()
+#quit()
 
 
 for axI,mode in enumerate(modes):
@@ -246,7 +205,8 @@ for axI,mode in enumerate(modes):
     ax.grid()
     ax.set_title(modeNames[axI])
 
-#fig.suptitle(var + ' ' + path)
+if i_plot < 3:
+    fig.suptitle(subdomain + ' ' + alts)
 fig.subplots_adjust(wspace=0.23,
         left=0.07, right=0.96, bottom=0.15, top=0.85)
 

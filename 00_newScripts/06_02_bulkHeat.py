@@ -14,29 +14,28 @@ ress = ['4.4', '2.2', '1.1']
 #ress = ['2.2', '1.1']
 #ress = ['4.4', '2.2']
 #ress = ['4.4']
-ress = ['2.2']
+#ress = ['2.2']
 #ress = ['1.1']
 modes = ['', 'f']
 #modes = ['']
-i_subdomain = 2
+i_subdomain = 1
 i_variables = 'QV' # 'QV' or 'T'
 #i_variables = 'T' # 'QV' or 'T'
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
 
-altInds = list(range(0,21))
+#altInds = list(range(0,21))
 #altInds = list(range(0,26))
 #altInds = list(range(0,65))
 
-#altInds = list(range(25,61))
-#altInds = list(range(0,21))
-#altInds = list(range(30,62))
-#altInds = list(range(0,41))
-#altInds = list(range(0,15))
+#altInds = list(range(20,65))
+#altInds = list(range(25,65))
+
+altInds = list(range(20,41))
 
 dt0 = datetime(2006,7,11,0)
 #dt0 = datetime(2006,7,12,0)
 dt1 = datetime(2006,7,20,0)
-dt1 = datetime(2006,7,11,12)
+#dt1 = datetime(2006,7,13,0)
 
 
 print(altInds)
@@ -87,9 +86,9 @@ elif i_variables == 'T':
 
 def calc_bulk(tCount, VOL, Atot):
     ncFileName = 'lffd{0:%Y%m%d%H}z.nc'.format(dts[tCount].astype(datetime))
-    #if tCount % 24 == 0:
-    #    print('\t\t'+ncFileName)
-    print('\t\t'+ncFileName)
+    if tCount % 24 == 0:
+        print('\t\t'+ncFileName)
+    #print('\t\t'+ncFileName)
 
     srcNCPath = inpPath + res + mode + '/' + ncFileName
 
