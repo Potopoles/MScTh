@@ -7,14 +7,15 @@ from functions import loadObj
 
 ress = ['4.4', '2.2', '1.1']
 ress = ['4.4', '2.2']
-#ress = ['4.4']
+ress = ['2.2']
+ress = ['4.4']
 modes = ['f', '', 'd']
 
 i_plot = 1
 
 path = 'alts_0_2500_Alpine_Region'
 path = 'alts_0_2000_Northern_Italy'
-path = 'alts_0_10000_Northern_Italy'
+#path = 'alts_0_10000_Northern_Italy'
 #path = 'alts_0_10000_Alpine_Region'
 
 #path = 'alts_3000_7000_Northern_Italy'
@@ -166,13 +167,12 @@ for varI,var in enumerate(vars):
     max = -np.Inf
     min = np.Inf
     for res in ress:
+        print(res)
         for mode in modes[0:2]:
             name = varGroup+'_'+res+mode
             obj = loadObj(folder,name)  
             dates = obj['time'].astype(datetime)
 
-            #print(len(obj[var]))
-            #quit()
 
             # MEAN DIURNAL
             vals = obj[var]*fact
@@ -189,29 +189,28 @@ for varI,var in enumerate(vars):
 
         # CALCUALTE DIFFERENCE
         out[res+'d'] = out[res+''] - out[res+'f']
-
-    #dif11 = out['1.1d']
-    #print(dif11[dif11 > 0])
-    #print(np.cumsum(dif11[dif11 > 0]))
-    #print(np.cumsum(dif11))
-    #quit()
+        print(np.nanmean(out[res+'d']))
+        print(np.nanmean(out[res+'']))
+        print(np.nanmean(out[res+'f']))
 
 
-    # PLOT
-    for axI,mode in enumerate(modes):
-        ax = axes[axI]
-        lines = []
-        for resI,res in enumerate(ress):
-            if (axI == 2) and (resI == 0):
-                pass
-            else:
-                line, = ax.plot(out['hrs'], out[res+mode], linestyle=ltypes[varI],
-                                color=colrs[resI], lineWidth=lwidths[varI])
-            lines.append(line)
-            if (axI == 0) and (resI == 0):
-                varLegendLines.append(line)
 
+    ## PLOT
+    #for axI,mode in enumerate(modes):
+    #    print(mode)
+    #    ax = axes[axI]
+    #    lines = []
+    #    for resI,res in enumerate(ress):
+    #        if mode == 'd' and res == '4.4':
+    #            pass
+    #        else:
+    #            line, = ax.plot(out['hrs'], out[res+mode], linestyle=ltypes[varI],
+    #                            color=colrs[resI], lineWidth=lwidths[varI])
+    #        lines.append(line)
+    #        if (axI == 0) and (resI == 0):
+    #            varLegendLines.append(line)
 
+quit()
 
 
 for axI,mode in enumerate(modes):
