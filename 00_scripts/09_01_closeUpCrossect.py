@@ -6,7 +6,7 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 2 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
 i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 0 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
@@ -33,10 +33,12 @@ dynamics = ['zW', 'zU', 'zV', 'zT', 'zP']
 #fieldNames = ['zU', 'cHSURF']
 #####################################################################		
 
-diurnals = list(range(6,24))
-diurnals.extend(list(range(0,6)))
+diurnals = list(range(8,24))
+diurnals.extend(list(range(0,8)))
 #diurnals = [15]
-plotVarName = 'zAQVT_HADV'
+plotVarName = 'zAQVT_MIC'
+plotVarName = 'zFQVy'
+plotVarName = 'zQV'
 #plotVarName = 'zT'
 cmapM = 'seismic' 
 
@@ -47,9 +49,9 @@ if plotVarName == 'zU':
 elif plotVarName == 'zV':
     ticks = list(np.arange(-7,8,1)) # U
     cmapM = 'seismic'
-elif plotVarName == 'zQV':
-    ticks = list(np.arange(0,15,1)) # U
-    cmapM = 'jet'
+#elif plotVarName == 'zQV':
+#    ticks = list(np.arange(0,15,1)) # U
+#    cmapM = 'jet'
 elif plotVarName == 'zW':
     ticks = list(np.arange(-2.5,2.5,0.30)) # U
     cmapM = 'seismic'
@@ -62,8 +64,12 @@ elif plotVarName == 'zT':
 elif plotVarName == 'zAQVT_HADV':
     ticks = list(np.arange(-0.5,0.6,0.1)) # U
     cmapM = 'seismic'
+elif plotVarName == 'zFQVy':
+    ticks = list(np.arange(-7.5,7.5,0.50))
+    cmapM = 'seismic'
 elif 'AQVT' in plotVarName:
-    ticks = list(np.arange(-10,11,1)) # U
+    #ticks = list(np.arange(-10,11,1)) # U
+    ticks = list(np.arange(-0.3,0.3,0.03)) # U
     cmapM = 'seismic'
 else:
     ticks = None # autoticks
@@ -71,7 +77,7 @@ else:
 i_subDomain = 4 # 0: full domain, 1: alpine region
 ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
 startHght = 0
-endHght = 60 
+endHght = 40
 altInds = list(range(startHght,endHght+1))
 ssI['altitude'] = altInds 
 #startTime = datetime(2006,7,12,8)
@@ -86,8 +92,8 @@ for i in range(0,len(diurnals)):
     # Options: MEAN, SUM 
     ag_commnds = {}
     #ag_commnds['rlat'] = 'MEAN'
-    #ag_commnds['rlon'] = 'MEAN'
-    ag_commnds['time'] = 'SUM'
+    ag_commnds['rlon'] = 'SUM'
+    #ag_commnds['time'] = 'MEAN'
     #ag_commnds['diurnal'] = 'MEAN'
     #ag_commnds['altitude'] = 'MEAN'
     #####################################################################
@@ -95,7 +101,8 @@ for i in range(0,len(diurnals)):
     ####################### NAMELIST PLOT #######################
     nDPlot = 2 # How many dimensions should plot have (1 or 2)
     i_diffPlot = 1 # Draw plot showing difference filtered - unfiltered # TODO
-    plotOutDir = '../00_plots/09_closeUp'
+    #plotOutDir = '../00_plots/09_closeUp'
+    plotOutDir = '../00_plots/11_yz_crossSect'
     plotName = plotVarName+'_'+str(i)+'_hr_'+str(diurn)+'.png' 
     ##### 1D PLOT #########
 
@@ -149,12 +156,14 @@ for i in range(0,len(diurnals)):
             ncs.Mticks = Mticks
             ncs.cmapD = cmapD
         
-            if 'cHSURF' in an.varNames:
-                ncs.plotTopo(an.vars['cHSURF'])
+            #if 'cHSURF' in an.varNames:
+            #    ncs.plotTopo(an.vars['cHSURF'])
             
             ncs.plotVar(an.vars[an.varNames[0]])
 
-            ncs.addContour(an.vars['zQC'], 'white', 0.8, 1.5, ticks=[0.1])
+            #ncs.addContour(an.vars['zQC'], 'white', 0.8, 1.5, ticks=[0.1])
+            #ncs.addContour(an.vars['zQC'], 'white', 0.8, 1.5, ticks=[0.01])
+            ncs.addContour(an.vars['zQC'], 'white', 0.8, 1.5, ticks=[1])
                 
             title = plotVarName+'_hr_'+str(diurn) 
             ncs.fig.suptitle(title, fontsize=14)

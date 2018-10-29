@@ -428,6 +428,7 @@ class ncSubplots():
             #        self.Dticks = np.linspace(start=-DmaxA, stop=DmaxA, num=3, endpoint=True)
         else:
             self.Mticks = ticks
+
         
         # MAIN LOOP
         for colInd,mode in enumerate(self.an.modes):
@@ -447,16 +448,19 @@ class ncSubplots():
                 
                 ax = self._adjustDateAxes(ax, dimx, dimy)				
 
-                # CONTOUR
-                C = ax.contour(dimx.vals, dimy.vals, fld.vals.squeeze(), self.Mticks,
-                            linewidths=lineWidth, colors=col, alpha=alpha)
-                # CONTOUR LABELS
-                ax.clabel(C, inline=1, fontsize=10)                
+                if np.nanmax(fld.vals) >= np.min(self.Mticks):
+                    # CONTOUR
+                    C = ax.contour(dimx.vals, dimy.vals, fld.vals.squeeze(),
+                                levels=self.Mticks,
+                                linewidths=lineWidth, colors=col, alpha=alpha)
 
-                if colInd == 0 and rowInd == 0:
-                    Cout = C
+                    # CONTOUR LABELS
+                    ax.clabel(C, inline=1, fontsize=10)                
+
+                    if colInd == 0 and rowInd == 0:
+                        Cout = C
                     
-        return(Cout)
+        #return(Cout)
             
 
     def _getUnits(self, fld):

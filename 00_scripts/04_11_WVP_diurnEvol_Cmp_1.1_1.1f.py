@@ -5,8 +5,8 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 1 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
+i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 
 labelsize = 17
@@ -53,7 +53,7 @@ elif subDomain == 2: # italy region
 #startTime = startDateTime
 #endTime = startTime + datetime.timedelta(hours=nts)
 #subSpaceIndsIN['time'] = [startTime,endTime]
-subSpaceIndsIN['diurnal'] = list(range(12,20))
+subSpaceIndsIN['diurnal'] = list(range(14,18))
 #####################################################################
 
 ####################### NAMELIST AGGREGATE #######################
@@ -72,7 +72,7 @@ if not os.path.exists(plotOutDir):
     os.makedirs(plotOutDir)
 #hrStr = '{num:02d}'.format(num=hour)
 #dtStr = format(startTime,'%d_%H') 
-plotName = '11_timeseries_diurn_WVP_'
+plotName = '11_WVP_1_1_1400_1700'
 
 
 an = analysis.analysis(inpPath, fieldNames)
@@ -102,14 +102,18 @@ fig, axes = plt.subplots(nts, 2, figsize=(widthStretch,heightStretch))
 
 dts = an.vars['zWVP'].ncos[an.resolutions[0]].dims['diurnal'].vals
 #for mI,mode in enumerate(an.modes):
-for tI in range(0,8):
-    if tI >= 4:
-        rI = tI - 4
-        cI = 1
-    else:
-        rI = tI
-        cI = 0
+for tI in range(0,4):
+    rI = tI
+    #if tI >= 4:
+    #    rI = tI - 4
+    #    cI = 1
+    #else:
+    #    rI = tI
+    #    cI = 0
         
+
+    ############ RAW
+    cI = 1
     ax = axes[rI,cI]
     ax.axis('equal')
 
@@ -121,9 +125,54 @@ for tI in range(0,8):
         cmap='binary', alpha=0.7)
 
     wvp = an.vars['zWVP'].ncos[an.resolutions[0]].field.vals[tI,:,:]
-    Mticks = np.arange(20,37.1,1) 
+    Mticks = np.arange(20,38.1,1) 
     CF = ax.contourf(dimx.vals, dimy.vals, wvp.squeeze(), Mticks,
         cmap='jet', alpha=0.7)
+
+    ax.text(666,246,str(dts[tI])+':00',size=timelabelsize,color='black',
+                    bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+
+    if tI == 0:
+        ax.text(375,480,'RAW1.1',size=timelabelsize,color='black',
+                        bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+
+    if rI == nts-1:
+        ax.set_xlabel('x $[km]$',fontsize=labelsize)
+    if cI == 0:
+        ax.set_ylabel('y $[km]$',fontsize=labelsize)
+
+
+    ########SMOOOTHED
+    cI = 0
+    ax = axes[rI,cI]
+    ax.axis('equal')
+
+    topo = an.vars['cHSURF'].ncos[an.resolutions[0]]
+    dimx = topo.dims['rlon']
+    dimy = topo.dims['rlat']
+    tTicks = np.array([-100,0,100,200,500,1000,1500,2000,2500,3000,3500,4000])
+    ax.contourf(dimx.vals, dimy.vals, topo.field.vals, tTicks,
+        cmap='binary', alpha=0.7)
+
+    wvp = an.vars['zWVP'].ncos[an.resolutions[0]+'f'].field.vals[tI,:,:]
+    Mticks = np.arange(20,38.1,1) 
+    CF = ax.contourf(dimx.vals, dimy.vals, wvp.squeeze(), Mticks,
+        cmap='jet', alpha=0.7)
+
+    ax.text(666,246,str(dts[tI])+':00',size=timelabelsize,color='black',
+                    bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+
+    if tI == 0:
+        ax.text(375,480,'SM1.1',size=timelabelsize,color='black',
+                        bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+
+    if rI == nts-1:
+        ax.set_xlabel('x $[km]$',fontsize=labelsize)
+    if cI == 0:
+        ax.set_ylabel('y $[km]$',fontsize=labelsize)
+
+
+
 
     #rain = an.vars['nTOT_PREC'].ncos[an.resolutions[0]+mode].field.vals[tI,:,:]
     #Mticks = [5]
@@ -133,13 +182,6 @@ for tI in range(0,8):
     #if tI == 0:
     #    ax.set_title(an.modeNames[mI]+an.resolutions[0],fontsize=titlesize)
 
-    ax.text(670,228,str(dts[tI])+':00',size=timelabelsize,color='black',
-                    bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
-
-    if rI == nts-1:
-        ax.set_xlabel('x $[km]$',fontsize=labelsize)
-    if cI == 0:
-        ax.set_ylabel('y $[km]$',fontsize=labelsize)
 
     # colorbar
     xPosLeft = 0.10

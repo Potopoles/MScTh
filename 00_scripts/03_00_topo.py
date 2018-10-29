@@ -23,12 +23,13 @@ from ncClasses.subdomains import setSSI
 # directory of input model folders
 inpPath = '../02_fields/topocut'
 #fieldNames = ['zQC', 'nHPBL', 'cHSURF']
-fieldNames = ['cHSURF']
+fieldNames = ['cHSURF','nTOT_PREC']
 #####################################################################		
 
 ####################### NAMELIST DIMENSIONS #######################
 i_subDomain = 0 # 0: full domain, 1: alpine region
 ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
+ssI_AR, domainName = setSSI(1, {'4.4':{}, '2.2':{}, '1.1':{}}) 
 #####################################################################
 
 ####################### NAMELIST AGGREGATE #######################
@@ -36,7 +37,7 @@ ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}})
 ag_commnds = {}
 #ag_commnds['rlat'] = 'MEAN'
 #ag_commnds['rlon'] = 'MEAN'
-#ag_commnds['time'] = 'DIURNAL'
+ag_commnds['time'] = 'MEAN'
 #ag_commnds['altitude'] = 'MEAN'
 #####################################################################
 
@@ -69,8 +70,38 @@ an.ag_commnds = ag_commnds
 an.i_info = i_info
 an.i_resolutions = i_resolutions
 
+
+
 # RUN ANALYSIS
 an.run()
+
+rad_1_1 = an.vars[fieldNames[1]].ncos['1.1r'].field.vals.squeeze().filled(fill_value=np.nan)
+rad_1_1[:,:ssI_AR['1.1']['rlon'][0]] = np.nan
+rad_1_1[ssI_AR['1.1']['rlat'][-1]:,:] = np.nan
+# fix some area with missing values for cosmetical reasons
+rad_1_1[490:510,650:670] = 1
+
+
+width = 1
+max_sum = (width*2+1)**2
+print(max_sum)
+mask = rad_1_1.copy()
+for j in range(0,rad_1_1.shape[0]):
+    for i in range(0,rad_1_1.shape[1]):
+        #i = 1
+        #j = 3
+        yrange = np.minimum(np.maximum(
+                    np.arange((j - width), (j + width + 1)).astype(np.int),0),
+                        rad_1_1.shape[0]-1)
+        xrange = np.minimum(np.maximum(
+                    np.arange((i - width), (i + width + 1)).astype(np.int),0),
+                        rad_1_1.shape[1]-1)
+        if np.sum(np.isnan(rad_1_1[yrange,xrange])) == 0:
+            mask[j,i] = np.nan
+rad_1_1_line = rad_1_1.copy()
+rad_1_1_line[np.isnan(mask)] = np.nan
+rad_1_1_line[~np.isnan(rad_1_1_line)] = 1
+rad_1_1_line[10,10] = 0
 
 
 import matplotlib
@@ -104,18 +135,66 @@ if i_plot > 0:
         fig, ax = ncp.plotNCO(nco)
         
         # ALPINE REGION
-        ax.plot([220, 1042.8], [180.4, 180.4], '-k')
-        ax.plot([220, 1042.8], [682, 682], '-k')
-        ax.plot([220, 220], [180.4, 682], '-k')
-        ax.plot([1042.8, 1042.8], [180.4, 682], '-k')
+        x0 = 50; x1 = 237
+        y0 = 41; y1 = 155
+        #ax.plot([220, 1042.8], [180.4, 180.4], '-k')
+        #ax.plot([220, 1042.8], [682, 682], '-k')
+        #ax.plot([220, 220], [180.4, 682], '-k')
+        #ax.plot([1042.8, 1042.8], [180.4, 682], '-k')
+        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], '-k')
+        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], '-k')
+        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], '-k')
+        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], '-k')
         # NORTHERN ITALY
-        ax.plot([418, 704], [264, 264], '--k')
-        ax.plot([418, 704], [440, 440], '--k')
-        ax.plot([418, 418], [264, 440], '--k')
-        ax.plot([704, 704], [264, 440], '--k')
+        x0 = 95; x1 = 160
+        y0 = 60; y1 = 100
+        #ax.plot([418, 704], [264, 264], '--k')
+        #ax.plot([418, 704], [440, 440], '--k')
+        #ax.plot([418, 418], [264, 440], '--k')
+        #ax.plot([704, 704], [264, 440], '--k')
+        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], '--k')
+        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], '--k')
+        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], '--k')
+        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], '--k')
+        # CROSSSECT
+        #x0 = 107; x1 = 130
+        #y0 = 50; y1 = 135
+        x0 = 110; x1 = 135
+        y0 = 52; y1 = 135
+        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], ':k')
+        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], ':k')
+        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], ':k')
+        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], ':k')
             
         #title = 'topography' 
         #ncp.fig.suptitle(title, fontsize=14)
+
+        dimx = an.vars['cHSURF'].ncos['1.1'].field.dims['rlon']
+        dimy = an.vars['cHSURF'].ncos['1.1'].field.dims['rlat']
+        [gridx, gridy] = np.meshgrid(dimx.vals, dimy.vals)
+        from matplotlib.colors import BoundaryNorm
+
+        CF = ax.pcolormesh(gridx, gridy, rad_1_1_line, cmap='Greys')
+        res = 1.1
+        nth_ind = 10
+        x0_inds = np.arange(0,900,nth_ind)
+        for i in range(0,len(x0_inds)):
+            x0_km = x0_inds[i]*res
+            if np.sum(~np.isnan(rad_1_1[:,x0_inds[i]])) > 0:
+                non_nan_yinds = np.argwhere(~np.isnan(rad_1_1[:,x0_inds[i]]))
+                y0_km = non_nan_yinds[0]*res
+                y1_km = non_nan_yinds[-1]*res
+                ax.plot([x0_km,x0_km], [y0_km, y1_km],
+                        '-k', linewidth=0.3)
+        y0_inds = np.arange(0,900,nth_ind)
+        for j in range(0,len(y0_inds)):
+            y0_km = y0_inds[j]*res
+            if np.sum(~np.isnan(rad_1_1[y0_inds[j],:])) > 0:
+                non_nan_xinds = np.argwhere(~np.isnan(rad_1_1[y0_inds[j],:]))
+                x0_km = non_nan_xinds[0]*res
+                x1_km = non_nan_xinds[-1]*res
+                ax.plot([x0_km,x1_km], [y0_km, y0_km],
+                        '-k', linewidth=0.3)
 
 
     else:

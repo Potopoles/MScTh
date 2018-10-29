@@ -6,8 +6,8 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
+i_resolutions = 2 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -16,19 +16,22 @@ import matplotlib.pyplot as plt
 
 
 import ncClasses.analysis as analysis
+from ncClasses.subdomains import setSSI
 from datetime import datetime
 from functions import *
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-inpPath = '../02_fields/subDomDiur'
+inpPath = '../02_fields/diurnal'
 fieldNames = ['cHSURF']
+i_subdomain = 1
 #####################################################################		
+ssI = setSSI(i_subdomain, {'4.4':{},'2.2':{},'1.1':{}})
 # DOMAIN 4 Greater Northern Italy Plains (use subDomDiur)
-lon0 = [45]
-lon1 = [118]
-lat0 = [12]
-lat1 = [62]
-plotName = 'locations_domain4_Greater_Northern_Italy_Plains.png'
+#lon0 = [45]
+#lon1 = [118]
+#lat0 = [12]
+#lat1 = [62]
+#plotName = 'locations_domain4_Greater_Northern_Italy_Plains.png'
 ## DOMAIN 3 Northern Italy Plains (use subDomDiur) 
 #lon0 = [48]
 #lon1 = [100]
@@ -123,6 +126,18 @@ if i_plot > 0:
         for varName in an.varNames:
             ncs.plotVar(an.vars[varName])
             
+        #for rowInd,res in enumerate(an.resolutions):
+        #    y1 = dimy.vals[lats[0]]
+        #    y2 = dimy.vals[lats[1]]
+        #    x1 = dimx.vals[lons[0]]
+        #    x2 = dimx.vals[lons[1]]
+        #    #ax.plot([x1, x1], [y1, y2], '-k')
+        #    #ax.plot([x2, x2], [y1, y2], '-k')
+        #    ax.plot([x1, x2], [y1, y1], '-k')
+        #    #ax.plot([x1, x2], [y2, y2], '-k')
+        #    #txt = str(lon)
+        #    txt = ''
+        #    ax.text(x1, y1, txt, size=txtSize)
         
         #####################################################################
         counts = range(0,len(lon0))
@@ -166,8 +181,8 @@ if i_plot > 0:
                     #txt = str(lon)
                     txt = ''
                     ax.text(x1, y1, txt, size=txtSize)
-            
-        #####################################################################
+           
+        ####################################################################
             
             
     elif nDPlot == 1 and someField.nNoneSingleton == 1:

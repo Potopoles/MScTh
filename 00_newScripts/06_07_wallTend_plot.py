@@ -11,7 +11,7 @@ ress = ['4.4', '2.2', '1.1']
 modes = ['f', '', 'd']
 #i_variables = 'QV' # 'QV' or 'T'
 #i_variables = 'T' # 'QV' or 'T'
-i_plot = 3
+i_plot = 1
 
 region = 'Alpine_Region'
 #region = 'Northern_Italy'
@@ -28,6 +28,7 @@ if not os.path.exists(plotOutDir):
 modeNames = ['SM', 'RAW', 'RAW - SM']
 
 i_walls = ['left', 'right', 'top', 'bottom']
+i_walls = ['bottom', 'top']
 i_MODE = 'SUM'
 #i_MODE = 'left'
 
@@ -65,13 +66,16 @@ for res in ress:
                 name = var+'_'+i_wall+'_'+res+mode
                 obj = loadObj(folder,name)  
                 if res == '4.4' and Area is None:
-                    print(obj)
+                    #print(obj)
                     Area = obj['Area']*1E6
                 if vals is None:
                     #vals = obj[var]/1E6
                     vals = obj[var]/Area*3600
                 else:
                     #vals = vals + obj[var]/1E6
+                    #if (i_wall == 'top') or (i_wall == 'bottom'):
+                    #    vals = vals + obj[var]/Area*3600
+                    #else:
                     vals = vals + obj[var]/Area*3600
         else:
             name = var+'_'+i_MODE+'_'+res+mode

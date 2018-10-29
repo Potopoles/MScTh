@@ -94,12 +94,15 @@ class ncSubplots():
                 else:
                     ax.plot(dim.vals, fld.vals.squeeze(), color=self.colrs[rI])
                 
-            #ax.grid(color='grey', Linestyle='--')
+            #ax.grid(color='grey', linestyle='--')
             ax.grid()
             ax.set_title(var.modeNames[rowInd], fontsize=16)
             if dim.key == 'altitude':
                 ax.set_ylim(np.min(dim.vals), np.max(dim.vals))
                 ax.set_xlim(Mmin, Mmax)
+            elif dim.key == 'time':
+                ax.set_ylim(Mmin, Mmax)
+                ax.set_xlim(dim.vals[0], dim.vals[-1])
             else:
                 ax.set_ylim(Mmin, Mmax)
                 ax.set_xlim(np.min(dim.vals), np.max(dim.vals))
@@ -160,7 +163,7 @@ class ncSubplots():
                     ax.plot(dim.vals, diff.squeeze(), color=self.colrs[rI])
                     ax.axhline(y=0, color=(0.5,0.5,0.5), linestyle='-', linewidth=1)
 
-            ax.grid(color='grey', Linestyle='--')
+            ax.grid(color='grey', linestyle='--')
             #ax.legend(self.ress)
             # X-AXIS LABEL
             if dim.key == 'altitude':

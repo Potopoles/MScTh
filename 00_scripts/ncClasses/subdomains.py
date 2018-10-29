@@ -25,9 +25,12 @@ def setSSI(i_subdomain, ssI):
         lat1 = 90 
     elif i_subdomain == 4:
         domainName = 'Close_Up_Crossect'
+        #lon0 = 110 
+        #lon1 = 110
         lon0 = 110 
-        lon1 = 110
-        lat0 = 75  
+        lon1 = 140
+        #lat0 = 75  
+        lat0 = 40
         lat1 = 135 
     elif i_subdomain == 5:
         domainName = 'Mountain'
@@ -47,6 +50,21 @@ def setSSI(i_subdomain, ssI):
         lon1 = 131 
         lat0 = 120  
         lat1 = 121 
+    elif i_subdomain == 10:
+        domainName = 'Summary_Crossect'
+        #lon0 = 107 
+        #lon1 = 130
+        #lat0 = 41
+        #lat1 = 135 
+        lon0 = 110
+        lon1 = 135
+        lat0 = 52
+        lat1 = 135 
+
+    ssI['lon0'] = lon0
+    ssI['lon1'] = lon1
+    ssI['lat0'] = lat0
+    ssI['lat1'] = lat1
          
     ssI['rlon'] = [lon0,lon1]
     ssI['rlat'] = [lat0,lat1]

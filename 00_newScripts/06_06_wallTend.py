@@ -9,14 +9,15 @@ os.chdir('00_newScripts/')
 
 from functions import saveObj 
 
+i_save = 0
 
 ress = ['4.4', '2.2', '1.1']
-ress = ['2.2', '1.1']
+#ress = ['2.2', '1.1']
 #ress = ['1.1']
 #ress = ['4.4']
 modes = ['', 'f']
 #modes = ['f']
-i_subdomain = 2
+i_subdomain = 1
 i_variables = 'Fqv'
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
 #altInds = list(range(25,61))
@@ -31,7 +32,8 @@ ssI['1.1']['altitude'] = altInds
 #ssIRaw = copy.deepcopy(ssI)
 
 i_walls = ['left', 'right', 'top', 'bottom']
-#i_walls = ['bottom']
+i_walls = ['bottom']
+i_walls = ['top']
 
 
 ssIRaw = ssI
@@ -53,13 +55,21 @@ for i_wall in i_walls:
     elif i_wall == 'bottom':
         for res in ress:
             ssI[res]['rlat'] = [ssIRaw[res]['rlat'][0]]
+            #print(ssI[res]['rlat'])
+            #quit()
             ssI[res]['srlat'] = [ssIRaw[res]['srlat'][0]]
         normVec = 1
     elif i_wall == 'top':
         for res in ress:
             ssI[res]['rlat'] = [ssIRaw[res]['rlat'][-1]]
+            #print(ssI[res]['rlat'])
+            #quit()
             ssI[res]['srlat'] = [ssIRaw[res]['srlat'][-1]]
         normVec = -1
+
+    print(i_wall)
+    print(ssI[res]['rlat'])
+    #quit()
 
     # Altitude arrays
     altI = np.asarray(altInds)
@@ -118,6 +128,13 @@ for i_wall in i_walls:
                 #print(srcNCPath)
                 #quit()
 
+                #print(res)
+                #HSURF = ncField.ncField('HSURF', '../01_rawData/HSURF/'+res+'.nc', ssI[res])
+                #HSURF.loadValues()
+                #plt.contourf(HSURF.vals.squeeze())
+                #plt.show()
+                #quit()
+
                 RHOncf = ncField.ncField('RHO', srcNCPath, ssI[res])
                 RHOncf.loadValues()
                 rho = RHOncf.vals
@@ -147,5 +164,6 @@ for i_wall in i_walls:
             name = 'Fqv_'+i_wall+'_'+res+mode
             print(name)
             print(folder)
-            saveObj(out,folder,name)  
+            if i_save:
+                saveObj(out,folder,name)  
 

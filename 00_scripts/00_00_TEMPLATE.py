@@ -6,8 +6,8 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 1 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
+i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -21,9 +21,9 @@ from functions import *
 from ncClasses.subdomains import setSSI
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-inpPath = '../02_fields/subDomDiur'
+#inpPath = '../02_fields/subDomDiur'
 inpPath = '../02_fields/diurnal'
-inpPath = '../02_fields/topocut'
+#inpPath = '../02_fields/topocut'
 
 others = ['cHSURF', 'nTOT_PREC', 'nHPBL']
 hydrometeors = ['zQC', 'zQI', 'zQV', 'zQR', 'zQS', 'zQG']
@@ -36,7 +36,9 @@ fieldNames = ['zAQVT_TURB']
 fieldNames = ['nASHFL_S']
 fieldNames = ['nALHFL_S']
 fieldNames = ['cHSURF']
+fieldNames = ['zQV']
 fieldNames = ['nPMSL']
+fieldNames = ['zT']
 #####################################################################		
 
 ####################### NAMELIST DIMENSIONS #######################
@@ -45,35 +47,37 @@ ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}})
 #print(ssI)
 #quit() ## PROBLEM WITH SUBDOMAIN!!!
 
-#startHght = 2
-#endHght = 30 
-#altInds = list(range(startHght,endHght+1))
-#ssI['altitude'] = altInds 
+startHght = 0
+endHght = 25
+altInds = list(range(startHght,endHght+1))
+ssI['altitude'] = altInds 
 
 #startTime = datetime(2006,7,11,00)
 #endTime = datetime(2006,7,20,23)
 #ssI['time'] = [startTime,endTime] # border values (one value if only one time step desired)
 
-#ssI['diurnal'] = [12] # list values
+#ssI['diurnal'] = [19] # list values
 #ssI['diurnal'] = [20,21,22,23,0,1,2,3,4,5] # list values
 
 ####################### NAMELIST AGGREGATE #######################
 # Options: MEAN, SUM 
 ag_commnds = {}
-#ag_commnds['rlat'] = 'MEAN'
-#ag_commnds['rlon'] = 'MEAN'
+ag_commnds['rlat'] = 'MEAN'
+ag_commnds['rlon'] = 'MEAN'
 #ag_commnds['time'] = 'SUM'
-ag_commnds['diurnal'] = 'MEAN'
+#ag_commnds['diurnal'] = 'MEAN'
 ag_commnds['altitude'] = 'MEAN'
-ag_commnds['time'] = 'MEAN'
+#ag_commnds['time'] = 'MEAN'
 #####################################################################
 
 ####################### NAMELIST PLOT #######################
-nDPlot = 2 # How many dimensions should plot have (1 or 2)
+nDPlot = 1 # How many dimensions should plot have (1 or 2)
 i_diffPlot = 1 # Draw plot showing difference filtered - unfiltered # TODO
 plotOutDir = '../00_plots'
+#plotOutDir = '../00_plots/04_coldPools/zFQVy'
 plotName = 'test.png'
-#plotName = 'SHFL.png'
+plotName = 'T_diurnal.png'
+#plotName = 'zFQVy_'+str(ssI['diurnal'][0])+'.png'
 #plotName = 'LHFL.png'
 ##### 1D PLOT #########
 
@@ -83,11 +87,11 @@ plotContour = 0 # Besides the filled contour, also plot the contour?
 cmapM = 'seismic' # colormap for Model output (jet, terrain, inferno, YlOrRd)
 axis = 'auto' # set 'equal' if keep aspect ratio, else 'auto'
 # COLORBAR Models
-autoTicks = 1 # 1 if colorbar should be set automatically
+autoTicks = 0 # 1 if colorbar should be set automatically
 Mmask = 1 # Mask Model values lower than MThrMinRel of maximum value?
 MThrMinRel = 0.02 # Relative amount of max value to mask (see Mmask)
 Mticks = [0.0001,0.0002,0.0003,0.0004,0.0005]
-Mticks = list(np.arange(0.0002,0.0022,0.0002))
+Mticks = list(np.arange(-0.1,0.1,0.02))
 # COLORBAR Models
 cmapD = 'bwr' # colormap for Difference output (bwr)
 #####################################################################

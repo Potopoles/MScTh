@@ -28,7 +28,7 @@ fieldNames = ['nTOT_PREC', 'cHSURF']
 #####################################################################		
 
 ####################### NAMELIST DIMENSIONS #######################
-subDomain = 2 # 0: full domain, 1: alpine region, 2: zoom in
+subDomain = 1 # 0: full domain, 1: alpine region, 2: zoom in
 # SUBSPACE
 #subSpaceIndsIN = {'4.4':{},'2.2':{},'1.1':{}}
 #subSpaceIndsIN = setSSI(subDomain, subSpaceIndsIN)
@@ -65,8 +65,8 @@ ag_commnds['rlon'] = 'MEAN'
 nDPlot = 1 # How many dimensions should plot have (1 or 2)
 i_diffPlot = 0 # Draw plot showing difference filtered - unfiltered # TODO
 plotOutDir = '../00_plots'
-#plotName = 'domAv_diurnal_TOT_PREC'
-plotName = 'domAv_diurnal_TOT_PREC_Northern_Italy'
+plotName = 'domAv_diurnal_TOT_PREC'
+#plotName = 'domAv_diurnal_TOT_PREC_Northern_Italy'
 ##### 1D PLOT #########
 
 ##### 2D Contour ######
@@ -139,34 +139,34 @@ else:
 	raise ValueError('ERROR: CANNOT MAKE ' + str(nDPlot) + 'D-PLOT WITH ' +
 	str(someField.nNoneSingleton) + ' NON-SINGLETON DIMS!')
 
-## PRECIP MEAN DAILY SUM
-#x = 1
-#yTop = 0.85
-#dy = 0.15
-#size = 14
-#for rowInd,mode in enumerate(an.modes):
-#    if ncs.orientation == 'VER':
-#        ax = ncs.axes[rowInd,0]
-#    elif ncs.orientation == 'HOR':
-#        ax = ncs.axes[0,rowInd]
-#    if mode != 'D':
-#        ax.text(x, yTop+dy, 'Sum:', size=size,
-#                bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
-#    # PLOT ADJUSTMENTS
-#    ax.set_xlabel('Hour',fontsize=12)
-#    if mode == '':
-#        #ax.legend_.remove()
-#        ax.set_ylabel('',fontsize=12)
-#    else:
-#        ax.set_ylabel(r'Rain Rate $[mm$ $h^{-1}]$',fontsize=12)
-#    ax.set_ylim(0,1.7)
-#    for rI,res in enumerate(ncs.ress):
-#        # GET VALUES AND DIMENSIONS				
-#        fld = an.vars['nTOT_PREC'].ncos[str(res+mode)].field
-#        if mode != 'd':
-#            sum = str(round(np.sum(fld.vals),2)) + ' mm' 
-#            ax.text(x, yTop-dy*rI, sum, color=ncs.colrs[rI], size=size,
-#                    bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+# PRECIP MEAN DAILY SUM
+x = 1
+yTop = 0.85
+dy = 0.12
+size = 12
+for rowInd,mode in enumerate(an.modes):
+    if ncs.orientation == 'VER':
+        ax = ncs.axes[rowInd,0]
+    elif ncs.orientation == 'HOR':
+        ax = ncs.axes[0,rowInd]
+    if mode != 'D':
+        ax.text(x, yTop+dy, 'Sum:', size=size,
+                bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+    # PLOT ADJUSTMENTS
+    ax.set_xlabel('Hour',fontsize=12)
+    if mode == '':
+        #ax.legend_.remove()
+        ax.set_ylabel('',fontsize=12)
+    else:
+        ax.set_ylabel(r'Rain Rate $[mm$ $h^{-1}]$',fontsize=12)
+    ax.set_ylim(0,1.7)
+    for rI,res in enumerate(ncs.ress):
+        # GET VALUES AND DIMENSIONS				
+        fld = an.vars['nTOT_PREC'].ncos[str(res+mode)].field
+        if mode != 'd':
+            sum = str(round(np.sum(fld.vals),1)) + ' mm' 
+            ax.text(x, yTop-dy*rI, sum, color=ncs.colrs[rI], size=size,
+                    bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
         
 	
 if i_plot == 1:

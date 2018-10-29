@@ -273,6 +273,7 @@ class field:
                     #vals = np.nansum(vals,i,keepdims=1)
                     # this version replaces all-nan vectors with nan
                     vals = np.nanmean(vals,i,keepdims=1)*vals.shape[i]
+                #vals[np.isnan(vals)] = 0
         return(vals)
         
     def _aggregate_dims(self, dimKeys, aggreg):

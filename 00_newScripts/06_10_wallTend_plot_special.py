@@ -11,7 +11,7 @@ ress = ['4.4', '2.2', '1.1']
 modes = ['f', '', 'd']
 #i_variables = 'QV' # 'QV' or 'T'
 #i_variables = 'T' # 'QV' or 'T'
-i_plot = 2
+i_plot = 1
 addLabel = '_HOR'
 #addLabel = ''
 
@@ -38,13 +38,11 @@ addLabel = '_HOR'
 #slab1Alt = '3000'
 #slab2Alt = '4000'
 
-#region = 'Alpine_Region'
-region = 'Northern_Italy'
+region = 'Alpine_Region'
+#region = 'Northern_Italy'
 #wallAlts = '2500_8000'
-wallAlts = '0_2000'
-#wallAlts = '0_1900'
-#slab1Alt = '0'
-#slab2Alt = '0'
+#wallAlts = '0_2000'
+wallAlts = '0_2500'
 
 # WALL
 path = 'alts_'+wallAlts+'_'+region

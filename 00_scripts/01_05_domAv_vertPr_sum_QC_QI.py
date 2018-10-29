@@ -6,8 +6,8 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 3 # 0 = no plot, 1 = show plot, 2 = save plot
+i_resolutions = 1 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot > 1:
@@ -83,14 +83,11 @@ an.i_resolutions = i_resolutions
 an.run()
 
 
-#print(an.vars['zCW'].ncos['4.4'].field.vals)
-#quit()
 for res in an.resolutions:
     for mode in an.modes:
         an.vars['zAQVT_MIC'].ncos[res+mode].field.vals =  \
                     an.vars['zAQVT_MIC'].ncos[res+mode].field.vals*-1
 
-#quit()
 
 import matplotlib
 if i_plot == 2:

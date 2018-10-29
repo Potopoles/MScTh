@@ -1,23 +1,34 @@
 #!/bin/bash
 
-#projPath=scratch_save/02_fields/topocut
-#scraPath=$SCRATCH/02_fields/topocut
-projPath=scratch_save/02_fields/diurnal
-scraPath=$SCRATCH/02_fields/diurnal
-var=nTOT_PREC.nc
+#srcPath=scratch_save/02_fields/topocut
+#srcPath=/scratch/snx1600/heimc/MScTh/02_fields/diurnal
+#srcPath=/scratch/snx1600/heimc/MScTh/02_fields/topocut
+srcPath=/project/pr04/heimc/initial_data/move
+#destPath=$SCRATCH/02_fields/diurnal
+#destPath=$SCRATCH/02_fields/topocut
+#destPath=/scratch/snx3000/heimc/MScTh/02_fields/diurnal
+destPath=/scratch/snx3000/heimc/MScTh/02_fields/topocut
+var=nPMSL.nc
 
 echo $var
 
 echo 4.4
-cp $projPath/4.4/$var $scraPath/4.4/
+cp $srcPath/4.4/$var $destPath/4.4/
 echo 4.4f
-cp $projPath/4.4f/$var $scraPath/4.4f/
+cp $srcPath/4.4f/$var $destPath/4.4f/
 echo 2.2
-cp $projPath/2.2/$var $scraPath/2.2/
+cp $srcPath/2.2/$var $destPath/2.2/
 echo 2.2f
-cp $projPath/2.2f/$var $scraPath/2.2f/
+cp $srcPath/2.2f/$var $destPath/2.2f/
 echo 1.1
-cp $projPath/1.1/$var $scraPath/1.1/
+cp $srcPath/1.1/$var $destPath/1.1/
 echo 1.1f
-cp $projPath/1.1f/$var $scraPath/1.1f/
+cp $srcPath/1.1f/$var $destPath/1.1f/
+
+#echo 4.4r
+#cp $srcPath/4.4r/$var $destPath/4.4r/
+#echo 2.2r
+#cp $srcPath/2.2r/$var $destPath/2.2r/
+#echo 1.1r
+#cp $srcPath/1.1r/$var $destPath/1.1r/
 
