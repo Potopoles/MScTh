@@ -47,7 +47,7 @@ ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}})
 #ssI['time'] = [startTime,endTime] # border values (one value if only one time step desired)
 
 ssI['diurnal'] = [20,21,22,23,0,1,2,3,4,5,6,7] # list values
-ssI['diurnal'] = [8,9,10,11,12,13,14,15,16,17,18,19] # list values
+#ssI['diurnal'] = [8,9,10,11,12,13,14,15,16,17,18,19] # list values
 
 #ssI['diurnal'] = [12,13,14,15,16,17] # list values
 #ssI['diurnal'] = [18,19,20,21,22,23] # list values
@@ -133,7 +133,7 @@ if i_plot > 0:
         
         (fig,axes,MCB) = ncs.plotVar(an.vars[an.varNames[0]])
 
-        MCB.set_label(r'Total Accumulated Precipitation $[mm]$', fontsize=13*ncs.MAG)
+        MCB.set_label(r'Total Accumulated Precipitation $[mm]$', fontsize=19*ncs.MAG)
             
         #title = 'Accum. Precip. '+str(ssI['diurnal'][0])+'-'+str(ssI['diurnal'][-1]+1)
         #ncs.fig.suptitle(title, fontsize=14)

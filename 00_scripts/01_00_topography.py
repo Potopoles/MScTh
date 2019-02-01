@@ -107,15 +107,15 @@ if i_plot > 0:
         #    ncs.plotTopo(an.vars['cHSURF'])
         
         (fig,axes,MCB) = ncs.plotVar(an.vars['cHSURF'])
-        MCB.set_label(r'Elevation $[m]$', fontsize=13*ncs.MAG)
+        MCB.set_label(r'Elevation $[m]$', fontsize=19*ncs.MAG)
 
         for rI,res in enumerate(an.resolutions):
             for mI,mode in enumerate(an.modes):
                 print(res+mode)
                 nco = an.vars['cHSURF'].ncos[res+mode]
                 maxHght = np.max(nco.field.vals)
-                axes[mI,rI].text(920,200, '{:d}'.format(maxHght.astype(np.int)), fontsize=15,
-                                color='w')
+                axes[mI,rI].text(920,200, '{:d}'.format(maxHght.astype(np.int)),
+                            fontsize=16*ncs.MAG, color='w')
             
         #title = 'topography' 
         #ncs.fig.suptitle(title, fontsize=14)

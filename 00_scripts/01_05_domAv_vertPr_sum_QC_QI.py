@@ -22,7 +22,8 @@ from ncClasses.subdomains import setSSI
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
 inpPath = '../02_fields/diurnal'
-fieldNames = ['zQC', 'zQI', 'zCW', 'zAQVT_MIC']
+fieldNames = ['zQC', 'zQI', 'zCW']
+#fieldNames = ['zQC', 'zQI', 'zCW', 'zAQVT_MIC']
 
 ####################### NAMELIST DIMENSIONS #######################
 i_subDomain = 1 # 0: full domain, 1: alpine region
@@ -83,10 +84,10 @@ an.i_resolutions = i_resolutions
 an.run()
 
 
-for res in an.resolutions:
-    for mode in an.modes:
-        an.vars['zAQVT_MIC'].ncos[res+mode].field.vals =  \
-                    an.vars['zAQVT_MIC'].ncos[res+mode].field.vals*-1
+#for res in an.resolutions:
+#    for mode in an.modes:
+#        an.vars['zAQVT_MIC'].ncos[res+mode].field.vals =  \
+#                    an.vars['zAQVT_MIC'].ncos[res+mode].field.vals*-1
 
 
 import matplotlib
@@ -122,17 +123,19 @@ if nDPlot == 2 and someField.nNoneSingleton == 2:
     ncs.Mticks = C_SumTicks 
     QI = ncs.addContour(an.vars['zQI'], 'black', 1, lineWidth=1.5) 
     QC = ncs.addContour(an.vars['zQC'], 'red', 1, lineWidth=1.5)
-    ncs.Mticks = C_AQVT_MIC_Ticks
-    MIC = ncs.addContour(an.vars['zAQVT_MIC'], 'blue', 1, lineWidth=1)
+    #ncs.Mticks = C_AQVT_MIC_Ticks
+    #MIC = ncs.addContour(an.vars['zAQVT_MIC'], 'blue', 1, lineWidth=1)
     
     ax1 = axes[0,0]
 
-    lines = [QI.collections[0], QC.collections[0], MIC.collections[0]]
-    labels = ['$q_{i}$', '$q_{c}$', 'Cond.']
+    #lines = [QI.collections[0], QC.collections[0], MIC.collections[0]]
+    #labels = ['$q_{i}$', '$q_{c}$', 'Cond.']
+    lines = [QI.collections[0], QC.collections[0]]
+    labels = ['$q_{i}$', '$q_{c}$']
     leg = ax1.legend(lines, labels, loc=2)
     leg.legendHandles[2].set_linestyle('-')
 
-    MCB.set_label(r'Cloud Water $[g$ $kg^{-1}]$', fontsize=13*ncs.MAG)
+    MCB.set_label(r'Cloud Water $[g$ $kg^{-1}]$', fontsize=19*ncs.MAG)
 
     #title = 'dA diurn (QC + QI)' 
     #ncs.fig.suptitle(title, fontsize=14)

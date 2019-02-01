@@ -22,7 +22,7 @@ class ncSubplots():
         self.plotMode = 'LATLON'
 
         self.MAG = 1.3
-        self.MAG = 1.0
+        #self.MAG = 1.0
        
         if orientation == 'HOR': 
             if i_diffPlot:
@@ -188,7 +188,7 @@ class ncSubplots():
                     ax.set_yticks([0,6,12,18,24])
 
                 # SUBPLOT TITLE
-                titl = ax.set_title(var.modeNames[colInd]+res, fontsize=14*self.MAG)
+                titl = ax.set_title(var.modeNames[colInd]+res, fontsize=23*self.MAG)
                 titl.set_position([0.5, 1.+0.01*self.MAG])
                 
                 # AXES UNITS AND LABELS
@@ -200,19 +200,19 @@ class ncSubplots():
                     
                     
                 if rowInd == 0:
-                    ax.set_ylabel(r''+dimy.label + ' ' + yUnits, fontsize=12*self.MAG,
+                    ax.set_ylabel(r''+dimy.label + ' ' + yUnits, fontsize=19*self.MAG,
                                     labelpad=6*self.MAG)
                 if self.orientation == 'VER':
                     if colInd == self.nRes-1:
-                        ax.set_xlabel(r''+dimx.label + ' ' + xUnits, fontsize=12*self.MAG,
+                        ax.set_xlabel(r''+dimx.label + ' ' + xUnits, fontsize=19*self.MAG,
                                     labelpad=6*self.MAG)
                 elif self.orientation == 'HOR':
                     if colInd == self.nrows-1:
-                        ax.set_xlabel(r''+dimx.label + ' ' + xUnits, fontsize=12*self.MAG,
+                        ax.set_xlabel(r''+dimx.label + ' ' + xUnits, fontsize=19*self.MAG,
                                     labelpad=5*self.MAG)
 
                 # Axes ticks
-                ax.tick_params(labelsize=9*self.MAG)
+                ax.tick_params(labelsize=13*self.MAG)
 
         ######### DIFF PLOT
         if self.i_diffPlot:
@@ -312,9 +312,9 @@ class ncSubplots():
         cax = self.fig.add_axes([xPosLeft, cPosBot, width, cHeight])
         MCB = plt.colorbar(mappable=CF, cax=cax,
                     orientation='horizontal')
-        cax.tick_params(labelsize=9*self.MAG)
+        cax.tick_params(labelsize=13*self.MAG)
         fldUnits = self._getUnits(fld)
-        MCB.set_label(fld.label + ' ' + fldUnits)
+        MCB.set_label(fld.label + ' ' + fldUnits, fontsize=19*self.MAG)
                     
         # DIFFERENCE COLORBAR
         if self.i_diffPlot:
@@ -322,7 +322,7 @@ class ncSubplots():
             DCB = plt.colorbar(mappable=DCF, cax=cax,
                         orientation='horizontal')
             fldUnits = self._getUnits(fld)
-            DCB.set_label(fld.label + ' ' + fldUnits)
+            DCB.set_label(fld.label + ' ' + fldUnits, fontsize=19*self.MAG)
                             
 
         # ADJUST SUBPLOT POSITIONS

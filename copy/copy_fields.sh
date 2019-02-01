@@ -1,14 +1,36 @@
 #!/bin/bash
 
+
+cp /project/pr04/heimc/initial_data/wl_4.4_km/4_lm_f/output/zlev/lff*z.nc \
+    $SCRATCH/MScTh/01_rawData/4.4
+cp /project/pr04/heimc/initial_data/wl_4.4_km_filtered/4_lm_f/output/zlev/lff*z.nc \
+    $SCRATCH/MScTh/01_rawData/4.4f
+cp /project/pr04/heimc/initial_data/wl_2.2_km/4_lm_f/output/zlev/lff*z.nc \
+    $SCRATCH/MScTh/01_rawData/2.2
+cp /project/pr04/heimc/initial_data/wl_2.2_km_filtered/4_lm_f/output/zlev/lff*z.nc \
+    $SCRATCH/MScTh/01_rawData/2.2f
+cp /project/pr04/heimc/initial_data/wl_1.1_km/4_lm_f/output/zlev/lff*z.nc \
+    $SCRATCH/MScTh/01_rawData/1.1
+cp /project/pr04/heimc/initial_data/wl_1.1_km_filtered/4_lm_f/output/zlev/lff*z.nc \
+    $SCRATCH/MScTh/01_rawData/1.1f
+
+
+exit 1
+
+
+
+
 #srcPath=scratch_save/02_fields/topocut
 #srcPath=/scratch/snx1600/heimc/MScTh/02_fields/diurnal
 #srcPath=/scratch/snx1600/heimc/MScTh/02_fields/topocut
 srcPath=/project/pr04/heimc/initial_data/move
+
 #destPath=$SCRATCH/02_fields/diurnal
 #destPath=$SCRATCH/02_fields/topocut
 #destPath=/scratch/snx3000/heimc/MScTh/02_fields/diurnal
-destPath=/scratch/snx3000/heimc/MScTh/02_fields/topocut
-var=nPMSL.nc
+#destPath=/scratch/snx3000/heimc/MScTh/02_fields/topocut
+
+#var=nPMSL.nc
 
 echo $var
 

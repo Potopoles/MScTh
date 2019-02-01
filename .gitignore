@@ -3,7 +3,6 @@
 *.nc
 *.pkl
 00_plots
-02_fields
 Session.vim
 *.out
 *.err
@@ -12,3 +11,4 @@ bErr
 *.grib*
 *.done*
 *.o
+*.tmp

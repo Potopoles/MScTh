@@ -12,16 +12,17 @@ os.chdir('00_newScripts/')
 
 ress = ['4.4', '2.2', '1.1']
 #ress = ['2.2', '1.1']
-#ress = ['1.1']
+#ress = ['4.4', '2.2']
+ress = ['1.1']
 modes = ['', 'f']
-#modes = ['f']
+modes = ['f']
 i_subdomain = 0
 
 #ssI, domainName = setSSI(i_subdomain, {}) 
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
 
 dt0 = datetime(2006,7,11,0)
-dt0 = datetime(2006,7,20,0)
+#dt0 = datetime(2006,7,20,0)
 dt1 = datetime(2006,7,20,1)
 dts = np.arange(dt0,dt1,timedelta(hours=1))
 inpPath = '../01_rawData/topocut/'

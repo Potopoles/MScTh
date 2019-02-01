@@ -6,7 +6,7 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
 i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 1 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
@@ -21,7 +21,8 @@ from functions import *
 from ncClasses.subdomains import setSSI
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-inpPath = '../02_fields/topocut'
+#inpPath = '../02_fields/topocut'
+inpPath = '../02_fields/diurnal'
 #fieldNames = ['zQC', 'nHPBL', 'cHSURF']
 fieldNames = ['cHSURF','nTOT_PREC']
 #####################################################################		
@@ -75,7 +76,10 @@ an.i_resolutions = i_resolutions
 # RUN ANALYSIS
 an.run()
 
-rad_1_1 = an.vars[fieldNames[1]].ncos['1.1r'].field.vals.squeeze().filled(fill_value=np.nan)
+# if import topocut
+#rad_1_1 = an.vars[fieldNames[1]].ncos['1.1r'].field.vals.squeeze().filled(fill_value=np.nan)
+# if import diurnal
+rad_1_1 = an.vars[fieldNames[1]].ncos['1.1r'].field.vals[3,:,:].squeeze().filled(fill_value=np.nan)
 rad_1_1[:,:ssI_AR['1.1']['rlon'][0]] = np.nan
 rad_1_1[ssI_AR['1.1']['rlat'][-1]:,:] = np.nan
 # fix some area with missing values for cosmetical reasons
@@ -133,6 +137,11 @@ if i_plot > 0:
         ncp.Mticks = Mticks
    
         fig, ax = ncp.plotNCO(nco)
+
+        text_size = 25
+        df = 50
+        col2 = 'red'
+        col3 = 'red'
         
         # ALPINE REGION
         x0 = 50; x1 = 237
@@ -141,10 +150,13 @@ if i_plot > 0:
         #ax.plot([220, 1042.8], [682, 682], '-k')
         #ax.plot([220, 220], [180.4, 682], '-k')
         #ax.plot([1042.8, 1042.8], [180.4, 682], '-k')
-        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], '-k')
-        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], '-k')
-        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], '-k')
-        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], '-k')
+        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], '-k', linewidth=2)
+        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], '-k', linewidth=2)
+        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], '-k', linewidth=2)
+        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], '-k', linewidth=2)
+        ax.text(x1*4.4-df, y0*4.4+df/3, 'A', fontsize=text_size)
+        ax.text(665, y1*4.4-df, 'D', fontsize=text_size)
+
         # NORTHERN ITALY
         x0 = 95; x1 = 160
         y0 = 60; y1 = 100
@@ -152,19 +164,22 @@ if i_plot > 0:
         #ax.plot([418, 704], [440, 440], '--k')
         #ax.plot([418, 418], [264, 440], '--k')
         #ax.plot([704, 704], [264, 440], '--k')
-        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], '--k')
-        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], '--k')
-        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], '--k')
-        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], '--k')
+        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], '--', lineWidth=2.5, color=col2)
+        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], '--', lineWidth=2.5, color=col2)
+        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], '--', lineWidth=2.5, color=col2)
+        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], '--', lineWidth=2.5, color=col2)
+        ax.text(x1*4.4-df, y1*4.4-df, 'B', fontsize=text_size, color=col2)
+
         # CROSSSECT
         #x0 = 107; x1 = 130
         #y0 = 50; y1 = 135
         x0 = 110; x1 = 135
         y0 = 52; y1 = 135
-        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], ':k')
-        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], ':k')
-        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], ':k')
-        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], ':k')
+        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], '-', lineWidth=2, color=col3)
+        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], '-', lineWidth=2, color=col3)
+        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], '-', lineWidth=2, color=col3)
+        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], '-', lineWidth=2, color=col3)
+        ax.text(x1*4.4-df, y1*4.4-df, 'C', fontsize=text_size, color=col3)
             
         #title = 'topography' 
         #ncp.fig.suptitle(title, fontsize=14)
@@ -174,6 +189,11 @@ if i_plot > 0:
         [gridx, gridy] = np.meshgrid(dimx.vals, dimy.vals)
         from matplotlib.colors import BoundaryNorm
 
+        #rad_1_1_line = rad_1_1_line[0,:,:]
+
+        #print(np.nanmean(rad_1_1_line))
+        #quit()
+        #CF = ax.pcolormesh(gridx, gridy, rad_1_1_line, cmap='Greys_r')
         CF = ax.pcolormesh(gridx, gridy, rad_1_1_line, cmap='Greys')
         res = 1.1
         nth_ind = 10

@@ -17,7 +17,7 @@ i_var_plot_mode = 2
 i_print_values = 0
 
 subdomain = 'Alpine_Region'
-subdomain = 'Northern_Italy'
+#subdomain = 'Northern_Italy'
 
 if subdomain == 'Alpine_Region':
     alts = 'alts_0_2500'
@@ -102,8 +102,9 @@ if not os.path.exists(plotOutDir):
 modeNames = ['SM', 'RAW', 'RAW - SM']
 
 colrs = [(0,0,0), (0,0,1), (1,0,0)]
-labelsize = 12
-titlesize = 14
+labelsize = 16
+titlesize = 18
+ticklabelsize = 12
 
 import matplotlib
 if i_plot > 1:
@@ -133,7 +134,7 @@ for varI,var in enumerate(vars):
 
 
             # MEAN DIURNAL
-            vals = obj[var]
+            vals = obj[var]#*6.8E6
             hrs = np.arange(0,24)
             hrVals = np.full(len(hrs), np.nan)
             for hr in hrs:
@@ -157,6 +158,7 @@ for varI,var in enumerate(vars):
     for axI,mode in enumerate(modes):
         #print(mode)
         ax = axes[axI]
+        ax.tick_params(axis='both', which='major', labelsize=ticklabelsize)
         lines = []
         for resI,res in enumerate(ress):
             if mode == 'd' and res == '4.4':
@@ -203,7 +205,7 @@ for axI,mode in enumerate(modes):
     else:
         ax.set_ylim((minm,maxm))
     ax.grid()
-    ax.set_title(modeNames[axI])
+    ax.set_title(modeNames[axI], fontsize=titlesize)
 
 if i_plot < 3:
     fig.suptitle(subdomain + ' ' + alts)

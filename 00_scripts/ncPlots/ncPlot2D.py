@@ -12,9 +12,11 @@ class ncPlot2D():
     def __init__(self, nco):
         self.nco = nco
         nco.field.prepareForPlotting()
+
+        self.mult = 1.5
         
-        heightStretch = 6
-        widthStretch = 6.36
+        heightStretch = 6*self.mult
+        widthStretch = 6.36*self.mult
         self.fig, self.ax = plt.subplots(figsize=(widthStretch,heightStretch))
 
 
@@ -72,8 +74,10 @@ class ncPlot2D():
         
         # AXES UNITS AND LABELS
         xUnits, yUnits = self._getAxisUnits(dimx, dimy)
-        ax.set_ylabel(dimy.label + ' ' + yUnits,fontsize=14)
-        ax.set_xlabel(dimx.label + ' ' + xUnits,fontsize=14)
+        ax.set_ylabel(dimy.label + ' ' + yUnits,fontsize=18*self.mult)
+        ax.set_xlabel(dimx.label + ' ' + xUnits,fontsize=18*self.mult)
+        #ax.xaxis.get_major_ticks().label.set_fontsize(10*self.mult)
+        plt.tick_params(axis='both', which='major', labelsize=11*self.mult)
                
         # MODEL COLORBAR
         cPosBot = 0.12

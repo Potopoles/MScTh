@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-#SBATCH --job-name="copy"
+#SBATCH --job-name="copy01"
 #SBATCH --time=12:00:00
 #SBATCH --ntasks=1
 #SBATCH --account='pr04'
 #SBATCH --partition=xfer
-#SBATCH --output=sbatch.out
-#SBATCH --error=sbatch.err
+#SBATCH --output=bOut/copy01.out
+#SBATCH --error=bOut/copy01.err
 
 #module unload daint-gpu
 #module load daint-mc
@@ -31,7 +31,7 @@ do
 		:
 		#mode="_filtered"
 
-		modelString="initial_data/wl_${model}_km${mode}"
+		modelString="/project/pr04/heimc/initial_data/wl_${model}_km${mode}/4_lm_f"
 		if [ "$mode" = "_filtered" ]; then
 			modelSaveString="${model}f"
 		else
@@ -39,24 +39,26 @@ do
 		fi
 		echo $modelSaveString
 
-		cd /scratch/snx3000/heimc/01_rawData/
+		cd $SCRATCH/MScTh/01_rawData/
 		if [ ! -d "$modelSaveString" ]; then
 			mkdir "$modelSaveString"
 		fi
 
-		cd /project/pr04/heimc
-		$command ${modelString}/output/lm_f/mlev /scratch/snx3000/heimc/01_rawData/${modelSaveString}/
-		cd /scratch/snx3000/heimc/01_rawData/${modelSaveString}
-		mv mlev/"$constantParamString" mlev/constantParams.nc
-		mv mlev/* .
-		rm -r mlev
-
 		#cd /project/pr04/heimc
-		#$command ${modelString}/output/lm_f/zlev /scratch/snx3000/heimc/01_rawData/${modelSaveString}/
-		#cd /scratch/snx3000/heimc/01_rawData/${modelSaveString}
-		#mv zlev/"$constantParamString" zlev/constantParamsz.nc
-		#mv zlev/* .
-		#rm -r zlev
+		#$command ${modelString}/output/mlev \
+        #        $SCRATCH/MScTh/01_rawData/${modelSaveString}/
+		#cd $SCRATCH/MScTh/01_rawData/${modelSaveString}
+		#mv mlev/"$constantParamString" mlev/constantParams.nc
+		#mv mlev/* .
+		#rm -r mlev
+
+		cd /project/pr04/heimc
+		$command ${modelString}/output/zlev \
+                $SCRATCH/MScTh/01_rawData/${modelSaveString}/
+		cd $SCRATCH/MScTh/01_rawData/${modelSaveString}
+		mv zlev/"$constantParamString" zlev/constantParamsz.nc
+		mv zlev/* .
+		rm -r zlev
 
 	done # MODE LOOP
 done # MODEL LOOP

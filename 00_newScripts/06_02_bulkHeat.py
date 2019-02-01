@@ -13,7 +13,7 @@ from functions import saveObj
 ress = ['4.4', '2.2', '1.1']
 #ress = ['2.2', '1.1']
 #ress = ['4.4', '2.2']
-#ress = ['4.4']
+ress = ['4.4']
 #ress = ['2.2']
 #ress = ['1.1']
 modes = ['', 'f']
@@ -24,13 +24,13 @@ i_variables = 'QV' # 'QV' or 'T'
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
 
 #altInds = list(range(0,21))
-#altInds = list(range(0,26))
+altInds = list(range(0,26))
 #altInds = list(range(0,65))
 
 #altInds = list(range(20,65))
 #altInds = list(range(25,65))
 
-altInds = list(range(20,41))
+#altInds = list(range(20,41))
 
 dt0 = datetime(2006,7,11,0)
 #dt0 = datetime(2006,7,12,0)
