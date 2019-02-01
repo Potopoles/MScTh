@@ -5,6 +5,9 @@ os.chdir('00_newScripts/')
 
 from functions import loadObj 
 
+
+## VERY FAST! CAN BE DONE ALL TOGETHER WITHIN DEBUG 30 MIN WITH 12 CPUS
+
 ress = ['4.4', '2.2', '1.1']
 #ress = ['4.4', '2.2']
 #ress = ['2.2']
@@ -17,7 +20,7 @@ i_var_plot_mode = 2
 i_print_values = 0
 
 subdomain = 'Alpine_Region'
-#subdomain = 'Northern_Italy'
+subdomain = 'Northern_Italy'
 
 if subdomain == 'Alpine_Region':
     alts = 'alts_0_2500'
@@ -105,6 +108,7 @@ colrs = [(0,0,0), (0,0,1), (1,0,0)]
 labelsize = 16
 titlesize = 18
 ticklabelsize = 12
+legend_fontsize = 12
 
 import matplotlib
 if i_plot > 1:
@@ -177,9 +181,9 @@ for varI,var in enumerate(vars):
 for axI,mode in enumerate(modes):
     ax = axes[axI]
     if axI == 1:
-        ax.legend(lines, labels=ress)
+        ax.legend(lines, labels=ress, fontsize=legend_fontsize)
     elif axI == 0:
-        leg = ax.legend(varLegendLines, labels=varLabels)
+        leg = ax.legend(varLegendLines, labels=varLabels, fontsize=legend_fontsize)
         for i in range(0,len(vars)):
             leg.legendHandles[i].set_color('k')
             leg.legendHandles[i].set_linestyle(ltypes[i])

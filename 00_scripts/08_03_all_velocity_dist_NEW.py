@@ -107,10 +107,11 @@ for startHght in altInds:
 
             # CREATE HISTOGRAMS
             nPoint = np.histogram(vals, bins=bins)[0]
-            #nPoints.append(nPoint[0]) 
             nPoints[simLabel] = nPoint
             freq = nPoint/len(vals)
-            #freqs.append(freq)
+
+            freq[freq < 1E-8] = np.nan
+
             freqs[simLabel] = freq
             outRess.append(str(res))
             outModes.append(mode)
@@ -123,21 +124,25 @@ for startHght in altInds:
     xmax = 25
     ymin = 1E-8
     ymax = 1E0
-    labelsize = 12
-    titlesize = 14
+    labelsize = 14
+    titlesize = 16
+    tick_labelsize = 10
 
     for rI,res in enumerate(an.resolutions): 
         # SMOOTH
         ax = axes[0]
+        ax.tick_params(labelsize=tick_labelsize)
         line, = ax.semilogy(binsCentred, freqs[str(res)+'f'], color=colrs[rI]) 
         handles.append(line)
 
         # RAW
         ax = axes[1]
+        ax.tick_params(labelsize=tick_labelsize)
         ax.semilogy(binsCentred, freqs[str(res)+''], color=colrs[rI]) 
 
         # DELTA
         ax = axes[2]
+        ax.tick_params(labelsize=tick_labelsize)
         minSamples = 30
         nRaw = nPoints[str(res)+'']
         nSm = nPoints[str(res)+'f']

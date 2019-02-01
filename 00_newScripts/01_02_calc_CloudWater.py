@@ -11,7 +11,7 @@ os.chdir('00_newScripts/')
 ress = ['4.4', '2.2', '1.1']
 #ress = ['4.4']
 modes = ['', 'f']
-modes = ['']
+modes = ['f']
 i_subdomain = 0
 
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 

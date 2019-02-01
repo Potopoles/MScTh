@@ -1,4 +1,4 @@
-import os
+import os, sys
 import ncClasses.ncField as ncField
 from ncClasses.subdomains import setSSI
 import matplotlib.pyplot as plt
@@ -10,17 +10,19 @@ os.chdir('00_newScripts/')
 
 ress = ['4.4', '2.2', '1.1']
 #ress = ['2.2', '1.1']
-ress = ['2.2']
+ress = ['4.4']
 modes = ['', 'f']
 #modes = ['f']
 i_subdomain = 0
 
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
 
-#dt0 = datetime(2006,7,11,0)
+dt0 = datetime(2006,7,11,0)
+#dt0 = datetime(2006,7,13,12)
 #dt1 = datetime(2006,7,20,1)
-dt0 = datetime(2006,7,20,0)
+#dt0 = datetime(2006,7,20,0)
 dt1 = datetime(2006,7,20,1)
+#dt1 = datetime(2006,7,13,13)
 dts = np.arange(dt0,dt1,timedelta(hours=1))
 inpPath = '../01_rawData/topocut/'
 
@@ -33,9 +35,6 @@ except:
     njobs = 1
 
 
-## TODO
-#njobs = 12
-#print('njobs MANUALLY SET TO ' + str(njobs))
 
 
 
@@ -72,29 +71,29 @@ def calc_horflux(ncFileName):
                 QV_HADVncf.addVarToExistingNC(srcNCPath)
 
 
-            ################################## ATT
-            l_already_done = False
-            try:
-                field = ncField.ncField('ATT_HADV', srcNCPath, ssI)
-                l_already_done = True
-            except:
-                pass
+            ################################### ATT
+            #l_already_done = False
+            #try:
+            #    field = ncField.ncField('ATT_HADV', srcNCPath, ssI)
+            #    l_already_done = True
+            #except:
+            #    pass
 
-            if not l_already_done:
+            #if not l_already_done:
 
-                T_ADVncf = ncField.ncField('ATT_ADV', srcNCPath, ssI[res])
-                T_ADVncf.loadValues()
-                t_adv = T_ADVncf.vals
-                T_ZADVncf = ncField.ncField('ATT_ZADV', srcNCPath, ssI[res])
-                T_ZADVncf.loadValues()
-                t_zadv = T_ZADVncf.vals
+            #    T_ADVncf = ncField.ncField('ATT_ADV', srcNCPath, ssI[res])
+            #    T_ADVncf.loadValues()
+            #    t_adv = T_ADVncf.vals
+            #    T_ZADVncf = ncField.ncField('ATT_ZADV', srcNCPath, ssI[res])
+            #    T_ZADVncf.loadValues()
+            #    t_zadv = T_ZADVncf.vals
 
-                t_hadv = t_adv - t_zadv
+            #    t_hadv = t_adv - t_zadv
 
-                T_HADVncf = T_ADVncf.copy() 
-                T_HADVncf.fieldName = 'ATT_HADV'
-                T_HADVncf.vals = t_hadv
-                T_HADVncf.addVarToExistingNC(srcNCPath)
+            #    T_HADVncf = T_ADVncf.copy() 
+            #    T_HADVncf.fieldName = 'ATT_HADV'
+            #    T_HADVncf.vals = t_hadv
+            #    T_HADVncf.addVarToExistingNC(srcNCPath)
 
 
 if njobs > 1:
