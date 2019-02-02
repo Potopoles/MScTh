@@ -6,8 +6,8 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 1 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
+i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_plot = 3 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot > 1:
@@ -132,8 +132,8 @@ if nDPlot == 2 and someField.nNoneSingleton == 2:
     #labels = ['$q_{i}$', '$q_{c}$', 'Cond.']
     lines = [QI.collections[0], QC.collections[0]]
     labels = ['$q_{i}$', '$q_{c}$']
-    leg = ax1.legend(lines, labels, loc=2)
-    leg.legendHandles[2].set_linestyle('-')
+    leg = ax1.legend(lines, labels, loc=2, fontsize=14*ncs.MAG)
+    #leg.legendHandles[2].set_linestyle('-')
 
     MCB.set_label(r'Cloud Water $[g$ $kg^{-1}]$', fontsize=19*ncs.MAG)
 

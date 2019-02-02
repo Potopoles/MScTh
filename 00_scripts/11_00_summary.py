@@ -7,7 +7,7 @@ import os
 os.chdir('00_scripts/')
 
 i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 3 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 0 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -56,23 +56,9 @@ ssI['altitude'] = altInds
 #endTime = datetime(2006,7,20,23)
 #ssI['time'] = [startTime,endTime] # border values (one value if only one time step desired)
 
-diurnals = list(range(8,24))
-diurnals.extend(list(range(0,8)))
-#diurnals = [10]
-
-diurnals = [list(range(0,24))]
-# good ones
-diurnals = [[22,23,0,1,2,3,4,5,6,7,8]]
-diurnals = [[9,10,11,12,13]]
-diurnals = [[14,15]]
-diurnals = [[16,17,18]]
-
-diurnals = [[9,10,11,12,13],
-            [14,15],
-            [17,18],
-            [22,23,0,1,2,3,4,5,6,7,8]]
-diurnal_labels = ['a) 08:00-13:00','b) 13:00-15:00','c) 16:00-18:00','d) 21:00-08:00']
-
+diurnals = [[9,10,11],
+            [16,17,18]]
+diurnal_labels = ['0800-1100 UTC','1500-1800 UTC']
 
 plotOutDir = '../00_plots/12_summary'
 perc_topo = 0
@@ -80,14 +66,22 @@ perc_topo = 0
 plot_var = 'FQVy'
 #plot_var = 'QV'
 
+
+labelsize = 16
+titlesize = 20
+time_labelsize = 20
+tick_labelsize = 14
+
+
 def set_ax_props(ax, dimy, dimz):
     ax.set_ylim(np.min(dimz),np.max(dimz))
     ax.set_xlim(np.min(dimy),np.max(dimy))
 
 
-fig,axes_all = plt.subplots(4,3, figsize=(13,16))
-fig.subplots_adjust(wspace=0.2, hspace=0.5,
-        left=0.05, right=0.95, bottom=0.25, top=0.90)
+#fig,axes_all = plt.subplots(4,3, figsize=(13,16))
+fig,axes_all = plt.subplots(2,3, figsize=(13,9.2))
+fig.subplots_adjust(wspace=0.15, hspace=0.45,
+        left=0.05, right=0.95, bottom=0.25, top=0.85)
 
 #plt.suptitle(diurnal_labels[dI])
 
@@ -128,8 +122,8 @@ for dI in range(0,len(diurnals)):
     SM = {}
     DIFF = {}
     lims = {}
-    RAW['HSURF'] = an.vars['cHSURF'].ncos[res].field.vals
-    SM['HSURF'] = an.vars['cHSURF'].ncos[res+'f'].field.vals
+    RAW['HSURF'] = an.vars['cHSURF'].ncos[res].field.vals/1000
+    SM['HSURF'] = an.vars['cHSURF'].ncos[res+'f'].field.vals/1000
     RAW['FQVy'] = an.vars['zFQVy'].ncos[res].field.vals*3600
     SM['FQVy'] = an.vars['zFQVy'].ncos[res+'f'].field.vals*3600
     RAW['QC'] = an.vars['zQC'].ncos[res].field.vals*3600
@@ -188,29 +182,34 @@ for dI in range(0,len(diurnals)):
                                 np.max(np.abs(lims[plot_var])), 20)
         levels_diff = np.linspace(-np.max(np.abs(DIFF[plot_var])),
                                 np.max(np.abs(DIFF[plot_var])), 20)
-        levels_mod = np.arange(-0.20,0.21,0.01)
-        levels_diff = np.arange(-0.1,0.105,0.005)
+        levels_mod = np.arange(-0.13,0.14,0.005)
+        levels_diff = np.arange(-0.05,0.055,0.005)
         unit = unit_FQVy; name = name_FQVy
         levels_QC = [np.percentile(RAW['QC'], q=98)]
         levels_QC = [0.07]
         #levels_CONV = [2E-6]
         #quit()
-    elif plot_var == 'QV':
-        cmap_mod = 'jet'
-        lims[plot_var] = (min(np.min(RAW[plot_var]), np.min(SM[plot_var])), 
-                         max(np.max(RAW[plot_var]), np.max(SM[plot_var])))
-        levels_mod = np.linspace(-np.max(np.abs(lims[plot_var])),
-                                np.max(np.abs(lims[plot_var])), 20)
-        levels_diff = np.linspace(-np.max(np.abs(DIFF[plot_var])),
-                                np.max(np.abs(DIFF[plot_var])), 20)
-        levels_mod = np.arange(0,0.015,0.00025)
-        levels_diff = np.arange(-0.005,0.005,0.0005)
-        unit = unit_QV; name = name_QV
+    #elif plot_var == 'QV':
+    #    cmap_mod = 'jet'
+    #    lims[plot_var] = (min(np.min(RAW[plot_var]), np.min(SM[plot_var])), 
+    #                     max(np.max(RAW[plot_var]), np.max(SM[plot_var])))
+    #    levels_mod = np.linspace(-np.max(np.abs(lims[plot_var])),
+    #                            np.max(np.abs(lims[plot_var])), 20)
+    #    levels_diff = np.linspace(-np.max(np.abs(DIFF[plot_var])),
+    #                            np.max(np.abs(DIFF[plot_var])), 20)
+    #    levels_mod = np.arange(0,0.015,0.00025)
+    #    levels_diff = np.arange(-0.005,0.005,0.0005)
+    #    unit = unit_QV; name = name_QV
 
 
     # SMOOTH
     ax = axes[0]
-    ax.text(-0.1,1.1,diurnal_labels[dI], transform=ax.transAxes, size=15)
+    if dI == 0:
+        ax.text(-0.15,1.25,diurnal_labels[dI], transform=ax.transAxes, size=time_labelsize)
+    else:
+        ax.text(-0.15,1.15,diurnal_labels[dI], transform=ax.transAxes, size=time_labelsize)
+    if dI == 0:
+        ax.set_title('SM1.1', fontsize=titlesize)
     CF = ax.contourf(dimy, dimz, SM[plot_var], cmap=cmap_mod, levels=levels_mod)
     #ax.contour(dimy, dimz, SM['CONV'], levels=levels_CONV, colors='green', linewidths=1)
     ax.plot(dimy, SM['HSURF'].mean(axis=1), '-k')
@@ -220,8 +219,16 @@ for dI in range(0,len(diurnals)):
     if np.nanmax(SM['QC']) >= np.min(levels_QC):
         ax.contour(dimy, dimz, SM['QC'], levels=levels_QC, colors='orange', linewidths=1)
     set_ax_props(ax, dimy, dimz)
+    ax.tick_params(labelsize=tick_labelsize)
+    ax.set_ylabel('Altitude [km]', fontsize=labelsize)
+    if dI == len(diurnals)-1:
+        ax.set_xlabel('Latitude [km]', fontsize=labelsize)
+
+
     # RAW
     ax = axes[1]
+    if dI == 0:
+        ax.set_title('RAW1.1', fontsize=titlesize)
     ax.plot(dimy, RAW['HSURF'].mean(axis=1), '-k')
     CF = ax.contourf(dimy, dimz, RAW[plot_var], cmap=cmap_mod, levels=levels_mod)
     #ax.contour(dimy, dimz, RAW['CONV'], levels=levels_CONV, colors='green', linewidths=1)
@@ -231,9 +238,15 @@ for dI in range(0,len(diurnals)):
     if np.nanmax(RAW['QC']) >= np.min(levels_QC):
         ax.contour(dimy, dimz, RAW['QC'], levels=levels_QC, colors='orange', linewidths=1)
     set_ax_props(ax, dimy, dimz)
+    ax.tick_params(labelsize=tick_labelsize)
+    if dI == len(diurnals)-1:
+        ax.set_xlabel('Latitude [km]', fontsize=labelsize)
+
     # DIFF
     ax = axes[2]
-    DCF = ax.contourf(dimy, dimz, DIFF[plot_var], cmap='seismic', levels=levels_diff)
+    if dI == 0:
+        ax.set_title('RAW1.1 - SM1.1', fontsize=titlesize)
+    DCF = ax.contourf(dimy, dimz, DIFF[plot_var], cmap='PuOr_r', levels=levels_diff)
     ax.plot(dimy, SM['HSURF'].mean(axis=1), '-k')
     ax.plot(dimy, np.percentile(SM['HSURF'], axis=1, q=perc_topo), '-k',
             linewidth=0.8)
@@ -241,27 +254,31 @@ for dI in range(0,len(diurnals)):
     #        linewidth=0.8)
     ax.fill_between(dimy, 0, np.percentile(RAW['HSURF'], axis=1, q=perc_topo), color='k')
     set_ax_props(ax, dimy, dimz)
+    ax.tick_params(labelsize=tick_labelsize)
+    if dI == len(diurnals)-1:
+        ax.set_xlabel('Latitude [km]', fontsize=labelsize)
 
 
 
 ####COLORBARS
 cPosBot = 0.12
-xPosLeft = 0.1
+xPosLeft = 0.07
 width = 0.55
 cHeight = 0.05
 
 cax = fig.add_axes([xPosLeft, cPosBot, width, cHeight])
+cax.tick_params(labelsize=tick_labelsize)
 CB = plt.colorbar(mappable=CF, cax=cax,
             orientation='horizontal')
-#cax.tick_params(labelsize=9)
-CB.set_label(name + ' ['+unit+']')
+CB.set_label(name + ' ['+unit+']',fontsize=labelsize)
 
 
-cax = fig.add_axes([0.7, cPosBot, 0.25, cHeight])
+cax = fig.add_axes([0.69, cPosBot, 0.25, cHeight])
+cax.tick_params(labelsize=tick_labelsize)
 DCB = plt.colorbar(mappable=DCF, cax=cax,
             orientation='horizontal')
-#fldUnits = self._getUnits(fld)
-DCB.set_label(name + ' ['+unit+']')
+DCB.set_ticks(np.arange(-0.05,0.055,0.025))
+DCB.set_label(name + ' ['+unit+']',fontsize=labelsize)
 
 
 

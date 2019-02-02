@@ -20,8 +20,8 @@ from ncClasses.subdomains import setSSI
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
 
 colrs = [(0,0,0), (0,0,1), (1,0,0)]
-labelsize = 12
-titlesize = 14
+labelsize = 13
+titlesize = 16
 
 import matplotlib
 if i_plot > 1:
@@ -117,6 +117,10 @@ for res in ress:
     for mode in modes:
         hist = np.histogram(allSizes[str(res)+mode], bins=bins_res[str(res)])
         ncloud = hist[0]
+
+        ncloud = ncloud.astype(np.float)
+        ncloud[ncloud < 0.9] = np.nan
+
         nclouds[str(res)+mode] = ncloud
 
 ########################################################################

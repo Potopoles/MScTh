@@ -2,19 +2,21 @@
 
 module load NCO
 
-source=../../01_rawData/topocut
+#source=../../01_rawData/topocut
+source=../../01_rawData/lwp
 dest=../topocut
 
 ress=(4.4 2.2 1.1)
 modes=("" f)
 
-#ress=(4.4)
+ress=(1.1)
 #modes=("" f)
 
 vars=("AQVT_TOT" "AQVT_ADV" "AQVT_ZADV" "AQVT_TURB" "AQVT_MIC")
 vars=("CW" "QI" "QC")
 
 vars=("FQVy")
+vars=("WVP")
 
 for var in "${vars[@]}"; do
     #var=AQVT_TOT

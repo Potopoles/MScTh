@@ -85,7 +85,7 @@ class dimension:
             dt0 = datetime.strptime('2006-07-11 00:00:00', '%Y-%m-%d %H:%M:%S')
             dtime = dt0 + timeSec*timedelta(seconds=1)
             self.vals = dtime
-            self.label = 'date'
+            self.label = 'Date'
             self.units = ''
             self.valType = 'DATE'
             self.agg_mode = None
@@ -93,7 +93,7 @@ class dimension:
             
         elif self.key == 'diurnal':
             self.vals = self.ncFile[self.key][:]
-            self.label = 'hour'
+            self.label = 'Hour'
             self.units = ''
             self.valType = 'DIURNAL'                
             self.agg_mode = 'DIURNAL'
@@ -124,9 +124,11 @@ class dimension:
             #self.function = 'hor'
             
         elif self.key == 'altitude':
-            self.vals = np.append(np.arange(0,6000,100), np.arange(6000,10001,1000))
-            self.label = 'altitude'
-            self.units = 'm'
+            #self.vals = np.append(np.arange(0,6000,100), np.arange(6000,10001,1000))
+            self.vals = np.append(np.arange(0,6,0.1), np.arange(6,10.1,1))
+            self.label = 'Altitude'
+            #self.units = 'm'
+            self.units = 'km'
             self.valType = 'NUM'
             #self.function = 'vert'
         else:

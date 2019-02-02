@@ -451,16 +451,16 @@ class ncSubplots():
                 if np.nanmax(fld.vals) >= np.min(self.Mticks):
                     # CONTOUR
                     C = ax.contour(dimx.vals, dimy.vals, fld.vals.squeeze(),
-                                levels=self.Mticks,
+                                levels=self.Mticks, 
                                 linewidths=lineWidth, colors=col, alpha=alpha)
 
                     # CONTOUR LABELS
-                    ax.clabel(C, inline=1, fontsize=10)                
+                    ax.clabel(C, inline=1, fontsize=12*self.MAG)
 
                     if colInd == 0 and rowInd == 0:
                         Cout = C
                     
-        #return(Cout)
+        return(Cout)
             
 
     def _getUnits(self, fld):

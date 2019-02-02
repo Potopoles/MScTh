@@ -9,9 +9,10 @@ i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
 i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 
-labelsize = 17
+labelsize = 28
 timelabelsize = 35
-titlesize = 23
+titlesize = 28
+tick_labelsize = 18
 
 import matplotlib
 if i_plot == 2:
@@ -129,7 +130,7 @@ for tI in range(0,4):
     CF = ax.contourf(dimx.vals, dimy.vals, wvp.squeeze(), Mticks,
         cmap='jet', alpha=0.7)
 
-    ax.text(666,246,str(dts[tI])+':00',size=timelabelsize,color='black',
+    ax.text(666,246,str(dts[tI])+'00',size=timelabelsize,color='black',
                     bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
 
     if tI == 0:
@@ -140,6 +141,8 @@ for tI in range(0,4):
         ax.set_xlabel('x $[km]$',fontsize=labelsize)
     if cI == 0:
         ax.set_ylabel('y $[km]$',fontsize=labelsize)
+
+    ax.tick_params(labelsize=tick_labelsize)
 
 
     ########SMOOOTHED
@@ -159,7 +162,7 @@ for tI in range(0,4):
     CF = ax.contourf(dimx.vals, dimy.vals, wvp.squeeze(), Mticks,
         cmap='jet', alpha=0.7)
 
-    ax.text(666,246,str(dts[tI])+':00',size=timelabelsize,color='black',
+    ax.text(666,246,str(dts[tI])+'00',size=timelabelsize,color='black',
                     bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
 
     if tI == 0:
@@ -171,6 +174,7 @@ for tI in range(0,4):
     if cI == 0:
         ax.set_ylabel('y $[km]$',fontsize=labelsize)
 
+    ax.tick_params(labelsize=tick_labelsize)
 
 
 
@@ -190,7 +194,7 @@ for tI in range(0,4):
     cHeight = 0.02
     cax = fig.add_axes([xPosLeft, cPosBot, width, cHeight])
     MCB = plt.colorbar(mappable=CF, cax=cax, orientation='horizontal')
-    cax.tick_params(labelsize=labelsize)
+    cax.tick_params(labelsize=tick_labelsize)
     MCB.set_label('Water Vapor Path $[kg$ $m^{-2}]$',fontsize=labelsize)
 
 
