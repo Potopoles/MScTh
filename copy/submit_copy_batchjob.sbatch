@@ -13,8 +13,8 @@ module unload xalt
 
 echo -e "$SLURM_JOB_NAME started on $(date):\n $command $1 $2\n"
 
-#srun -n $SLURM_NTASKS copy_scratch_project.sh
-srun -n $SLURM_NTASKS copy_fields.sh
+srun -n $SLURM_NTASKS copy_scratch_project.sh
+#srun -n $SLURM_NTASKS copy_fields.sh
 
 echo -e "$SLURM_JOB_NAME finished on $(date)\n"
 

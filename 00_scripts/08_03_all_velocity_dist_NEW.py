@@ -164,6 +164,9 @@ for startHght in altInds:
         if mI == 0:
             ax.set_ylabel('Frequency',fontsize=labelsize)
             ax.legend(handles,an.resolutions)
+        elif mI == 2:
+            ax.set_ylabel('Relative Difference',fontsize=labelsize)
+
         ax.set_xlim((xmin,xmax))
         if mI < 2:
             ax.set_ylim((ymin,ymax))
@@ -175,7 +178,8 @@ for startHght in altInds:
         ax.grid()
 
 
-    fig.subplots_adjust(wspace=0.23,left=0.07, right=0.95, bottom=0.15, top=0.85)
+    #fig.subplots_adjust(wspace=0.23,left=0.07, right=0.95, bottom=0.15, top=0.85)
+    fig.subplots_adjust(wspace=0.30,left=0.07, right=0.95, bottom=0.15, top=0.85)
 
 
     if i_plot == 2:
