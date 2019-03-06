@@ -13,8 +13,8 @@ class variable:
     modeNames = ['SM', 'RAW']
 
     # TODO TMP
-    #modes = ['f', '', 'r'] # '' = raw, 'f' = filtered
-    #modeNames = ['SM', 'RAW', 'OBS']
+    modes = ['f', '', 'r'] # '' = raw, 'f' = filtered
+    modeNames = ['SM', 'RAW', 'OBS']
 
     def __init__(self, varName):
         self.varName = varName

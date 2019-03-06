@@ -53,7 +53,8 @@ plotName = 'domain_AR_and_NI.png'
 ##### 2D Contour ######
 contourTranspose = 0 # Reverse contour dimensions?
 plotContour = 0 # Besides the filled contour, also plot the contour?
-cmapM = 'terrain' # colormap for Model output (jet, terrain, inferno, YlOrRd)
+#cmapM = 'terrain' # colormap for Model output (jet, terrain, inferno, YlOrRd)
+cmapM = 'Greys_r' # colormap for Model output (jet, terrain, inferno, YlOrRd)
 axis = 'equal' # set 'equal' if keep aspect ratio, else 'auto'
 # COLORBAR Models
 autoTicks = 1 # 1 if colorbar should be set automatically
@@ -86,9 +87,8 @@ rad_1_1[ssI_AR['1.1']['rlat'][-1]:,:] = np.nan
 rad_1_1[490:510,650:670] = 1
 
 
-width = 1
+width = 2
 max_sum = (width*2+1)**2
-print(max_sum)
 mask = rad_1_1.copy()
 for j in range(0,rad_1_1.shape[0]):
     for i in range(0,rad_1_1.shape[1]):
@@ -106,6 +106,7 @@ rad_1_1_line = rad_1_1.copy()
 rad_1_1_line[np.isnan(mask)] = np.nan
 rad_1_1_line[~np.isnan(rad_1_1_line)] = 1
 rad_1_1_line[10,10] = 0
+
 
 
 import matplotlib
@@ -142,6 +143,9 @@ if i_plot > 0:
         df = 50
         col2 = 'red'
         col3 = 'red'
+
+        col_D = 'white'
+        col_D = 'orange'
         
         # ALPINE REGION
         x0 = 50; x1 = 237
@@ -150,12 +154,19 @@ if i_plot > 0:
         #ax.plot([220, 1042.8], [682, 682], '-k')
         #ax.plot([220, 220], [180.4, 682], '-k')
         #ax.plot([1042.8, 1042.8], [180.4, 682], '-k')
-        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], '-k', linewidth=2)
-        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], '-k', linewidth=2)
-        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], '-k', linewidth=2)
-        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], '-k', linewidth=2)
-        ax.text(x1*4.4-df, y0*4.4+df/3, 'A', fontsize=text_size)
-        ax.text(665, y1*4.4-df, 'D', fontsize=text_size)
+        ax.plot([x0*4.4, x1*4.4], [y0*4.4, y0*4.4], '-w', linewidth=2)
+        ax.plot([x0*4.4, x1*4.4], [y1*4.4, y1*4.4], '-w', linewidth=2)
+        ax.plot([x0*4.4, x0*4.4], [y0*4.4, y1*4.4], '-w', linewidth=2)
+        ax.plot([x1*4.4, x1*4.4], [y0*4.4, y1*4.4], '-w', linewidth=2)
+        ax.text(x1*4.4-df, y0*4.4+df/3, 'A', fontsize=text_size, color='w')
+
+        # First part: DOMAIN D
+        x0 = 50; x1 = 164
+        y0 = 71; y1 = 155
+        ax.text(665, y1*4.4-df, 'D', fontsize=text_size, color=col_D)
+        shift = 3
+        ax.plot([x0*4.4+shift, x0*4.4+shift], [y0*4.4, (y1-1)*4.4], '-', linewidth=1.5, color=col_D)
+        ax.plot([(x0+1)*4.4, x1*4.4], [y1*4.4-shift, y1*4.4-shift], '-', linewidth=1.5, color=col_D)
 
         # NORTHERN ITALY
         x0 = 95; x1 = 160
@@ -193,8 +204,13 @@ if i_plot > 0:
 
         #print(np.nanmean(rad_1_1_line))
         #quit()
-        #CF = ax.pcolormesh(gridx, gridy, rad_1_1_line, cmap='Greys_r')
-        CF = ax.pcolormesh(gridx, gridy, rad_1_1_line, cmap='Greys')
+        if col_D == 'orange':
+            CF = ax.pcolormesh(gridx, gridy, rad_1_1_line, cmap='Wistia')
+        elif col_D == 'white':
+            CF = ax.pcolormesh(gridx, gridy, rad_1_1_line, cmap='Greys_r')
+        else:
+            raise ValueError()
+        #CF = ax.pcolormesh(gridx, gridy, rad_1_1_line, cmap='Greys')
         res = 1.1
         nth_ind = 10
         x0_inds = np.arange(0,900,nth_ind)
@@ -205,7 +221,7 @@ if i_plot > 0:
                 y0_km = non_nan_yinds[0]*res
                 y1_km = non_nan_yinds[-1]*res
                 ax.plot([x0_km,x0_km], [y0_km, y1_km],
-                        '-k', linewidth=0.3)
+                        '-w', color=col_D, linewidth=0.3)
         y0_inds = np.arange(0,900,nth_ind)
         for j in range(0,len(y0_inds)):
             y0_km = y0_inds[j]*res
@@ -214,7 +230,7 @@ if i_plot > 0:
                 x0_km = non_nan_xinds[0]*res
                 x1_km = non_nan_xinds[-1]*res
                 ax.plot([x0_km,x1_km], [y0_km, y0_km],
-                        '-k', linewidth=0.3)
+                        '-', color=col_D, linewidth=0.3)
 
 
     else:
