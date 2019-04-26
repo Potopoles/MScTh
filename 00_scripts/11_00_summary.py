@@ -6,8 +6,8 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 3 # 0 = no plot, 1 = show plot, 2 = save plot
+i_resolutions = 1 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 0 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:

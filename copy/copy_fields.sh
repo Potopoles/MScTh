@@ -2,16 +2,27 @@
 
 
 src_path=/project/pr04/heimc/data/cosmo_out/MScTh
+mkdir -p $SCRATCH/MScTh/01_rawData/4.4
 cp $src_path/RAW4/4_lm_f/output/zlev/lff*z.nc \
     $SCRATCH/MScTh/01_rawData/4.4
+
+mkdir -p $SCRATCH/MScTh/01_rawData/4.4f
 cp $src_path/SM4/4_lm_f/output/zlev/lff*z.nc \
     $SCRATCH/MScTh/01_rawData/4.4f
+
+mkdir -p $SCRATCH/MScTh/01_rawData/2.2
 cp $src_path/RAW2/4_lm_f/output/zlev/lff*z.nc \
     $SCRATCH/MScTh/01_rawData/2.2
+
+mkdir -p $SCRATCH/MScTh/01_rawData/2.2f
 cp $src_path/SM2/4_lm_f/output/zlev/lff*z.nc \
     $SCRATCH/MScTh/01_rawData/2.2f
+
+mkdir -p $SCRATCH/MScTh/01_rawData/1.1
 cp $src_path/RAW1/4_lm_f/output/zlev/lff*z.nc \
     $SCRATCH/MScTh/01_rawData/1.1
+
+mkdir -p $SCRATCH/MScTh/01_rawData/1.1f
 cp $src_path/SM1/4_lm_f/output/zlev/lff*z.nc \
     $SCRATCH/MScTh/01_rawData/1.1f
 

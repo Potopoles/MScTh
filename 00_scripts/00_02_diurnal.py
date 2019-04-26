@@ -1,8 +1,3 @@
-#################################
-# Calculate domain Average Precipitation
-# author: Christoph Heim
-# date: 21 10 2017
-#################################
 import os
 os.chdir('00_scripts/')
 
@@ -18,24 +13,7 @@ import os, sys
 inpPath = '../02_fields/topocut'
 outPath = '../02_fields/diurnal'
 
-others = ['nTOT_PREC', 'nHPBL']
-hydrometeors = ['zQC', 'zQI', 'zQV', 'zQR', 'zQS', 'zQG']
-TTendencies = ['zATT_MIC', 'zATT_RAD', 'zATT_ADV', 'zATT_ZADV', 'zATT_TURB', 'zATT_TOT', 'zATT_HADV']
-QVTendencies = ['zAQVT_MIC', 'zAQVT_ADV', 'zAQVT_ZADV', 'zAQVT_TURB', 'zAQVT_TOT','zAQVT_HADV']
-LWP = ['zALL', 'zHYD', 'zIWP', 'zLWP', 'zWVP']
-clouds = ['zCB', 'zCT', 'zMF', 'zWM']
-dynamics = ['zW', 'zU', 'zV', 'zT', 'zP']
-
-#fieldNames = ['nALHFL_S', 'nASHFL_S']
-#fieldNames = ['nALHFL_S']
-#fieldNames = ['zAQVT_TURB']
-#fieldNames = TTendencies
-#fieldNames = QVTendencies
-#fieldNames = ['zCW', 'zPW']
-#fieldNames = ['zWV_mass']
-#fieldNames = ['nCAPE_ML', 'nCIN_ML']
-#fieldNames = ['nTOT_PREC']
-#fieldNames = ['zQC']
+i_resolution = 1
 
 if len(sys.argv) > 1:
     fieldNames = [sys.argv[1]]
@@ -46,7 +24,6 @@ else:
     quit()
 
 
-i_resolution = 3
 #####################################################################		
 if i_resolution == 1:
     ress = ['4.4']
@@ -74,6 +51,7 @@ for fieldName in fieldNames:
             outFilePath = outPath + '/' + res+mode + '/' + fieldName + '.nc'
 
             nco = ncObject.ncObject(inpFilePath, res, fieldName[1:])        
+            print('Object generated')
             #quit()
             #nco.selField(varName)
             if fieldName in 'nTOT_PREC':

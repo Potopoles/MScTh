@@ -1,14 +1,13 @@
 #!/bin/bash -l
 #
 #SBATCH --job-name="topoCut"
-#SBATCH --time=0:30:00
+#SBATCH --time=12:00:00
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=12
 #SBATCH --account='pr04'
 #SBATCH --constraint=gpu
-#SBATCH --partition=debug
-#SBATCH --output=bOut/topocut.out
-#SBATCH --error=bOut/topocut.err
+#SBATCH --partition=normal
+#SBATCH --output=bOut/sbatch.out
+#SBATCH --error=bOut/sbatch.err
 
 #fileName = "$SLURM_JOB_NAME*"
 
@@ -16,8 +15,7 @@
 
 echo -e "$SLURM_JOB_NAME started on $(date):\n $command $1 $2\n"
 
-srun -c $SLURM_CPUS_PER_TASK -n $SLURM_NTASKS python -u topocut.py $SLURM_CPUS_PER_TASK
-
+srun -n $SLURM_NTASKS python -u topoCut.py
 
 echo -e "$SLURM_JOB_NAME finished on $(date)\n"
 

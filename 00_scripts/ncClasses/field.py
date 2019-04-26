@@ -311,15 +311,21 @@ class field:
         insertInds = copy.deepcopy(extractInds)
         # LOOP THROUGH HOURS
         for hr in range(0,24):
+            print(hr)
             insertInds[timeDimInd] = [hr]
             hrInds = []
             for ind,dt in enumerate(self.dims['time'].vals):
-                if dt.hour == hr and dt.day not in [10,20]: # ATTENTION LIKE THIS ONLY VALID FOR MASTERTHESIS CASE (TODO)
+                # ATTENTION LIKE THIS ONLY VALID FOR MASTERTHESIS CASE (TODO)
+                if dt.hour == hr and dt.day not in [10,20]: 
                     hrInds.append(ind) 
 
             # DALY AVERAGE (AVERAGE OVER ALL DAYS FOR CURRENT HOUR)
             extractInds[timeDimInd] = hrInds
+            #extractInds[1] = extractInds[1][0:1]
+            #print(extractInds)
+            #quit()
             vals = self.ncFile[self.name][extractInds]
+            #print('loaded')
             vals[vals == self.missing_value] = np.nan # replace missing values
             vals[vals.mask] = np.nan # replace masked values with missing values
             if agg_operation == 'MEAN':
