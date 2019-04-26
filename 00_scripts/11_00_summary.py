@@ -49,6 +49,7 @@ ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}})
 
 startHght = 0
 endHght = 40
+endHght = 10
 altInds = list(range(startHght,endHght+1))
 ssI['altitude'] = altInds 
 
@@ -56,9 +57,17 @@ ssI['altitude'] = altInds
 #endTime = datetime(2006,7,20,23)
 #ssI['time'] = [startTime,endTime] # border values (one value if only one time step desired)
 
+#diurnals = [[9,10,11],
+#            [16,17,18]]
+#diurnal_labels = ['0800-1100 UTC','1500-1800 UTC']
+#plotName = 'summary'
+
+
 diurnals = [[9,10,11],
             [16,17,18]]
 diurnal_labels = ['0800-1100 UTC','1500-1800 UTC']
+plotName = 'summary'
+
 
 plotOutDir = '../00_plots/12_summary'
 perc_topo = 0
@@ -94,8 +103,6 @@ for dI in range(0,len(diurnals)):
         ssI['diurnal'] = diurnals[dI]
     else:
         ssI['diurnal'] = [diurnals[dI]]
-    #plotName = plot_var+'_'+str(dI)+'_'+str(ssI['diurnal'][0])+'.png'
-    plotName = 'summary'
 
     an = analysis.analysis(inpPath, fieldNames)
 
@@ -108,15 +115,16 @@ for dI in range(0,len(diurnals)):
     # RUN ANALYSIS
     an.run()
 
-    res = '1.1'
-    #res = '4.4'
+    #res = '1.1'
+    res = '4.4'
     dx = float(res)*1000
     dz = 100
 
     dimx = an.vars['cHSURF'].ncos[res].field.dims['rlon'].vals
     dimy = an.vars['cHSURF'].ncos[res].field.dims['rlat'].vals
     dimz = an.vars['zFQVy'].ncos[res].field.dims['altitude'].vals
-    dimd = an.vars['zFQVy'].ncos[res].field.dims['diurnal'].vals
+    #dimd = an.vars['zFQVy'].ncos[res].field.dims['diurnal']
+    dimd = [val.hour for val in an.vars['zFQVy'].ncos[res].field.dims['time'].vals]
 
     RAW = {}
     SM = {}

@@ -1,15 +1,13 @@
 #!/bin/bash
 
-module load NCO
-
-#source=../../01_rawData/topocut
-source=../../01_rawData/lwp
+source=../../01_rawData/topocut
+#source=../../01_rawData/lwp
 dest=../topocut
 
 ress=(4.4 2.2 1.1)
 modes=("" f)
 
-ress=(1.1)
+#ress=(4.4)
 #modes=("" f)
 
 vars=("AQVT_TOT" "AQVT_ADV" "AQVT_ZADV" "AQVT_TURB" "AQVT_MIC")
@@ -17,6 +15,7 @@ vars=("CW" "QI" "QC")
 
 vars=("FQVy")
 vars=("WVP")
+vars=(U V)
 
 for var in "${vars[@]}"; do
     #var=AQVT_TOT
