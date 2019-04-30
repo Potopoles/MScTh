@@ -1,6 +1,7 @@
 *.pyc
 *.swp
 *.nc
+*.nc.old
 *.pkl
 00_plots
 Session.vim

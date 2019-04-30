@@ -16,6 +16,7 @@ vars=("CW" "QI" "QC")
 vars=("FQVy")
 vars=("WVP")
 vars=(U V)
+vars=(RHO)
 
 for var in "${vars[@]}"; do
     #var=AQVT_TOT

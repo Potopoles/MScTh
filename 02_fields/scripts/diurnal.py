@@ -78,6 +78,7 @@ if __name__ == '__main__':
 
     members = ['4.4', '4.4f']
     members = ['4.4', '4.4f', '2.2', '2.2f', '1.1', '1.1f']
+    members = ['1.1', '1.1f']
     run_async = False
 
     temp_path = '/scratch/snx3000/heimc/.tmp/'

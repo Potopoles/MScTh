@@ -51,8 +51,7 @@ for fieldName in fieldNames:
             outFilePath = outPath + '/' + res+mode + '/' + fieldName + '.nc'
 
             nco = ncObject.ncObject(inpFilePath, res, fieldName[1:])        
-            print('Object generated')
-            #quit()
+
             #nco.selField(varName)
             if fieldName in 'nTOT_PREC':
                 nco.loadAsDiurnal('SUM')
