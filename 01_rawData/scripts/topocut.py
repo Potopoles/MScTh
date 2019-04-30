@@ -1,25 +1,15 @@
-import os, sys
+import os, sys, time
 import numpy as np
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 import multiprocessing as mp
 
-ress = ['4.4', '2.2', '1.1']
-ress = ['2.2']
-ress = ['1.1']
-
-modes = ['', 'f']
-modes = ['']
-modes = ['f']
-
-path = '../topocut'
 
 
-def set_topography_to_nan(file, res, mode, path, mask):
+
+def set_topography_to_nan(file, model, path, mask):
     print(file)
-    filePath = str(path+'/'+res+mode+'/'+file)
-    #print(filePath)
-
+    filePath = str(path+'/'+model+'/'+file)
     ncFile = Dataset(filePath, 'a')
     varKeys = list(ncFile.variables.keys())
 
@@ -30,18 +20,15 @@ def set_topography_to_nan(file, res, mode, path, mask):
             varNames.append(key)
 
     # LOOP THROUGH ALL VARIABLES
-    #varNames = ['AQVT_ADV']
     for varName in varNames:
-        #print(varName)
-        vals = ncFile[varName][:,0:45,:,:]
-        vals = np.ma.masked_where(mask == 0,vals)
-        #vals = np.ma.set_fill_value(vals,-999)
+        var = ncFile[varName]
+        var.setncattr('missing_value',fill_value)
 
-        #aI = 5
-        #plt.contourf(vals[0,aI,:,:].squeeze())
-        #plt.colorbar()
-        #plt.show()
-        #print(vals[0,aI,100:110,100:110])
+        # only look at values below 4.5 km because topo is not higher
+        # than that.
+        vals = var[:,0:45,:,:]
+        vals = np.ma.masked_where(mask == 0,vals)
+        np.ma.set_fill_value(vals,fill_value)
 
         ncFile[varName][:,0:45,:,:] = vals
 
@@ -51,29 +38,40 @@ def set_topography_to_nan(file, res, mode, path, mask):
 
 
 
+if __name__ == '__main__':
 
-if len(sys.argv) > 1:
-    njobs = int(sys.argv[1])
-    print('number of jobs is ' + str(njobs))
-else:
-    print('Number of Jobs not given. Assume 1')
-    njobs = 1
+    t00 = time.time()
+
+    if len(sys.argv) > 1:
+        njobs = int(sys.argv[1])
+        print('number of jobs is ' + str(njobs))
+    else:
+        print('Number of Jobs not given. Assume 1')
+        njobs = 1
+
+    path = '../topocut'
+    fill_value = -999999.0
+
+    models = ['RAW4']
+    models = ['SM4']
+
+    file_subsel_inds = None
+    #file_subsel_inds = slice(0,1)
 
 
-for res in ress:
-    #res = '4.4'
-    #print(res)
-    for mode in modes:
-        #mode = ''
-        print('########### '+res+mode+' ###########')
+    for model in models:
+        print('########### '+model+' ###########')
+        t0 = time.time()
 
         # LOAD TOPO DATASET
-        topoPath = str('../HSURF/'+res+mode+'.nc')
+        topoPath = str('../HSURF/'+model+'.nc')
         ncFile = Dataset(topoPath, 'r')
         topo = ncFile['HSURF'][:].squeeze()
         ncFile.close()
-        altitudes = np.append(np.arange(0,6000,100), np.arange(6000,10001,1000))
-        # CREATE MASK FOR CURRENT TOPO DATASET (time,altitude,rlat/srlat,rlon/srlon)
+        altitudes = np.append(np.arange(0,6000,100),
+                            np.arange(6000,10001,1000))
+        # CREATE MASK FOR CURRENT TOPO DATASET \
+        #   (time,altitude,rlat/srlat,rlon/srlon)
         shapeMask = (1,45,)+topo.shape
         mask = np.zeros(shapeMask)
 
@@ -84,21 +82,23 @@ for res in ress:
             mask[0,aI,:,:] = topo < alt # 1 where values should NOT be masked
 
 
-        files = os.listdir(path+'/'+res+mode)
-
-        #files = files[:120]
-        files = files[-120:]
+        files = os.listdir(path+'/'+model)
+        if file_subsel_inds is not None:
+            files = files[file_subsel_inds]
 
 
         if njobs > 1:
             pool = mp.Pool(processes=njobs)
-            input = [ (file, res, mode, path, mask ) for file in files]
+            input = [ (file, model, path, mask ) for file in files]
             result = pool.starmap(set_topography_to_nan, input)
 
         else:
             for file in files:
-                set_topography_to_nan(file, res, mode, path, mask)
+                set_topography_to_nan(file, model, path, mask)
 
+        print(time.time() - t0)
+
+    print(time.time() - t00)
 
 
 
