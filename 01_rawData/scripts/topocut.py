@@ -52,8 +52,7 @@ if __name__ == '__main__':
     path = '../topocut'
     fill_value = -999999.0
 
-    models = ['RAW4']
-    models = ['SM4']
+    models = ['RAW1', 'SM1']
 
     file_subsel_inds = None
     #file_subsel_inds = slice(0,1)

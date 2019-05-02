@@ -4,30 +4,25 @@ source=../../01_rawData/topocut
 #source=../../01_rawData/lwp
 dest=../topocut
 
-ress=(4.4 2.2 1.1)
-modes=("" f)
-
-#ress=(4.4)
-#modes=("" f)
+models=(RAW4 SM4 RAW2 SM2 RAW1 SM1)
 
 vars=("AQVT_TOT" "AQVT_ADV" "AQVT_ZADV" "AQVT_TURB" "AQVT_MIC")
 vars=("CW" "QI" "QC")
 
 vars=("FQVy")
 vars=("WVP")
-vars=(U V)
-vars=(RHO)
+vars=(U V QV QC QR QI QS W T P)
+#vars=(RHO)
 
 for var in "${vars[@]}"; do
     #var=AQVT_TOT
     echo $var
 
-    for res in "${ress[@]}"; do
-        for mode in "${modes[@]}"; do
-            echo $res$mode
-            rm $dest/$res$mode/z${var}.nc
-            ncrcat -v $var $source/$res$mode/lffd*z.nc $dest/$res$mode/z${var}.nc
-        done
+    for model in "${models[@]}"; do
+        echo $model
+        mkdir -p $dest/$model
+        rm $dest/$model/z${var}.nc
+        ncrcat -v $var $source/$model/lffd*z.nc $dest/$model/z${var}.nc
     done
 done
 
