@@ -139,7 +139,7 @@ class dimension:
         """Append all dimensions objects in timeDims to this one"""
         for td in timeDims:
             self.size = self.size + td.size
-            self.valsUncut = np.append(self.valsUncut, td.valsUncut)
+            #self.valsUncut = np.append(self.valsUncut, td.valsUncut)
             self.vals = np.append(self.vals, td.vals)
         self.inds = range(0,self.size)
         

@@ -20,7 +20,7 @@ from datetime import datetime
 from functions import *
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-inpPath = '../02_fields/subDomDiur'
+inpPath = '../02_fields/diurnal'
 others = ['cHSURF', 'nTOT_PREC']
 hydrometeors = ['zQC', 'zQI', 'zQV', 'zQR', 'zQS', 'zQG']
 TTendencies = ['zATT_MIC', 'zATT_RAD', 'zATT_ADV', 'zATT_ZADV', 'zATT_TURB', 'zATT_TOT']
@@ -30,8 +30,8 @@ dynamics = ['zW', 'zU', 'zV', 'zT', 'zP']
 fieldNames = ['zAQVT_MIC']
 #fieldNames = QVTendencies
 
-altInds = [40,50,60,61,62,63,64]
-altInds = [63]
+#altInds = [40,50,60,61,62,63,64]
+#altInds = [63]
 
 for fieldName in fieldNames:
     print('#######################')

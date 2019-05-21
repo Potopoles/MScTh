@@ -9,7 +9,7 @@ import multiprocessing as mp
 
 def set_topography_to_nan(file, model, path, mask):
     print(file)
-    filePath = str(path+'/'+model+'/'+file)
+    filePath = str(path+'/'+model+'/zlev/'+file)
     ncFile = Dataset(filePath, 'a')
     varKeys = list(ncFile.variables.keys())
 
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     path = '../topocut'
     fill_value = -999999.0
 
-    models = ['RAW1', 'SM1']
+    models = ['RAW4']
 
     file_subsel_inds = None
     #file_subsel_inds = slice(0,1)
@@ -81,10 +81,9 @@ if __name__ == '__main__':
             mask[0,aI,:,:] = topo < alt # 1 where values should NOT be masked
 
 
-        files = os.listdir(path+'/'+model)
+        files = os.listdir(path+'/'+model+'/zlev')
         if file_subsel_inds is not None:
             files = files[file_subsel_inds]
-
 
         if njobs > 1:
             pool = mp.Pool(processes=njobs)

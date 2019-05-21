@@ -13,8 +13,6 @@ import os, sys
 inpPath = '../02_fields/topocut'
 outPath = '../02_fields/diurnal'
 
-i_resolution = 1
-
 if len(sys.argv) > 1:
     fieldNames = [sys.argv[1]]
     print('fieldName is ' + str(fieldNames))
@@ -23,42 +21,36 @@ else:
     print('exit')
     quit()
 
+models=['RAW4', 'SM4', 'RAW2', 'SM2' ,'RAW1', 'SM1']
+#models=['RAW4', 'SM4']
+#models=['RAW2', 'SM2']
+#models=['RAW2', 'SM2' ,'RAW1', 'SM1']
+#models=['SM1']
 
 #####################################################################		
-if i_resolution == 1:
-    ress = ['4.4']
-elif i_resolution == 2:
-    ress = ['4.4', '2.2']
-elif i_resolution == 3:
-    ress = ['4.4','2.2','1.1']
-elif i_resolution == 4:
-    ress = ['2.2']
-elif i_resolution == 5:
-    ress = ['1.1']
-modes = ['', 'f']
-#modes = ['r']
-
+dx = {'RAW4':4.4, 'SM4':4.4,
+        'RAW2':2.2, 'SM2':2.2,
+        'RAW1':1.1, 'SM1':1.1,}
 
 for fieldName in fieldNames:
     print(fieldName)
-    for res in ress:
-        for mode in modes:
-            print(str(res) + mode)
+    for model in models:
+        print(model)
 
-            varName = fieldName[1:]
+        varName = fieldName[1:]
 
-            inpFilePath = inpPath + '/' + res+mode + '/' + fieldName + '.nc'
-            outFilePath = outPath + '/' + res+mode + '/' + fieldName + '.nc'
+        inpFilePath = inpPath + '/' + model + '/' + fieldName + '.nc'
+        outFilePath = outPath + '/' + model + '/' + fieldName + '.nc'
 
-            nco = ncObject.ncObject(inpFilePath, res, fieldName[1:])        
+        nco = ncObject.ncObject(inpFilePath, dx[model], fieldName[1:])        
 
-            #nco.selField(varName)
-            if fieldName in 'nTOT_PREC':
-                nco.loadAsDiurnal('SUM')
-            else:
-                nco.loadAsDiurnal('MEAN')
-            # SAVE FILE
-            if os.path.exists(outFilePath):
-                os.remove(outFilePath)
-            nco.saveToNewNC(outFilePath)
+        #nco.selField(varName)
+        if fieldName in 'nTOT_PREC':
+            nco.loadAsDiurnal('SUM')
+        else:
+            nco.loadAsDiurnal('MEAN')
+        # SAVE FILE
+        if os.path.exists(outFilePath):
+            os.remove(outFilePath)
+        nco.saveToNewNC(outFilePath)
 

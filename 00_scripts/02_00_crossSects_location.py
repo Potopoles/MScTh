@@ -6,8 +6,8 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 2 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
+i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -20,7 +20,7 @@ from datetime import datetime
 from functions import *
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-inpPath = '../02_fields/result'
+inpPath = '../02_fields/topocut'
 fieldNames = ['cHSURF']
 #####################################################################		
 
@@ -29,11 +29,11 @@ subDomain = 1 # 0: full domain, 1: alpine region, 2: zoom in
 # SUBSPACE
 subSpaceIndsIN = {}
 if subDomain == 1: # alpine region
-	subSpaceIndsIN['rlon'] = (50,237)
-	subSpaceIndsIN['rlat'] = (41,155)
+	subSpaceIndsIN['rlon'] = [50,237]
+	subSpaceIndsIN['rlat'] = [41,155]
 elif subDomain == 2: # zoom in subdomain
-	subSpaceIndsIN['rlon'] = (70,100)
-	subSpaceIndsIN['rlat'] = (70,100)
+	subSpaceIndsIN['rlon'] = [70,100]
+	subSpaceIndsIN['rlat'] = [70,100]
 
 #startTime = datetime(2006,7,11,0)
 #endTime = datetime(2006,7,11,23)
@@ -73,10 +73,18 @@ Mticks = list(np.arange(0.0002,0.0022,0.0002))
 cmapD = 'bwr' # colormap for Difference output (bwr)
 #####################################################################
 
+import xarray as xr
+
+# TODO
+print(inpPath)
+model = 'RAW1':
+field = xarray.open_dataset(inpPath
+quit()
+
 
 an = analysis.analysis(inpPath, fieldNames)
 
-an.subSpaceIndsIN = subSpaceIndsIN
+an.subSpaceInds = subSpaceIndsIN
 an.ag_commnds = ag_commnds
 an.i_info = i_info
 an.i_resolutions = i_resolutions
@@ -94,109 +102,112 @@ import matplotlib.pyplot as plt
 
 
 if i_plot > 0:
-	if i_info >= 3:
-		print('plotting')
-	mainVar = an.vars[an.fieldNames[0]]
-	someField = mainVar['modelRes']['4.4'].ncos['U'].curFld
-	if i_info >= 1:
-		print('NONSINGLETONS: ' + str(someField.nNoneSingleton))
-	import ncPlots.ncSubplots as ncSubplots
-	ncs = ncSubplots.ncSubplots(an, nDPlot, i_diffPlot)
-	
-	if nDPlot == 2 and someField.nNoneSingleton == 2:
-		ncs.contourTranspose = contourTranspose
-		ncs.plotContour = plotContour
-		ncs.cmapM = cmapM
-		ncs.axis = axis
-		ncs.autoTicks = autoTicks
-		ncs.Mmask = Mmask
-		ncs.MThrMinRel = MThrMinRel
-		ncs.Mticks = Mticks
-		ncs.cmapD = cmapD
-	
-		
-		for fldName in an.fieldNames:
-			ncs.plotVar2D(an.vars[fldName])
-			
-		
-		#####################################################################
-		lons = [80, 90, 107, 125, 150, 175, None, None, None, None, None, None, None]
-		lats = [None, None, None, None, None, None, 60, 75, 90, 100, 110, 120, 130]
-		lons = [None]
-		lats = [110]
-		counts = range(0,len(lons))
-		#counts = [1,2,3,7,8,9]
-		
-		txtSize = 10
-		for count in counts:
-			lon44 = lons[count]
-			lat44 = lats[count]
-			for rowInd,res in enumerate(an.resolutions):
-				#res = '4.4'
-				if lat44 == None:
-					lat = lat44
-					if res == '2.2':
-						lon = lon44*2
-					elif res == '1.1':
-						lon = lon44*4
-					else:
-						lon = lon44
-				elif lon44 == None:
-					lon = lon44
-					if res == '2.2':
-						lat = lat44*2
-					elif res == '1.1':
-						lat = lat44*4
-					else:
-						lat = lat44
-				
-				for colInd,mode in enumerate(['U', 'F']):
-					#mode = 'U'
-					ax = ncs.axes[rowInd,colInd]
-					
-					var = an.vars['cHSURF']
-					nco  = var['modelRes'][res].ncos[mode]
-					fld = nco.curFld
-					dims = fld.getNoneSingletonDims()			
-					dimx, dimy, fld = ncs._prepareDimAndFields(dims, fld)
-					
-					if lat == None:
-						latI = nco.subSpaceInds['rlat']
-						y1 = dimy.valsUncut[latI[0]]
-						y2 = dimy.valsUncut[latI[1]]
-						x = dimx.valsUncut[lon]
-						ax.plot([x, x], [y1, y2], '-k')
-						txt = str(lon)
-						ax.text(x, y1, txt, size=txtSize)
-					elif lon == None:
-						lonI = nco.subSpaceInds['rlon']
-						y = dimy.valsUncut[lat]
-						x1 = dimx.valsUncut[lonI[0]]
-						x2 = dimx.valsUncut[lonI[1]]
-						ax.plot([x1, x2], [y, y], '-k')
-						txt = str(lat)
-						ax.text(x1, y+5, txt, size=txtSize)
-				
-		#####################################################################
-			
-			
-	elif nDPlot == 1 and someField.nNoneSingleton == 1:
-	
-		for fldName in an.fieldNames:
-			if fldName != 'cHSURF':
-				ncs.plotVar1D(an.vars[fldName])
+    if i_info >= 3:
+        print('plotting')
+    mainVar = an.vars[an.varNames[0]]
+    someField = next(iter(mainVar.ncos.values())).field
+    if i_info >= 1:
+        print('NONSINGLETONS: ' + str(someField.nNoneSingleton))
+    import ncPlots.ncSubplots2D as ncSubplots
+    ncs = ncSubplots.ncSubplots(an, nDPlot, i_diffPlot, 'HOR')
 
-	else:
-		raise ValueError('ERROR: CANNOT MAKE ' + str(nDPlot) + 'D-PLOT WITH ' +
-		str(someField.nNoneSingleton) + ' NON-SINGLETON DIMS!')
+    if nDPlot == 2 and someField.nNoneSingleton == 2:
+        ncs.contourTranspose = contourTranspose
+        ncs.plotContour = plotContour
+        ncs.cmapM = cmapM
+        ncs.axis = axis
+        ncs.autoTicks = autoTicks
+        ncs.Mmask = Mmask
+        ncs.MThrMinRel = MThrMinRel
+        ncs.Mticks = Mticks
+        ncs.cmapD = cmapD
 
-	
-	if i_plot == 1:
-		plt.show()
-	elif i_plot == 2:
-		plotPath = plotOutDir + '/' + plotName
-		plt.savefig(plotPath, format='png', bbox_inches='tight')
+        
+        for fldName in an.varNames:
+            ncs.plotVar(an.vars[fldName])
+            
+        
+        #####################################################################
+        lons = [80, 90, 107, 125, 150, 175, None, None, None, None, None, None, None]
+        lats = [None, None, None, None, None, None, 60, 75, 90, 100, 110, 120, 130]
+        #lons = [None]
+        #lats = [110]
+        counts = range(0,len(lons))
+        #counts = [1,2,3,7,8,9]
+        
+        txtSize = 10
+        for count in counts:
+            lon44 = lons[count]
+            lat44 = lats[count]
+            for rowInd,res in enumerate(an.resolutions):
+                if lat44 == None:
+                    #lat = lat44
+                    if res == '2':
+                        lon = lon44*2
+                    elif res == '1':
+                        lon = lon44*4
+                    else:
+                        lon = lon44
+                elif lon44 == None:
+                    #lon = lon44
+                    if res == '2':
+                        lat = lat44*2
+                    elif res == '1':
+                        lat = lat44*4
+                    else:
+                        lat = lat44
+                
+                for colInd,mode in enumerate(['RAW', 'SM']):
+                    ax = ncs.axes[colInd,rowInd]
+                    #if lat44 is None:
+                    #    ax.plot([lon, lon], [-1000, 1000], '-k')
+                    #elif lon44 is None:
+                    #    ax.plot([-1000, 1000], [lat, lat], '-k')
+                    
+                    var = an.vars['cHSURF']
+                    nco  = var.ncos[mode+res]
+                    fld = nco.field
+                    dims = fld.noneSingletonDims			
+                    dimx, dimy, fld = ncs._prepareDimAndFields(dims, fld)
+                    
+                    if lat44 == None:
+                        latI = nco.subSpaceInds['rlat']
+                        y1 = dimy.vals[latI[0]]
+                        y2 = dimy.vals[latI[1]]
+                        x = dimx.vals[lon]
+                        ax.plot([x, x], [y1, y2], '-k')
+                        txt = str(lon)
+                        ax.text(x, y1, txt, size=txtSize)
+                    elif lon44 == None:
+                        lonI = nco.subSpaceInds['rlon']
+                        print(lat)
+                        y = dimy.vals[lat]
+                        x1 = dimx.vals[lonI[0]]
+                        x2 = dimx.vals[lonI[1]]
+                        ax.plot([x1, x2], [y, y], '-k')
+                        txt = str(lat)
+                        ax.text(x1, y+5, txt, size=txtSize)
+                
+        #####################################################################
+            
+            
+    elif nDPlot == 1 and someField.nNoneSingleton == 1:
 
-		  
+        for fldName in an.varNames:
+            if fldName != 'cHSURF':
+                ncs.plotVar1D(an.vars[fldName])
+
+    else:
+        raise ValueError('ERROR: CANNOT MAKE ' + str(nDPlot) + 'D-PLOT WITH ' +
+        str(someField.nNoneSingleton) + ' NON-SINGLETON DIMS!')
+
+
+    if i_plot == 1:
+        plt.show()
+    elif i_plot == 2:
+        plotPath = plotOutDir + '/' + plotName
+        plt.savefig(plotPath, format='png', bbox_inches='tight')
+
+          
 
 

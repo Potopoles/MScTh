@@ -74,14 +74,14 @@ class ncSubplots():
                     ax = self.axes[rowInd,colInd]
                 elif self.orientation == 'HOR':
                     ax = self.axes[colInd,rowInd]
-                tfld = topo.ncos[str(res+mode)].field
+                tfld = topo.ncos[str(mode+res)].field
                 self._plotTopo(ax, tfld)
-                if self.i_diffPlot:
+                if self.i_diffPlot and self.i_diff_topo:
                     if self.orientation == 'VER':
                         ax = self.axes[rowInd,2]
                     elif self.orientation == 'HOR':
                         ax = self.axes[2,rowInd]
-                    tfld = topo.ncos[str(res)].field
+                    tfld = topo.ncos[str(mode+res)].field
                     self._plotTopo(ax, tfld)
             
                 
@@ -110,7 +110,7 @@ class ncSubplots():
                 ax.axis(self.axis) # aspect ratio
 
                 # GET VALUES AND DIMENSIONS				
-                fld = var.ncos[str(res+mode)].field
+                fld = var.ncos[str(mode+res)].field
                 dims = fld.noneSingletonDims			
                 dimx, dimy, fld = self._prepareDimAndFields(dims, fld)
 
@@ -222,12 +222,9 @@ class ncSubplots():
                 elif self.orientation == 'HOR':
                     ax = self.axes[2,rI]
                 # GET VALUES AND DIMENSIONS				
-                rawfld = var.ncos[str(res)].field
-                smfld = var.ncos[str(res)+'f'].field
-                #print(np.nanmean(smfld.vals))
-                #print(np.nanmean(rawfld.vals))
+                rawfld = var.ncos[mode+str(res)].field
+                smfld = var.ncos[mode+str(res)].field
                 diff = rawfld.vals - smfld.vals
-                #print(np.nanmean(diff))
                 dims = rawfld.noneSingletonDims			
                 dimx, dimy, fld = self._prepareDimAndFields(dims, rawfld)
 
@@ -250,6 +247,7 @@ class ncSubplots():
                     DCF = ax.contourf(dimx.vals, dimy.vals,
                                             diff.squeeze(), levels=levels,
                                             cmap=cmap)
+                    self.DCF = DCF
 
                 # COLORMESH SHOWING PIXELS. NO INTERPOLATION
                 elif i_plotType == 1:
@@ -258,6 +256,7 @@ class ncSubplots():
                     norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
                     DCF = ax.pcolormesh(gridx, gridy, diff.squeeze(),
                                     cmap=cmap, norm=norm)
+                    self.DCF = DCF
                     
                 if self.orientation == 'VER':
                     self.plts[rowInd][2] = CF
@@ -323,6 +322,7 @@ class ncSubplots():
                         orientation='horizontal')
             fldUnits = self._getUnits(fld)
             DCB.set_label(fld.label + ' ' + fldUnits, fontsize=19*self.MAG)
+            self.DCB = DCB
                             
 
         # ADJUST SUBPLOT POSITIONS
@@ -389,20 +389,21 @@ class ncSubplots():
         return(xUnits, yUnits)
         
     def _plotTopo(self, ax, tfld):
-        tTicks = np.array([-100,0,100,200,500,1000,1500,2000,2500,3000,3500,4000])
+        #tTicks = np.array([-100,0,100,200,500,1000,1500,2000,2500,3000,3500,4000])
+        tTicks = np.array([0,0.1,0.2,0.5,1,1.5,2,2.5,3,3.5,4])
         tdims = tfld.noneSingletonDims
         if len(tdims) == 2: # 2D TOPO
             tdimx, tdimy, tfld = self._prepareDimAndFields(tdims, tfld)
-            ax.contourf(tdimx.vals, tdimy.vals, tfld.vals.squeeze(), tTicks,
+            ax.contourf(tdimx.vals, tdimy.vals, tfld.vals.squeeze()/1000, tTicks,
                 cmap='binary', alpha=0.7)
         elif len(tdims) == 1: # 1D TOPO (FROM e.g. lon cross-section)
             tfld.vals[tfld.vals < 0] = 0 # for plotting: make ground always zero.
-            ax.fill_between(tdims[0].vals, 0, tfld.vals.squeeze(), color='k')
+            ax.fill_between(tdims[0].vals, 0, tfld.vals.squeeze()/1000, color='k')
             
         ax.axis(self.axis) # aspect ratio
             
             
-    def addContour(self, var, col, alpha, lineWidth, ticks=None):
+    def addContour(self, var, col, alpha, lineWidth, ticks=None, num_labels=False):
 
         Mmax = var.max
         Mmin = var.min
@@ -442,7 +443,7 @@ class ncSubplots():
                 ax.axis(self.axis) # aspect ratio
 
                 # GET VALUES AND DIMENSIONS				
-                fld = var.ncos[res+mode].field
+                fld = var.ncos[mode+res].field
                 dims = fld.noneSingletonDims			
                 dimx, dimy, fld = self._prepareDimAndFields(dims, fld)
                 
@@ -455,12 +456,16 @@ class ncSubplots():
                                 linewidths=lineWidth, colors=col, alpha=alpha)
 
                     # CONTOUR LABELS
-                    ax.clabel(C, inline=1, fontsize=12*self.MAG)
+                    if num_labels:
+                        ax.clabel(C, inline=1, fontsize=12*self.MAG)
 
                     if colInd == 0 and rowInd == 0:
                         Cout = C
                     
-        return(Cout)
+        try:
+            return(Cout)
+        except UnboundLocalError:
+            ('No return Value in Contour')
             
 
     def _getUnits(self, fld):

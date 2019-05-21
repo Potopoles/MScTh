@@ -6,6 +6,7 @@ i_overwrite=1
 
 models=(RAW4 SM4)
 models=(SM2 RAW1 SM1)
+models=(RAW4)
 
 for model in ${models[@]} ;do
     echo $model

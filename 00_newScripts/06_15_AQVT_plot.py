@@ -82,17 +82,16 @@ maxm =  1.0*fact
 mind = -0.5*fact
 maxd =  0.5*fact
 
-if i_plot == 3:
-    if (subdomain == 'Alpine_Region') and (alts == 'alts_0_2500'):
-        minm = -0.75
-        maxm =  0.5
-        mind = -0.2
-        maxd =  0.2
-    if (subdomain == 'Northern_Italy') and (alts == 'alts_0_2000'):
-        minm = -0.75
-        maxm =  0.5
-        mind = -0.2
-        maxd =  0.2
+if (subdomain == 'Alpine_Region') and (alts == 'alts_0_2500'):
+    minm = -0.75
+    maxm =  0.5
+    mind = -0.2
+    maxd =  0.2
+if (subdomain == 'Northern_Italy') and (alts == 'alts_0_2000'):
+    minm = -0.75
+    maxm =  0.5
+    mind = -0.2
+    maxd =  0.2
 
 
     
@@ -136,7 +135,6 @@ for varI,var in enumerate(vars):
             obj = loadObj(folder,name)  
             dates = obj['time'].astype(datetime)
 
-
             # MEAN DIURNAL
             vals = obj[var]#*6.8E6
             hrs = np.arange(0,24)
@@ -165,17 +163,14 @@ for varI,var in enumerate(vars):
         ax.tick_params(axis='both', which='major', labelsize=ticklabelsize)
         lines = []
         for resI,res in enumerate(ress):
-            if mode == 'd' and res == '4.4':
-                pass
-            else:
+            if mode != 'd' or var == 'AQVT_TOT':
                 line, = ax.plot(out['hrs'], out[res+mode], linestyle=ltypes[varI],
                                 color=colrs[resI], lineWidth=lwidths[varI])
-            lines.append(line)
+                lines.append(line)
             #if (axI == 0) and (resI == 0):
             if varI == 0:
                 varLegendLines.append(line)
 
-#quit()
 
 
 for axI,mode in enumerate(modes):

@@ -82,7 +82,7 @@ class ncSubplots():
             
             for rI,res in enumerate(self.ress):
                 # GET VALUES AND DIMENSIONS				
-                fld = var.ncos[str(res+mode)].field
+                fld = var.ncos[str(mode+res)].field
                 dim = fld.noneSingletonDims[0]
                 if dim.valType == 'DATE':
                     ax.xaxis.set_major_formatter(xAxisDateFmt)			

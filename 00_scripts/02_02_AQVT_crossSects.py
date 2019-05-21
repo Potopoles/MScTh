@@ -3,11 +3,11 @@
 # author: Christoph Heim
 # date: 21 10 2017
 #################################
-import os
+import os, sys
 os.chdir('00_scripts/')
 
 i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 0 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -31,35 +31,50 @@ models_meta = {
 }
 # directory of input model folders
 settings = {
-    'mixing':{
+    'tot':{
         'cmapM':'seismic',
-        'plot_var':'zW',
-        'Mticks':list(np.arange(-8,8,0.1)),
+        'plot_var':'zAQVT_TOT',
+        'Mticks':list(np.arange(-15,15.1,0.5)),
     },
-    'wv':{
-        'cmapM':'jet',
-        'plot_var':'zQV',
-        'Mticks':list(np.arange(0,16,0.1)),
-    },
-    'fqvz':{
+    'adv':{
         'cmapM':'seismic',
-        'plot_var':'zFQVZ',
-        'Mticks':list(np.arange(-50,50,1)*1E-3),
+        'plot_var':'zAQVT_ADV',
+        'Mticks':list(np.arange(-15,15.1,0.5)),
     },
-    'rh':{
-        'cmapM':'jet',
-        'plot_var':'zRH',
-        'Mticks':list(np.arange(0,106,2)),
+    'zadv':{
+        'cmapM':'seismic',
+        'plot_var':'zAQVT_ZADV',
+        'Mticks':list(np.arange(-20,20.1,0.5)),
+    },
+    'hadv':{
+        'cmapM':'seismic',
+        'plot_var':'zAQVT_HADV',
+        'Mticks':list(np.arange(-20,20.1,0.5)),
+    },
+    'mic':{
+        'cmapM':'seismic',
+        'plot_var':'zAQVT_MIC',
+        'Mticks':list(np.arange(-15,15.1,0.5)),
+    },
+    'turb':{
+        'cmapM':'seismic',
+        'plot_var':'zAQVT_TURB',
+        'Mticks':list(np.arange(-8,8.1,0.5)),
     },
 }
 
-fieldNames = ['zW', 'zV', 'zU', 'zQV', 'zQC', 'zFQVY', 'zRH', 'cHSURF',
-              'nTOT_PREC', 'zWVP_0_2', 'zWVP_2_4', 'zEQPOTT', 'zT', 'zP']
+fieldNames = ['zW', 'zV', 'zU', 'zQV', 'zQC', 'zFQVY', 'cHSURF',
+              'nTOT_PREC', 'zWVP_0_2', 'zWVP_2_4', 'zEQPOTT', 'zT', 'zP',
+            'zAQVT_TOT', 'zAQVT_ADV', 'zAQVT_ZADV', 'zAQVT_MIC', 'zAQVT_TURB']
 
-#case = 'mixing'
-case = 'wv'
-#case = 'fqvz'
-#case = 'rh'
+case = 'tot'
+#case = 'adv'
+#case = 'zadv'
+#case = 'mic'
+#case = 'turb'
+#case = 'hadv'
+if len(sys.argv) > 1:
+    case = sys.argv[1]
 
 time_mode = 'ts'
 time_mode = 'diurnal'
@@ -68,14 +83,16 @@ if time_mode == 'ts':
     inpPath = '../02_fields/topocut'
     dt0 = datetime(2006,7,11,0)
     dt1 = datetime(2006,7,20,0)
-    dt0 = datetime(2006,7,12,12)
-    dt1 = datetime(2006,7,12,13)
+    #dt0 = datetime(2006,7,12,12)
+    #dt1 = datetime(2006,7,12,13)
     dt_range = np.arange(dt0, dt1, timedelta(hours=1)).tolist()
 elif time_mode == 'diurnal':
     inpPath = '../02_fields/diurnal'
     dt_range = np.arange(0,24).tolist()
 
 setting = settings[case]
+if time_mode == 'diurnal':
+    setting['Mticks'] = list(np.arange(-2.0,2.1,0.1))
 #####################################################################		
 lons = [80, 90, 107, 125, 150, 175, None, None, None, None, None, None, None]
 lats = [None, None, None, None, None, None, 60, 75, 90, 100, 110, 120, 130]
@@ -208,7 +225,24 @@ for count in counts:
 
             if 'cHSURF' in an.varNames:
                 ncs.plotTopo(an.vars['cHSURF'])
+
             
+            if setting['plot_var'] == 'zAQVT_HADV':
+                an.vars['zAQVT_HADV'] = an.vars['zAQVT_ZADV']._copy()
+                for model in ['RAW1', 'SM1']:
+                    an.vars['zAQVT_HADV'].ncos[model].field.vals = (
+                        an.vars['zAQVT_ADV'].ncos[model].field.vals - 
+                        an.vars['zAQVT_ZADV'].ncos[model].field.vals) 
+                    an.vars['zAQVT_HADV'].ncos[model].field.label = 'AQVT_HADV'
+
+
+            for model in ['RAW1', 'SM1']:
+                vals = an.vars[setting['plot_var']].ncos[model].field.vals
+                vals = np.ma.filled(vals, np.nan)
+                vals[vals > setting['Mticks'][-1]] = setting['Mticks'][-1]
+                vals[vals < setting['Mticks'][0]] = setting['Mticks'][0]
+                an.vars[setting['plot_var']].ncos[model].field.vals = vals
+
             ncs.plotVar(an.vars[setting['plot_var']])
 
             axlegend = fig.add_axes([0.88,0.9,0.1,0.1])
@@ -350,16 +384,8 @@ for count in counts:
                 qc_tick = 0.1
             elif time_mode == 'diurnal':
                 qc_tick = 0.05
+            ncs.addContour(an.vars['zQC'], 'darkgreen', 0.8, 2, ticks=[qc_tick])
 
-            qv_tick = 8
-
-            if case in ['wv']:
-                ncs.addContour(an.vars['zQC'], 'purple', 0.8, 2, ticks=[qc_tick])
-            elif case in ['rh', 'mixing']:
-                ncs.addContour(an.vars['zQC'], 'darkgreen', 0.8, 2, ticks=[qc_tick])
-
-            if case == 'wv':
-                ncs.addContour(an.vars['zQV'], 'black', 1, 1.0, ticks=[qv_tick])
 
                 
         elif nDPlot == 1 and someField.nNoneSingleton == 1:

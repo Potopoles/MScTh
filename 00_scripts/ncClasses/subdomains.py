@@ -1,4 +1,5 @@
 def setSSI(i_subdomain, ssI):
+    # These indices are used for 4.4 km
     if i_subdomain == 0:
         domainName = 'Whole_Domain'
         lon0 = 0

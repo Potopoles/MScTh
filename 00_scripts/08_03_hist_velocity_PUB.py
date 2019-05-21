@@ -1,13 +1,21 @@
-#################################
-# Calculate domain Average Precipitation
-# author: Christoph Heim
-# date: 21 10 2017
-#################################
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+title			:hist_velocity.py
+description	    :Calculate histograms of vertical velocity at an altitude
+author			:Christoph Heim
+date created    :20171121
+date changed    :20190521
+usage			:run direct
+notes			:Figure 8 in paper.
+python_version	:3.7.1
+==============================================================================
+"""
 import os
 os.chdir('00_scripts/')
 
 i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 3 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 altInds = [10,20,30,40,50,60,61,62,63,64]
 altInds = [40]
@@ -99,9 +107,9 @@ for startHght in altInds:
 
     for res in an.resolutions: 
         for mode in an.modes:
-            simLabel = str(res)+mode
+            simLabel = mode+str(res)
             print(simLabel)
-            vals = an.vars['zW'].ncos[str(res)+mode].field.vals
+            vals = an.vars['zW'].ncos[mode+str(res)].field.vals
             vals = vals.flatten()
             vals = vals[~np.isnan(vals)] # remove mountains
 
@@ -116,6 +124,7 @@ for startHght in altInds:
             outRess.append(str(res))
             outModes.append(mode)
 
+    dxs = [4.4,2.2,1.1]
     colrs = [(0,0,0), (0,0,1), (1,0,0)]
     fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(11,4))
     handles = []
@@ -132,25 +141,25 @@ for startHght in altInds:
         # SMOOTH
         ax = axes[0]
         ax.tick_params(labelsize=tick_labelsize)
-        line, = ax.semilogy(binsCentred, freqs[str(res)+'f'], color=colrs[rI]) 
+        line, = ax.semilogy(binsCentred, freqs['SM'+str(res)], color=colrs[rI]) 
         handles.append(line)
 
         # RAW
         ax = axes[1]
         ax.tick_params(labelsize=tick_labelsize)
-        ax.semilogy(binsCentred, freqs[str(res)+''], color=colrs[rI]) 
+        ax.semilogy(binsCentred, freqs['RAW'+str(res)], color=colrs[rI]) 
 
         # DELTA
         ax = axes[2]
         ax.tick_params(labelsize=tick_labelsize)
         minSamples = 30
-        nRaw = nPoints[str(res)+'']
-        nSm = nPoints[str(res)+'f']
+        nRaw = nPoints['RAW'+str(res)]
+        nSm = nPoints['SM'+str(res)]
         mask = np.full(len(nRaw),1)
         mask[nRaw < minSamples] = 0
         mask[nSm < minSamples] = 0
-        raw = freqs[str(res)+'']
-        sm = freqs[str(res)+'f']
+        raw = freqs['RAW'+str(res)]
+        sm = freqs['SM'+str(res)]
         raw[raw == 0] = np.nan
         sm[sm == 0] = np.nan
         ratio = (raw - sm)/sm
@@ -163,7 +172,8 @@ for startHght in altInds:
         ax.set_xlabel('Vertical Velocity [$m$ $s^{-1}$]',fontsize=labelsize)
         if mI == 0:
             ax.set_ylabel('Frequency',fontsize=labelsize)
-            ax.legend(handles,an.resolutions)
+            #ax.legend(handles,an.resolutions)
+            ax.legend(handles,dxs)
         elif mI == 2:
             ax.set_ylabel('Relative Difference',fontsize=labelsize)
 

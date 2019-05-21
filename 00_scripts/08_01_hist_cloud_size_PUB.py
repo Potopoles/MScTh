@@ -1,3 +1,16 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+title			:hist_cloud_size.py
+description	    :Calculate histograms of cloud sizes (convective clouds)
+author			:Christoph Heim
+date created    :20171121
+date changed    :20190521
+usage			:run direct
+notes			:Figure 9 in paper.
+python_version	:3.7.1
+==============================================================================
+"""
 from netCDF4 import Dataset
 import numpy as np
 

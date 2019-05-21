@@ -7,7 +7,7 @@ import os
 os.chdir('00_scripts/')
 
 i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -21,9 +21,8 @@ from functions import *
 from ncClasses.subdomains import setSSI
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-#inpPath = '../02_fields/subDomDiur'
-inpPath = '../02_fields/diurnal'
-#inpPath = '../02_fields/topocut'
+#inpPath = '../02_fields/diurnal'
+inpPath = '../02_fields/topocut'
 
 others = ['cHSURF', 'nTOT_PREC', 'nHPBL']
 hydrometeors = ['zQC', 'zQI', 'zQV', 'zQR', 'zQS', 'zQG']
@@ -38,7 +37,7 @@ fieldNames = ['nALHFL_S']
 fieldNames = ['cHSURF']
 fieldNames = ['zQV']
 fieldNames = ['nPMSL']
-fieldNames = ['zT']
+fieldNames = ['cHSURF']
 #####################################################################		
 
 ####################### NAMELIST DIMENSIONS #######################
@@ -47,10 +46,10 @@ ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}})
 #print(ssI)
 #quit() ## PROBLEM WITH SUBDOMAIN!!!
 
-startHght = 0
-endHght = 25
-altInds = list(range(startHght,endHght+1))
-ssI['altitude'] = altInds 
+#startHght = 0
+#endHght = 25
+#altInds = list(range(startHght,endHght+1))
+#ssI['altitude'] = altInds 
 
 #startTime = datetime(2006,7,11,00)
 #endTime = datetime(2006,7,20,23)
@@ -62,17 +61,17 @@ ssI['altitude'] = altInds
 ####################### NAMELIST AGGREGATE #######################
 # Options: MEAN, SUM 
 ag_commnds = {}
-ag_commnds['rlat'] = 'MEAN'
-ag_commnds['rlon'] = 'MEAN'
-#ag_commnds['time'] = 'SUM'
+ag_commnds['rlat'] = 'SUM'
+ag_commnds['rlon'] = 'SUM'
+#ag_commnds['time'] = 'MEAN'
 #ag_commnds['diurnal'] = 'MEAN'
-ag_commnds['altitude'] = 'MEAN'
+#ag_commnds['altitude'] = 'MEAN'
 #ag_commnds['time'] = 'MEAN'
 #####################################################################
 
 ####################### NAMELIST PLOT #######################
 nDPlot = 1 # How many dimensions should plot have (1 or 2)
-i_diffPlot = 1 # Draw plot showing difference filtered - unfiltered # TODO
+i_diffPlot = 0 # Draw plot showing difference filtered - unfiltered # TODO
 plotOutDir = '../00_plots'
 #plotOutDir = '../00_plots/04_coldPools/zFQVy'
 plotName = 'test.png'
@@ -108,13 +107,12 @@ an.i_resolutions = i_resolutions
 # RUN ANALYSIS
 an.run()
 
-#for res in an.resolutions:
-#    for mode in an.modes:
-#        print(res+mode)
-#        qc = an.vars['zQC'].ncos[res+mode].field.vals
-#        qi = an.vars['zQI'].ncos[res+mode].field.vals
-#        print(qc/qi)
-#quit()
+for res in an.resolutions:
+    for mode in an.modes:
+        print(res+mode)
+        topo = an.vars['cHSURF'].ncos[mode+res].field.vals
+        print(topo)
+quit()
 
 
 import matplotlib

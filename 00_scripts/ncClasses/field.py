@@ -311,7 +311,8 @@ class field:
         insertInds = copy.deepcopy(extractInds)
         # LOOP THROUGH HOURS
         for hr in range(0,24):
-            print(hr)
+            if hr % 4 == 0:
+                print('\t'+str(hr))
             insertInds[timeDimInd] = [hr]
             hrInds = []
             for ind,dt in enumerate(self.dims['time'].vals):

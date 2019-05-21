@@ -12,7 +12,14 @@ from datetime import datetime, timedelta
 class analysis:
     from netCDF4 import Dataset
 
-    modes = ['f', ''] # '' = raw, 'f' = filtered
+    #modes = ['f', ''] # '' = raw, 'f' = filtered
+    #modeNames = ['SM', 'RAW']
+    ### TODO TMP
+    ##modes = ['f', '', 'r'] # '' = raw, 'f' = filtered
+    ##modeNames = ['SM', 'RAW', 'OBS']
+
+
+    modes = ['SM', 'RAW'] # '' = raw, 'f' = filtered
     modeNames = ['SM', 'RAW']
     ## TODO TMP
     #modes = ['f', '', 'r'] # '' = raw, 'f' = filtered
@@ -35,16 +42,17 @@ class analysis:
             self.vars[vN].label = vN[1:]
 
     def set_resolutions(self):
+        self.grid_spacings = {'4':4400,'2':2200,'1':1100}
         if self.i_resolutions == 1:
-            self.resolutions = ['4.4']
+            self.resolutions = ['4']
         elif self.i_resolutions == 2:
-            self.resolutions = ['4.4', '2.2']
+            self.resolutions = ['4', '2']
         elif self.i_resolutions == 3:
-            self.resolutions = ['4.4', '2.2', '1.1']
+            self.resolutions = ['4', '2', '1']
         elif self.i_resolutions == 4:
-            self.resolutions = ['2.2']
+            self.resolutions = ['2']
         elif self.i_resolutions == 5:
-            self.resolutions = ['1.1']
+            self.resolutions = ['1']
         else:
             print('NO VALID RESOLUTION CODE')
         
@@ -57,7 +65,7 @@ class analysis:
         self.dxs = []
         for res in self.resolutions:
             for mode in self.modes:
-                self.ncoKeys.append(res+mode)
+                self.ncoKeys.append(mode+res)
                 self.dxs.append(float(res))
 
         # LOOP THROUGH VARIABLE NAMES TO FILL variables WITH ncObjects
@@ -86,7 +94,7 @@ class analysis:
                 if self.i_info >= 3:
                     print('\t\tdim subspace')
                 nco.subSpaceInds = self._setSubspaceInds(
-                                                    self.subSpaceInds, self.dxs[j])
+                                            self.subSpaceInds, self.dxs[j])
                 nco.cutDimsToSubSpace() 
 
                 # AGGREGATE

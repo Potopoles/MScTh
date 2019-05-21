@@ -119,19 +119,19 @@ varRH = an.vars['zP']._copy()
 varRH.varName = 'zRH' 
 for res in an.resolutions:
     for mode in an.modes:
-        p = an.vars['zP'].ncos[res+mode].field.vals
-        qv = an.vars['zQV'].ncos[res+mode].field.vals
-        T = an.vars['zT'].ncos[res+mode].field.vals
+        p = an.vars['zP'].ncos[mode+res].field.vals
+        qv = an.vars['zQV'].ncos[mode+res].field.vals
+        T = an.vars['zT'].ncos[mode+res].field.vals
         TC = T - 273.15 # Temperature in Celsius
 
         eps = 0.622
         e = p*qv/(eps+qv) # vapor pressure
         es = 611*np.exp(17.27*TC/(273.3+TC)) # saturation vapor pressure
         RH = e/es*100
-        varRH.ncos[res+mode].field.vals = RH
-        varRH.ncos[res+mode].fieldName = 'RH'
-        varRH.ncos[res+mode].field.name = 'RH'
+        varRH.ncos[mode+res].field.vals = RH
+        varRH.ncos[mode+res].fieldName = 'RH'
+        varRH.ncos[mode+res].field.name = 'RH'
         outNCPath = outPath + '/'+ res+mode + '/zRH.nc'
-        varRH.ncos[res+mode].saveToNewNC(outNCPath)
+        varRH.ncos[mode+res].saveToNewNC(outNCPath)
 
 
