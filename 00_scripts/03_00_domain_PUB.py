@@ -1,13 +1,21 @@
-#################################
-# Calculate domain Average Precipitation
-# author: Christoph Heim
-# date: 21 10 2017
-#################################
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+title			:domain.py
+description	    :Plot simulation domain with topography and analysis domains
+author			:Christoph Heim
+date created    :20171121 
+date changed    :20190522
+usage			:no args
+notes			:Figure 1 in paper.
+python_version	:3.7.1
+==============================================================================
+"""
 import os
 os.chdir('00_scripts/')
 
 i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 1 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:

@@ -289,7 +289,7 @@ class field:
 
 
 
-    def loadAsDiurnal(self, agg_operation):
+    def load_as_diurnal(self, agg_operation):
         import copy as copy
 
         # FIND INDICES FOR NONE TIME DIMENSIONS

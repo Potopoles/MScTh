@@ -6,7 +6,7 @@ description	    :Calculate histograms of cloud sizes (convective clouds)
 author			:Christoph Heim
 date created    :20171121
 date changed    :20190521
-usage			:run direct
+usage			:no args
 notes			:Figure 9 in paper.
 python_version	:3.7.1
 ==============================================================================

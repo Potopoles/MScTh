@@ -1,3 +1,16 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+title			:diurnal.py
+description	    :Calculate mean diurnal cycle for fields.
+author			:Christoph Heim
+date created    :20171121 
+date changed    :20190522
+usage			:arg1: Var with type prefix. e.g. nTOT_PREC or zU
+notes			:
+python_version	:3.7.1
+==============================================================================
+"""
 import os
 os.chdir('00_scripts/')
 
@@ -22,15 +35,12 @@ else:
     quit()
 
 models=['RAW4', 'SM4', 'RAW2', 'SM2' ,'RAW1', 'SM1']
-#models=['RAW4', 'SM4']
-#models=['RAW2', 'SM2']
-#models=['RAW2', 'SM2' ,'RAW1', 'SM1']
-#models=['SM1']
+models=['OBS4', 'OBS2', 'OBS1']
 
 #####################################################################		
-dx = {'RAW4':4.4, 'SM4':4.4,
-        'RAW2':2.2, 'SM2':2.2,
-        'RAW1':1.1, 'SM1':1.1,}
+dx = {'RAW4':4.4, 'SM4':4.4, 'OBS4':4.4,
+        'RAW2':2.2, 'SM2':2.2, 'OBS2':2.2,
+        'RAW1':1.1, 'SM1':1.1, 'OBS1':1.1,}
 
 for fieldName in fieldNames:
     print(fieldName)
@@ -46,7 +56,7 @@ for fieldName in fieldNames:
 
         #nco.selField(varName)
         if fieldName in 'nTOT_PREC':
-            nco.loadAsDiurnal('SUM')
+            nco.load_as_diurnal('SUM')
         else:
             nco.loadAsDiurnal('MEAN')
         # SAVE FILE

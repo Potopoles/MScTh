@@ -5,9 +5,9 @@ title			:summary.py
 description	    :Calculate summary plot for delayed onset and Po Valley night
                  time precip.
 author			:Christoph Heim
-date created    :20190120
+date created    :20190120 
 date changed    :20190521
-usage			:run direct
+usage			:no args
 notes			:Figure 10 in paper.
 python_version	:3.7.1
 ==============================================================================

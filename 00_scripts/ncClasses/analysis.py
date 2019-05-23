@@ -12,17 +12,10 @@ from datetime import datetime, timedelta
 class analysis:
     from netCDF4 import Dataset
 
-    #modes = ['f', ''] # '' = raw, 'f' = filtered
-    #modeNames = ['SM', 'RAW']
-    ### TODO TMP
-    ##modes = ['f', '', 'r'] # '' = raw, 'f' = filtered
-    ##modeNames = ['SM', 'RAW', 'OBS']
-
-
     modes = ['SM', 'RAW'] # '' = raw, 'f' = filtered
     modeNames = ['SM', 'RAW']
-    ## TODO TMP
-    #modes = ['f', '', 'r'] # '' = raw, 'f' = filtered
+    ### TODO TMP
+    #modes = ['SM', 'RAW', 'OBS'] # '' = raw, 'f' = filtered
     #modeNames = ['SM', 'RAW', 'OBS']
 
     def __init__(self, inpPath, varNames):

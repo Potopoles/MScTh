@@ -73,8 +73,8 @@ class ncObject:
         self.field.loadValues(self.ncFile, self.ag_commnds)
         
         
-    def loadAsDiurnal(self, agg_operation):
-        self.field.loadAsDiurnal(agg_operation)
+    def load_as_diurnal(self, agg_operation):
+        self.field.load_as_diurnal(agg_operation)
         self.dims['diurnal'] = self.dims['time']
         del self.dims['time']
         

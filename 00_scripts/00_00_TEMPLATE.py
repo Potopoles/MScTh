@@ -1,8 +1,16 @@
-################################
-# Calculate domain Average Precipitation
-# author: Christoph Heim
-# date: 21 10 2017
-#################################
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+title			:TEMPLATE.py
+description	    :
+author			:Christoph Heim
+date created    :20171121 
+date changed    :20190521
+usage			:no args
+notes			:
+python_version	:3.7.1
+==============================================================================
+"""
 import os
 os.chdir('00_scripts/')
 

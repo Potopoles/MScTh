@@ -1,13 +1,15 @@
 #!/bin/bash
 
-source=../../01_rawData/topocut
 #source=../../01_rawData/lwp
+source_obs=../../radar
 source_mlev=../../../data/cosmo_out/MScTh
+source=../../01_rawData/topocut
 dest=../topocut
 
 models=(RAW4 SM4 RAW2 SM2 RAW1 SM1)
 #models=(RAW4 SM4 RAW2 SM2)
 #models=(SM1 RAW1)
+models=(OBS4 OBS2 OBS1)
 
 # zlev
 vars=(AQVT_TOT AQVT_ADV AQVT_ZADV AQVT_TURB AQVT_MIC)
@@ -23,12 +25,16 @@ vars=(LWP_0_10 LWP_0_2 LWP_2_4 LWP_4_10)
 vars=(TOT_PREC U_10M V_10M)
 vars=(PS T_S)
 
+# obs
+vars=(TOT_PREC)
+
 # selection
-vars=(PS T_S)
+vars=(TOT_PREC)
 
 #var_grp=zlev
 #var_grp=calc
-var_grp=mlev
+#var_grp=mlev
+var_grp=obs
 
 for var in "${vars[@]}"; do
     #var=AQVT_TOT
@@ -47,6 +53,8 @@ for var in "${vars[@]}"; do
             ncrcat -v $var $source/$model/calc/${var}/lffd*z.nc $dest/$model/z${var}.nc
         elif [ $var_grp == mlev ]; then
             ncrcat -v $var $source_mlev/$model/mlev/lffd*.nc $dest/$model/n${var}.nc
+        elif [ $var_grp == obs ]; then
+            ncrcat -v $var $source_obs/$model/CPCH*.nc $dest/$model/n${var}.nc
         fi
     done
 done

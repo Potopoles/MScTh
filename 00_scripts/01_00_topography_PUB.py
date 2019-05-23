@@ -1,8 +1,16 @@
-#################################
-# Calculate domain Average Precipitation
-# author: Christoph Heim
-# date: 21 10 2017
-#################################
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+title			:topography.py
+description	    :Plot topographies for all 6 simulations.
+author			:Christoph Heim
+date created    :20171121 
+date changed    :20190522
+usage			:no args
+notes			:Figure 2 in paper.
+python_version	:3.7.1
+==============================================================================
+"""
 import os
 os.chdir('00_scripts/')
 
@@ -112,7 +120,7 @@ if i_plot > 0:
         for rI,res in enumerate(an.resolutions):
             for mI,mode in enumerate(an.modes):
                 print(res+mode)
-                nco = an.vars['cHSURF'].ncos[res+mode]
+                nco = an.vars['cHSURF'].ncos[mode+res]
                 maxHght = np.max(nco.field.vals)
                 axes[mI,rI].text(920,200, '{:d}'.format(maxHght.astype(np.int)),
                             fontsize=16*ncs.MAG, color='w')
