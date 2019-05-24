@@ -74,7 +74,7 @@ class ncSubplots():
                     ax = self.axes[rowInd,colInd]
                 elif self.orientation == 'HOR':
                     ax = self.axes[colInd,rowInd]
-                tfld = topo.ncos[str(res+mode)].field
+                tfld = topo.ncos[str(mode+res)].field
                 self._plotTopo(ax, tfld)
                 if self.i_diffPlot:
                     if self.orientation == 'VER':
@@ -110,7 +110,7 @@ class ncSubplots():
                 ax.axis(self.axis) # aspect ratio
 
                 # GET VALUES AND DIMENSIONS				
-                fld = var.ncos[str(res+mode)].field
+                fld = var.ncos[str(mode+res)].field
                 dims = fld.noneSingletonDims			
                 dimx, dimy, fld = self._prepareDimAndFields(dims, fld)
 
@@ -441,7 +441,7 @@ class ncSubplots():
                 ax.axis(self.axis) # aspect ratio
 
                 # GET VALUES AND DIMENSIONS				
-                fld = var.ncos[res+mode].field
+                fld = var.ncos[mode+res].field
                 dims = fld.noneSingletonDims			
                 dimx, dimy, fld = self._prepareDimAndFields(dims, fld)
                 

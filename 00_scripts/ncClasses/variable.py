@@ -9,21 +9,12 @@ from datetime import datetime, timedelta
 class variable:
     from netCDF4 import Dataset
 
-    #modes = ['f', ''] # '' = raw, 'f' = filtered
-    #modeNames = ['SM', 'RAW']
-
-    ## TODO TMP
-    #modes = ['f', '', 'r'] # '' = raw, 'f' = filtered
-    #modeNames = ['SM', 'RAW', 'OBS']
-
-
-
     modes = ['SM', 'RAW'] # '' = raw, 'f' = filtered
     modeNames = ['SM', 'RAW']
 
-    ## TODO TMP
-    #modes = ['SM', 'RAW', 'OBS'] # '' = raw, 'f' = filtered
-    #modeNames = ['SM', 'RAW', 'OBS']
+    # TODO TMP
+    modes = ['SM', 'RAW', 'OBS'] # '' = raw, 'f' = filtered
+    modeNames = ['SM', 'RAW', 'OBS']
 
 
     def __init__(self, varName):
