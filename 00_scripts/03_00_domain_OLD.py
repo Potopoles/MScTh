@@ -5,7 +5,7 @@ title			:domain.py
 description	    :Plot simulation domain with topography and analysis domains
 author			:Christoph Heim
 date created    :20171121 
-date changed    :20190522
+date changed    :20190607
 usage			:no args
 notes			:Figure 1 in paper.
 python_version	:3.7.1

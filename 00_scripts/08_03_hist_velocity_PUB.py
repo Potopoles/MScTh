@@ -5,9 +5,9 @@ title			:hist_velocity.py
 description	    :Calculate histograms of vertical velocity at an altitude
 author			:Christoph Heim
 date created    :20171121
-date changed    :20190521
+date changed    :20190607
 usage			:no args
-notes			:Figure 8 in paper.
+notes			:
 python_version	:3.7.1
 ==============================================================================
 """
@@ -15,7 +15,7 @@ import os
 os.chdir('00_scripts/')
 
 i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 3 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 altInds = [10,20,30,40,50,60,61,62,63,64]
 altInds = [40]
@@ -25,7 +25,7 @@ if i_plot > 1:
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-
+from pathlib import Path
 import ncClasses.analysis as analysis
 from datetime import datetime
 from functions import *
@@ -86,6 +86,7 @@ for startHght in altInds:
         altitude = startHght*100
 
     outPath = '../00_plots/08_cloud_cluster/'
+    Path(outPath).mkdir(parents=True, exist_ok=True)
 
     an.vars['zW'].setValueLimits()
     binMax = np.ceil(an.vars['zW'].max)
@@ -125,6 +126,7 @@ for startHght in altInds:
             outModes.append(mode)
 
     dxs = [4.4,2.2,1.1]
+    dxs_string = ['4','2','1']
     colrs = [(0,0,0), (0,0,1), (1,0,0)]
     fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(11,4))
     handles = []
@@ -172,8 +174,7 @@ for startHght in altInds:
         ax.set_xlabel('Vertical Velocity [$m$ $s^{-1}$]',fontsize=labelsize)
         if mI == 0:
             ax.set_ylabel('Frequency',fontsize=labelsize)
-            #ax.legend(handles,an.resolutions)
-            ax.legend(handles,dxs)
+            ax.legend(handles,dxs_string)
         elif mI == 2:
             ax.set_ylabel('Relative Difference',fontsize=labelsize)
 

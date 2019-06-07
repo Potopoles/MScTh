@@ -1,8 +1,16 @@
-#################################
-# Calculate domain Average Precipitation
-# author: Christoph Heim
-# date: 21 10 2017
-#################################
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+title			:domAv_vert_Pr_sum_QC_QI.py
+description	    :Plot domain average cloud water diurnal cycle.
+author			:Christoph Heim
+date created    :20171121 
+date changed    :20190607
+usage			:no args
+notes			:
+python_version	:3.7.1
+==============================================================================
+"""
 import os
 os.chdir('00_scripts/')
 
@@ -27,7 +35,7 @@ fieldNames = ['zQC', 'zQI', 'zCW']
 
 ####################### NAMELIST DIMENSIONS #######################
 i_subDomain = 1 # 0: full domain, 1: alpine region
-ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
+ssI, domainName = setSSI(i_subDomain, {'4':{}, '2':{}, '1':{}}) 
 #ssI['diurnal'] = list(range(10,20)) 
 #ssI['altitude'] = list(range(25,65)) 
 # DOMAINS ASSUMING Alpine Region FROM subDomDiur FILES IS REFERENCE!

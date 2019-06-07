@@ -53,10 +53,6 @@ def setSSI(i_subdomain, ssI):
         lat1 = 121 
     elif i_subdomain == 10:
         domainName = 'Summary_Crossect'
-        #lon0 = 107 
-        #lon1 = 130
-        #lat0 = 41
-        #lat1 = 135 
         lon0 = 110
         lon1 = 135
         lat0 = 52
@@ -74,17 +70,17 @@ def setSSI(i_subdomain, ssI):
 
 
     # FOR THE cloud-base etc. frequency dists
-    ssI['4.4']['rlon'] = list(range(lon0,lon1))
-    ssI['4.4']['rlat'] = list(range(lat0,lat1)) 
-    ssI['4.4']['srlon'] = list(range(lon0,lon1)) 
-    ssI['4.4']['srlat'] = list(range(lat0,lat1)) 
-    ssI['2.2']['rlon'] = list(range(lon0*2,lon1*2))
-    ssI['2.2']['rlat'] = list(range(lat0*2,lat1*2)) 
-    ssI['2.2']['srlon'] = list(range(lon0*2,lon1*2)) 
-    ssI['2.2']['srlat'] = list(range(lat0*2,lat1*2)) 
-    ssI['1.1']['rlon'] = list(range(lon0*4,lon1*4))
-    ssI['1.1']['rlat'] = list(range(lat0*4,lat1*4)) 
-    ssI['1.1']['srlon'] = list(range(lon0*4,lon1*4)) 
-    ssI['1.1']['srlat'] = list(range(lat0*4,lat1*4)) 
+    ssI['4']['rlon'] = list(range(lon0,lon1))
+    ssI['4']['rlat'] = list(range(lat0,lat1)) 
+    ssI['4']['srlon'] = list(range(lon0,lon1)) 
+    ssI['4']['srlat'] = list(range(lat0,lat1)) 
+    ssI['2']['rlon'] = list(range(lon0*2,lon1*2))
+    ssI['2']['rlat'] = list(range(lat0*2,lat1*2)) 
+    ssI['2']['srlon'] = list(range(lon0*2,lon1*2)) 
+    ssI['2']['srlat'] = list(range(lat0*2,lat1*2)) 
+    ssI['1']['rlon'] = list(range(lon0*4,lon1*4))
+    ssI['1']['rlat'] = list(range(lat0*4,lat1*4)) 
+    ssI['1']['srlon'] = list(range(lon0*4,lon1*4)) 
+    ssI['1']['srlat'] = list(range(lat0*4,lat1*4)) 
 
     return(ssI, domainName)

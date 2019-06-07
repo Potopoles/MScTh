@@ -35,7 +35,7 @@ else:
     quit()
 
 models=['RAW4', 'SM4', 'RAW2', 'SM2' ,'RAW1', 'SM1']
-models=['OBS4', 'OBS2', 'OBS1']
+#models=['OBS4', 'OBS2', 'OBS1']
 
 #####################################################################		
 dx = {'RAW4':4.4, 'SM4':4.4, 'OBS4':4.4,
@@ -58,7 +58,7 @@ for fieldName in fieldNames:
         if fieldName in 'nTOT_PREC':
             nco.load_as_diurnal('SUM')
         else:
-            nco.loadAsDiurnal('MEAN')
+            nco.load_as_diurnal('MEAN')
         # SAVE FILE
         if os.path.exists(outFilePath):
             os.remove(outFilePath)

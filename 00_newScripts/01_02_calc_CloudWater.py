@@ -8,10 +8,7 @@ import multiprocessing as mp
 os.chdir('00_newScripts/')
 
 
-ress = ['4.4', '2.2', '1.1']
-#ress = ['4.4']
-modes = ['', 'f']
-modes = ['f']
+models = ['RAW4', 'SM4', 'RAW2', 'SM2', 'RAW1', 'SM1']
 i_subdomain = 0
 
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
@@ -32,33 +29,31 @@ else:
 
 def calc_cw(ncFileName):
     print(ncFileName)
-    for res in ress:
-        for mode in modes:
-            #print('\t'+res+mode)
-            srcNCPath = inpPath + res + mode + '/' + ncFileName
+    for model in models:
+        srcNCPath = inpPath + model + '/zlev/' + ncFileName
 
-            l_already_done = False
-            try:
-                fqvfield = ncField.ncField(var, srcNCPath, ssI)
-                l_already_done = True
-            except:
-                pass
+        l_already_done = False
+        try:
+            fqvfield = ncField.ncField(var, srcNCPath, ssI)
+            l_already_done = True
+        except:
+            pass
 
-            if not l_already_done:
-                NCF = ncField.ncField('QC', srcNCPath, ssI)
-                NCF.loadValues()
-                qc = NCF.vals
+        if not l_already_done:
+            NCF = ncField.ncField('QC', srcNCPath, ssI)
+            NCF.loadValues()
+            qc = NCF.vals
 
-                NCF = ncField.ncField('QI', srcNCPath, ssI)
-                NCF.loadValues()
-                qi = NCF.vals
+            NCF = ncField.ncField('QI', srcNCPath, ssI)
+            NCF.loadValues()
+            qi = NCF.vals
 
-                cw = qc + qi
-                
-                CWncf = NCF.copy() 
-                CWncf.fieldName = 'CW'
-                CWncf.vals = cw
-                CWncf.addVarToExistingNC(srcNCPath)
+            cw = qc + qi
+            
+            CWncf = NCF.copy() 
+            CWncf.fieldName = 'CW'
+            CWncf.vals = cw
+            CWncf.addVarToExistingNC(srcNCPath)
 
 
 

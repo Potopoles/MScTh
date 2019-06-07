@@ -3,10 +3,10 @@
 """
 title			:summary.py
 description	    :Calculate summary plot for delayed onset and Po Valley night
-                 time precip.
+                 time precipitation.
 author			:Christoph Heim
 date created    :20190120 
-date changed    :20190521
+date changed    :20190607
 usage			:no args
 notes			:Figure 10 in paper.
 python_version	:3.7.1
@@ -45,9 +45,10 @@ endHght = 40
 altInds = list(range(startHght,endHght+1))
 ssI['altitude'] = altInds 
 
-diurnals = [[9,10,11],
-            [16,17,18]]
-diurnal_labels = ['0800-1100 UTC','1500-1800 UTC']
+diurnals = [[9,10,11,12],
+            [17,18],
+            [23,0,1,2,3,4,5,6]]
+diurnal_labels = ['0800-1200 UTC','1600-1800 UTC', '2200-0600 UTC']
 
 plotName = 'summary'
 plotOutDir = '../00_plots/12_summary'
@@ -68,9 +69,10 @@ def set_ax_props(ax, dimy, dimz):
 
 
 #fig,axes_all = plt.subplots(4,3, figsize=(13,16))
-fig,axes_all = plt.subplots(2,3, figsize=(13,9.2))
+#fig,axes_all = plt.subplots(2,3, figsize=(13,9.2))
+fig,axes_all = plt.subplots(3,3, figsize=(11,4))
 fig.subplots_adjust(wspace=0.15, hspace=0.45,
-        left=0.05, right=0.95, bottom=0.25, top=0.85)
+        left=0.05, right=0.95, bottom=0.15, top=0.90)
 
 
 for dI in range(0,len(diurnals)):
@@ -101,28 +103,29 @@ for dI in range(0,len(diurnals)):
     dimz = an.vars['zFQVY'] .ncos['RAW'+res].field.dims['altitude'].vals
     dimd = an.vars['zFQVY'] .ncos['RAW'+res].field.dims['diurnal']
 
+
     RAW = {}
     SM = {}
     DIFF = {}
     lims = {}
-    RAW['HSURF']    = an.vars['cHSURF'] .ncos['RAW'+res].field.vals/1000
-    SM ['HSURF']    = an.vars['cHSURF'] .ncos['SM'+res].field.vals/1000
-    RAW['FQVY']     = an.vars['zFQVY']  .ncos['RAW'+res].field.vals*1000
-    SM ['FQVY']     = an.vars['zFQVY']  .ncos['SM'+res].field.vals*1000
-    #RAW['QC']       = an.vars['zQC']    .ncos['RAW'+res].field.vals*1000
-    #SM['QC']        = an.vars['zQC']    .ncos['SM'+res].field.vals*1000
+    RAW['HSURF']    = np.ma.filled(an.vars['cHSURF'] .ncos['RAW'+res].field.vals,np.nan)/1000
+    SM ['HSURF']    = np.ma.filled(an.vars['cHSURF'] .ncos['SM'+res] .field.vals,np.nan)/1000
+    RAW['FQVY']     = np.ma.filled(an.vars['zFQVY']  .ncos['RAW'+res].field.vals,np.nan)*1000
+    SM ['FQVY']     = np.ma.filled(an.vars['zFQVY']  .ncos['SM'+res] .field.vals,np.nan)*1000
 
     #### AGGREGATE X
-    RAW['FQVY'] = np.nansum(RAW['FQVY'], axis=3)/len(dimx)
-    SM ['FQVY'] = np.nansum(SM ['FQVY'], axis=3)/len(dimx)
-    #RAW['QC'] = np.nansum(RAW['QC'], axis=3)/len(dimx)
-    #SM['QC'] = np.nansum(SM['QC'], axis=3)/len(dimx)
+    n_nan_x_RAW = np.sum(np.isnan(RAW['FQVY']),axis=3)
+    n_nan_x_SM = np.sum(np.isnan(SM['FQVY']),axis=3)
+    #RAW['FQVY'] = np.nansum(RAW['FQVY'], axis=3)/len(dimx)
+    #SM ['FQVY'] = np.nansum(SM ['FQVY'], axis=3)/len(dimx)
+    RAW['FQVY'] = np.nansum(RAW['FQVY'], axis=3)/(len(dimx) - n_nan_x_RAW)
+    SM ['FQVY'] = np.nansum(SM ['FQVY'], axis=3)/(len(dimx) - n_nan_x_SM)
+    RAW['FQVY'][np.isnan(RAW['FQVY'])] = 0.
+    SM['FQVY'][np.isnan(SM['FQVY'])] = 0.
 
     #### AGGREGATE DIURNAL
     RAW['FQVY'] = np.mean(RAW['FQVY'], axis=0)
     SM ['FQVY'] = np.mean(SM ['FQVY'], axis=0)
-    #RAW['QC'] = np.mean(RAW['QC'], axis=0)
-    #SM['QC'] = np.mean(SM['QC'], axis=0)
 
     unit_FQVY  = '$g$ $m^{-2}$ $s^{-1}$'
     name_FQVY  = '$Q_{V}$ $Flux$'
@@ -144,13 +147,21 @@ for dI in range(0,len(diurnals)):
                             np.max(np.abs(lims[plot_var])), 20)
     levels_diff = np.linspace(-np.max(np.abs(DIFF[plot_var])),
                             np.max(np.abs(DIFF[plot_var])), 20)
-    #levels_mod = np.arange(-0.13,0.14,0.005)
-    #levels_diff = np.arange(-0.05,0.055,0.005)
-    levels_mod = np.arange(-35,35.1,1.0)
-    levels_diff = np.arange(-15,15.1,1.0)
+    # original with 2 labels
+    levels_mod = np.arange(-40,41.1,2.0)
+    levels_diff = np.arange(-20,20.1,1.0)
+    #levels_mod = np.arange(-40,40.1,1.0)
+    #levels_diff = np.arange(-40,40.1,1.0)
     unit = unit_FQVY; name = name_FQVY
     #levels_QC = [np.percentile(RAW['QC'], q=98)]
     #levels_QC = [0.02]
+
+    SM[plot_var][SM[plot_var] < levels_mod[0]] = levels_mod[0]
+    SM[plot_var][SM[plot_var] > levels_mod[-1]] = levels_mod[-1]
+    RAW[plot_var][RAW[plot_var] < levels_mod[0]] = levels_mod[0]
+    RAW[plot_var][RAW[plot_var] > levels_mod[-1]] = levels_mod[-1]
+    DIFF[plot_var][DIFF[plot_var] < levels_diff[0]] = levels_diff[0]
+    DIFF[plot_var][DIFF[plot_var] > levels_diff[-1]] = levels_diff[-1]
 
 
     # SMOOTH
@@ -212,10 +223,10 @@ for dI in range(0,len(diurnals)):
 
 
 ####COLORBARS
-cPosBot = 0.12
+cPosBot = 0.05
 xPosLeft = 0.07
 width = 0.55
-cHeight = 0.05
+cHeight = 0.03
 
 cax = fig.add_axes([xPosLeft, cPosBot, width, cHeight])
 cax.tick_params(labelsize=tick_labelsize)

@@ -14,8 +14,8 @@ i_save = 0
 ress = ['4.4', '2.2', '1.1']
 #ress = ['2.2', '1.1']
 #ress = ['1.1']
-#ress = ['4.4']
-modes = ['', 'f']
+ress = ['4']
+modes = ['RAW', 'SM']
 #modes = ['f']
 i_subdomain = 1
 i_variables = 'Fqv'
@@ -29,7 +29,11 @@ altInds = list(range(0,21))
 ssI['4.4']['altitude'] = altInds 
 ssI['2.2']['altitude'] = altInds 
 ssI['1.1']['altitude'] = altInds 
+
+ssI['4'] = ssI['4.4']
 #ssIRaw = copy.deepcopy(ssI)
+
+dxs = {'4':4.4}
 
 i_walls = ['left', 'right', 'top', 'bottom']
 i_walls = ['bottom']
@@ -96,7 +100,8 @@ for i_wall in i_walls:
     #print(i_variables)
     #print('#########################')
     for res in ress:
-        dx = float(res)*1000
+        #dx = float(res)*1000
+        dx = float(dxs[res])*1000
         for mode in modes:
             print('###### '+res+mode+' ######')
 
@@ -123,7 +128,7 @@ for i_wall in i_walls:
                 if tCount % 24 == 0:
                     print('\t\t'+ncFileName)
 
-                srcNCPath = inpPath + res + mode + '/' + ncFileName
+                srcNCPath = inpPath + mode+ res+ '/calc/' + ncFileName
 
                 #print(srcNCPath)
                 #quit()

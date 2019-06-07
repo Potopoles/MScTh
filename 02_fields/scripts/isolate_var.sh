@@ -9,11 +9,11 @@ dest=../topocut
 models=(RAW4 SM4 RAW2 SM2 RAW1 SM1)
 #models=(RAW4 SM4 RAW2 SM2)
 #models=(SM1 RAW1)
-models=(OBS4 OBS2 OBS1)
+#models=(OBS4 OBS2 OBS1)
 
 # zlev
 vars=(AQVT_TOT AQVT_ADV AQVT_ZADV AQVT_TURB AQVT_MIC)
-vars=(CW QI QC)
+vars=(CW QI QC, CW)
 vars=(U V QV QC QR QI QS W T P)
 
 # calc
@@ -29,12 +29,12 @@ vars=(PS T_S)
 vars=(TOT_PREC)
 
 # selection
-vars=(TOT_PREC)
+vars=(CW)
 
-#var_grp=zlev
+var_grp=zlev
 #var_grp=calc
 #var_grp=mlev
-var_grp=obs
+#var_grp=obs
 
 for var in "${vars[@]}"; do
     #var=AQVT_TOT

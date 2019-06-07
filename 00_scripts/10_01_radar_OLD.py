@@ -15,7 +15,7 @@ import os, sys
 os.chdir('00_scripts/')
 
 i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 0 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 1 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -106,6 +106,9 @@ if nDPlot == 2:
     for res in an.resolutions:
         radar_masks[res] = np.isnan(an.vars[fieldNames[0]].ncos['OBS'+res].field.vals)
 
+    print('Radar Mean:')
+    print(np.nanmean(an.vars[fieldNames[0]].ncos['OBS'+res].field.vals))
+
 
     for res in an.resolutions:
         for mode in an.modes:
@@ -117,6 +120,9 @@ if nDPlot == 2:
                 #pass
             #print(np.sum(np.isnan(vals)))
             #print(np.nanmean(vals))
+
+    print('RAW1 Mean:')
+    print(np.nanmean(an.vars[fieldNames[0]].ncos['RAW1'].field.vals))
 
 elif nDPlot == 1:
     an.run()

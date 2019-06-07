@@ -14,9 +14,9 @@ class analysis:
 
     modes = ['SM', 'RAW'] # '' = raw, 'f' = filtered
     modeNames = ['SM', 'RAW']
-    ### TODO TMP
-    modes = ['SM', 'RAW', 'OBS'] # '' = raw, 'f' = filtered
-    modeNames = ['SM', 'RAW', 'OBS']
+    #### TODO TMP
+    #modes = ['SM', 'RAW', 'OBS'] # '' = raw, 'f' = filtered
+    #modeNames = ['SM', 'RAW', 'OBS']
 
     def __init__(self, inpPath, varNames):
         self.inpPath = inpPath

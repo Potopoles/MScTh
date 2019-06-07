@@ -1,13 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-title			:topography.py
-description	    :Plot topographies for all 6 simulations.
+title			:domain.py
+description	    :Plot simulation domain with topography and analysis domains
 author			:Christoph Heim
 date created    :20171121 
-date changed    :20190522
+date changed    :20190607
 usage			:no args
-notes			:Figure 2 in paper.
+notes			:Figure 1 in paper.
 python_version	:3.7.1
 ==============================================================================
 """
@@ -29,29 +29,26 @@ from functions import *
 from ncClasses.subdomains import setSSI
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-inpPath = '../02_fields/topocut'
-fieldNames = ['cHSURF']
+#inpPath = '../02_fields/topocut'
+inpPath = '../02_fields/diurnal'
+#fieldNames = ['zQC', 'nHPBL', 'cHSURF']
+fieldNames = ['cHSURF','nTOT_PREC']
 #####################################################################		
 
 ####################### NAMELIST DIMENSIONS #######################
-i_subDomain = 1 # 0: full domain, 1: alpine region
+i_subDomain = 0 # 0: full domain, 1: alpine region
 ssI, domainName = setSSI(i_subDomain, {'4':{}, '2':{}, '1':{}}) 
 #####################################################################
 
 ####################### NAMELIST AGGREGATE #######################
 # Options: MEAN, SUM, DIURNAL
 ag_commnds = {}
-#ag_commnds['rlat'] = 'MEAN'
-#ag_commnds['rlon'] = 'MEAN'
-#ag_commnds['time'] = 'DIURNAL'
-#ag_commnds['altitude'] = 'MEAN'
 #####################################################################
 
 ####################### NAMELIST PLOT #######################
 nDPlot = 2 # How many dimensions should plot have (1 or 2)
-i_diffPlot = 0 # Draw plot showing difference filtered - unfiltered # TODO
 plotOutDir = '../00_plots'
-plotName = 'topography.png'
+plotName = 'domain_AR_and_NI.png'
 ##### 1D PLOT #########
 
 ##### 2D Contour ######
@@ -65,11 +62,7 @@ Mmask = 0 # Mask Model values lower than MThrMinRel of maximum value?
 MThrMinRel = 0.15 # Relative amount of max value to mask (see Mmask)
 Mticks = [0.0001,0.0002,0.0003,0.0004,0.0005]
 Mticks = list(np.arange(0.0002,0.0022,0.0002))
-# COLORBAR Models
-cmapD = 'bwr' # colormap for Difference output (bwr)
 #####################################################################
-
-
 an = analysis.analysis(inpPath, fieldNames)
 
 an.subSpaceInds = ssI
@@ -80,64 +73,57 @@ an.i_resolutions = i_resolutions
 # RUN ANALYSIS
 an.run()
 
-
 import matplotlib
 if i_plot == 2:
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-
-
-
 if i_plot > 0:
     if i_info >= 3:
         print('plotting')
     mainVar = an.vars[an.varNames[0]]
+    nco = mainVar.ncos['RAW1']
     someField = next(iter(mainVar.ncos.values())).field
     if i_info >= 1:
         print('NONSINGLETONS: ' + str(someField.nNoneSingleton))
     
     if nDPlot == 2 and someField.nNoneSingleton == 2:
-        import ncPlots.ncSubplots2D as ncSubplots
-        ncs = ncSubplots.ncSubplots(an, nDPlot, i_diffPlot, 'HOR')
+        import ncPlots.ncPlot2D as ncPlot
+        ncp = ncPlot.ncPlot2D(nco)
 
-        ncs.contourTranspose = contourTranspose
-        ncs.plotContour = plotContour
-        ncs.cmapM = cmapM
-        ncs.axis = axis
-        ncs.autoTicks = autoTicks
-        ncs.Mmask = Mmask
-        ncs.MThrMinRel = MThrMinRel
-        ncs.Mticks = Mticks
-        ncs.cmapD = cmapD
-    
-        #if 'cHSURF' in an.varNames:
-        #    ncs.plotTopo(an.vars['cHSURF'])
+        ncp.contourTranspose = contourTranspose
+        ncp.plotContour = plotContour
+        ncp.cmapM = cmapM
+        ncp.axis = axis
+        ncp.autoTicks = autoTicks
+        ncp.Mmask = Mmask
+        ncp.MThrMinRel = MThrMinRel
+        ncp.Mticks = Mticks
+   
+        fig, ax = ncp.plotNCO(nco)
+
+        text_size = 25
+        df = 50
+        col3 = 'black'
         
-        (fig,axes,MCB) = ncs.plotVar(an.vars['cHSURF'])
-        MCB.set_label(r'Elevation $[m]$', fontsize=19*ncs.MAG)
+        # ALPINE REGION
+        x0 = 50; x1 = 237
+        y0 = 41; y1 = 155
+        ax.plot([x0*4, x1*4], [y0*4, y0*4], '-k', linewidth=2)
+        ax.plot([x0*4, x1*4], [y1*4, y1*4], '-k', linewidth=2)
+        ax.plot([x0*4, x0*4], [y0*4, y1*4], '-k', linewidth=2)
+        ax.plot([x1*4, x1*4], [y0*4, y1*4], '-k', linewidth=2)
+        ax.text(x1*4-df, y0*4+df/3, 'A', fontsize=text_size, color='k')
 
-        for rI,res in enumerate(an.resolutions):
-            for mI,mode in enumerate(an.modes):
-                print(res+mode)
-                nco = an.vars['cHSURF'].ncos[mode+res]
-                maxHght = np.max(nco.field.vals)
-                axes[mI,rI].text(830,190, '{:d}'.format(maxHght.astype(np.int)),
-                            fontsize=16*ncs.MAG, color='w')
+        # CROSSSECT
+        x0 = 110; x1 = 135
+        y0 = 52; y1 = 135
+        ax.plot([x0*4, x1*4], [y0*4, y0*4], '-', lineWidth=2, color=col3)
+        ax.plot([x0*4, x1*4], [y1*4, y1*4], '-', lineWidth=2, color=col3)
+        ax.plot([x0*4, x0*4], [y0*4, y1*4], '-', lineWidth=2, color=col3)
+        ax.plot([x1*4, x1*4], [y0*4, y1*4], '-', lineWidth=2, color=col3)
+        ax.text(x1*4-df, y1*4-df, 'B', fontsize=text_size, color=col3)
             
-        #title = 'topography' 
-        #ncs.fig.suptitle(title, fontsize=14)
-
-    elif nDPlot == 1 and someField.nNoneSingleton == 1:
-        import ncPlots.ncSubplots1D as ncSubplots
-        ncs = ncSubplots.ncSubplots(an, nDPlot, i_diffPlot, 'HOR')
-    
-        for fldName in an.fieldNames:
-            if fldName != 'cHSURF':
-                ncs.plotVar(an.vars[fldName])
-
-        title = 'title' 
-        ncs.fig.suptitle(title, fontsize=14)
 
     else:
         raise ValueError('ERROR: CANNOT MAKE ' + str(nDPlot) + 'D-PLOT WITH ' +

@@ -5,12 +5,13 @@ title			:hist_cloud_size.py
 description	    :Calculate histograms of cloud sizes (convective clouds)
 author			:Christoph Heim
 date created    :20171121
-date changed    :20190521
+date changed    :20190607
 usage			:no args
-notes			:Figure 9 in paper.
+notes			:
 python_version	:3.7.1
 ==============================================================================
 """
+from pathlib import Path
 from netCDF4 import Dataset
 import numpy as np
 
@@ -18,19 +19,18 @@ day0 = 11
 #day0 = 12
 day1 = 19 
 #day1 = 12 
-ress = [4.4, 2.2, 1.1]
-#ress = [4.4, 2.2]
-#ress = [4.4]
-
-modes = ['', 'f']
+ress = ['4', '2', '1']
+dxs = {'4':4.4,'2':2.2,'1':1.1}
+modes = ['RAW', 'SM']
 i_plot = 3
 plotOutDir = '00_plots/08_cloud_cluster'
+Path(plotOutDir).mkdir(parents=True, exist_ok=True)
 plotName = 'cloud_size_absFreq_dist_and_diff_NEW'
 nbins = 40
 minNClouds = 30
 i_subdomain = 1
 from ncClasses.subdomains import setSSI
-ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
+ssI, domainName = setSSI(i_subdomain, {'4':{}, '2':{}, '1':{}}) 
 
 colrs = [(0,0,0), (0,0,1), (1,0,0)]
 labelsize = 13
@@ -54,20 +54,20 @@ labels = []
 # 
 ########################################################################
 for res in ress:
-    xmin = ssI[str(res)]['rlon'][0]
-    xmax = ssI[str(res)]['rlon'][-1]
-    ymin = ssI[str(res)]['rlat'][0]
-    ymax = ssI[str(res)]['rlat'][-1]
+    xmin = ssI[res]['rlon'][0]
+    xmax = ssI[res]['rlon'][-1]
+    ymin = ssI[res]['rlat'][0]
+    ymax = ssI[res]['rlat'][-1]
     for mode in modes:
-        print(str(res)+mode)
-        inpPath = '01_rawData/cloud_cluster/'+str(res)+mode
+        print(mode+res)
+        inpPath = '01_rawData/cloud_cluster/'+mode+res
         sizes = []
         for i in range(0,len(days)):
             file = 'lffd200607'+str(days[i]).zfill(2) + str(hours[i]).zfill(2) + 'z.nc'
             fullPath = inpPath + '/' + file
             nc = Dataset(fullPath, 'r')
 
-            factor = np.power(res,2)
+            factor = np.power(dxs[res],2)
 
             xc = nc['XCENTER'][:]
             yc = nc['YCENTER'][:]
@@ -86,10 +86,10 @@ for res in ress:
         sizes = np.asarray(sizes)
         print('n clouds: ' + str(sizes.shape[0]))
         #allSizes.append(sizes)
-        allSizes[str(res)+mode] = sizes
-        outRess.append(str(res))
+        allSizes[mode+res] = sizes
+        outRess.append(res)
         outModes.append(mode)
-        labels.append(str(res)+mode)
+        labels.append(mode+res)
 
 
 ########################################################################
@@ -104,18 +104,18 @@ bins_res = {}
 bins_centred_res = {}
 for res in ress:
     bins = np.logspace(0,5,num=nbins)
-    thresh_ind = np.argwhere(np.diff(bins) >= float(res)**2)[0][0]
+    thresh_ind = np.argwhere(np.diff(bins) >= dxs[res]**2)[0][0]
     thresh_val = bins[thresh_ind]
     linear_spacing = []
     i = 1
-    while float(res)**2*i <= thresh_val:
-        linear_spacing.append(float(res)**2*i - float(res)**2/2)
+    while dxs[res]**2*i <= thresh_val:
+        linear_spacing.append(dxs[res]**2*i - dxs[res]**2/2)
         i += 1
     bins = bins[thresh_ind:]
     both = []; both.extend(linear_spacing); both.extend(bins)
     bins_centred = both[0:(len(both)-1)] + np.diff(both)/2
-    bins_res[str(res)] = both
-    bins_centred_res[str(res)] = bins_centred
+    bins_res[res] = both
+    bins_centred_res[res] = bins_centred
 
 #print(bins_res)
 #print()
@@ -128,13 +128,13 @@ for res in ress:
 nclouds = {}
 for res in ress:
     for mode in modes:
-        hist = np.histogram(allSizes[str(res)+mode], bins=bins_res[str(res)])
+        hist = np.histogram(allSizes[mode+res], bins=bins_res[res])
         ncloud = hist[0]
 
         ncloud = ncloud.astype(np.float)
         ncloud[ncloud < 0.9] = np.nan
 
-        nclouds[str(res)+mode] = ncloud
+        nclouds[mode+res] = ncloud
 
 ########################################################################
 #  CREATE PLOTS
@@ -149,8 +149,8 @@ modeStrings = ['SM', 'RAW', '(RAW - SM)/SM']
 for rI,res in enumerate(ress):
 
     # ABSOLUTE VALUES
-    nClRaw = nclouds[str(res)+'']
-    nClSmo = nclouds[str(res)+'f']
+    nClRaw = nclouds['RAW'+res]
+    nClSmo = nclouds['SM'+res]
     line, = axes[0].loglog(bins_centred_res[str(res)], nClSmo, '-', color=colrs[rI]) 
     axes[1].loglog(bins_centred_res[str(res)], nClRaw, '-', color=colrs[rI]) 
     handles.append(line)
@@ -181,9 +181,9 @@ for rI,res in enumerate(ress):
 
     # LABELS
     ax = axes[1]
-    x = 1.5
-    yTop = 3E1
-    ry = 0.42
+    x = 1.4
+    yTop = 7E1
+    ry = 0.36
     size = 13
     if i == 0:
         ax.text(x, yTop, 'RAW/SM:', size=size,
