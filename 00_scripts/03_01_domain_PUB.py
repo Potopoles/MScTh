@@ -5,7 +5,7 @@ title			:domain.py
 description	    :Plot simulation domain with topography and analysis domains
 author			:Christoph Heim
 date created    :20171121 
-date changed    :20190607
+date changed    :20190611
 usage			:no args
 notes			:Figure 1 in paper.
 python_version	:3.7.1
@@ -31,8 +31,8 @@ from ncClasses.subdomains import setSSI
 # directory of input model folders
 #inpPath = '../02_fields/topocut'
 inpPath = '../02_fields/diurnal'
-#fieldNames = ['zQC', 'nHPBL', 'cHSURF']
-fieldNames = ['cHSURF','nTOT_PREC']
+#fieldNames = ['cHSURF','nTOT_PREC']
+fieldNames = ['cHSURF']
 #####################################################################		
 
 ####################### NAMELIST DIMENSIONS #######################
@@ -104,6 +104,7 @@ if i_plot > 0:
 
         text_size = 25
         df = 50
+        col2 = 'red'
         col3 = 'black'
         
         # ALPINE REGION
@@ -122,7 +123,13 @@ if i_plot > 0:
         ax.plot([x0*4, x1*4], [y1*4, y1*4], '-', lineWidth=2, color=col3)
         ax.plot([x0*4, x0*4], [y0*4, y1*4], '-', lineWidth=2, color=col3)
         ax.plot([x1*4, x1*4], [y0*4, y1*4], '-', lineWidth=2, color=col3)
-        ax.text(x1*4-df, y1*4-df, 'B', fontsize=text_size, color=col3)
+        ax.text(x1*4+df/4, y1*4-df, 'B', fontsize=text_size, color=col3)
+
+        # LINE CROSSSECT
+        x = 120
+        y0 = 90; y1 = 140
+        ax.plot([x*4, x*4], [y0*4, y1*4], '-', lineWidth=2, color=col2)
+        ax.text(x*4-df/3, y0*4-df, 'C', fontsize=text_size, color=col2)
             
 
     else:
