@@ -13,6 +13,7 @@ models=(RAW4 SM4 RAW2 SM2 RAW1 SM1)
 
 # zlev
 vars=(AQVT_TOT AQVT_ADV AQVT_ZADV AQVT_TURB AQVT_MIC)
+vars=(ATT_TOT ATT_ADV ATT_ZADV ATT_TURB ATT_MIC ATT_RAD)
 vars=(CW QI QC, CW)
 vars=(U V QV QC QR QI QS W T P)
 
@@ -29,7 +30,8 @@ vars=(PS T_S)
 vars=(TOT_PREC)
 
 # selection
-vars=(CW)
+#vars=(ATT_TOT ATT_ADV ATT_ZADV ATT_TURB ATT_MIC ATT_RAD)
+vars=(ATT_MIC ATT_RAD)
 
 var_grp=zlev
 #var_grp=calc

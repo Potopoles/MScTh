@@ -144,8 +144,8 @@ class ncSubplots():
 
             for rI,res in enumerate(self.ress):
                 # GET VALUES AND DIMENSIONS				
-                rawfld = var.ncos[str(res)].field
-                smfld = var.ncos[str(res)+'f'].field
+                rawfld = var.ncos['RAW'+str(res)].field
+                smfld = var.ncos['SM'+str(res)].field
                 diff = rawfld.vals - smfld.vals
                 dim = rawfld.noneSingletonDims[0]
 

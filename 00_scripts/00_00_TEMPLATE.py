@@ -5,7 +5,7 @@ title			:TEMPLATE.py
 description	    :
 author			:Christoph Heim
 date created    :20171121 
-date changed    :20190521
+date changed    :20190612
 usage			:no args
 notes			:
 python_version	:3.7.1
@@ -14,7 +14,7 @@ python_version	:3.7.1
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
 i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
@@ -29,8 +29,8 @@ from functions import *
 from ncClasses.subdomains import setSSI
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-#inpPath = '../02_fields/diurnal'
-inpPath = '../02_fields/topocut'
+inpPath = '../02_fields/diurnal'
+#inpPath = '../02_fields/topocut'
 
 others = ['cHSURF', 'nTOT_PREC', 'nHPBL']
 hydrometeors = ['zQC', 'zQI', 'zQV', 'zQR', 'zQS', 'zQG']
@@ -45,19 +45,20 @@ fieldNames = ['nALHFL_S']
 fieldNames = ['cHSURF']
 fieldNames = ['zQV']
 fieldNames = ['nPMSL']
-fieldNames = ['cHSURF']
+fieldNames = ['zT']
+#fieldNames = ['zATT_TURB']
 #####################################################################		
 
 ####################### NAMELIST DIMENSIONS #######################
 i_subDomain = 1 # 0: full domain, 1: alpine region
-ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
+ssI, domainName = setSSI(i_subDomain, {'4':{}, '2':{}, '1':{}}) 
 #print(ssI)
 #quit() ## PROBLEM WITH SUBDOMAIN!!!
 
-#startHght = 0
-#endHght = 25
-#altInds = list(range(startHght,endHght+1))
-#ssI['altitude'] = altInds 
+startHght = 0
+endHght = 30
+altInds = list(range(startHght,endHght+1))
+ssI['altitude'] = altInds 
 
 #startTime = datetime(2006,7,11,00)
 #endTime = datetime(2006,7,20,23)
@@ -69,17 +70,17 @@ ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}})
 ####################### NAMELIST AGGREGATE #######################
 # Options: MEAN, SUM 
 ag_commnds = {}
-ag_commnds['rlat'] = 'SUM'
-ag_commnds['rlon'] = 'SUM'
+ag_commnds['rlat'] = 'MEAN'
+ag_commnds['rlon'] = 'MEAN'
 #ag_commnds['time'] = 'MEAN'
 #ag_commnds['diurnal'] = 'MEAN'
-#ag_commnds['altitude'] = 'MEAN'
+ag_commnds['altitude'] = 'MEAN'
 #ag_commnds['time'] = 'MEAN'
 #####################################################################
 
 ####################### NAMELIST PLOT #######################
 nDPlot = 1 # How many dimensions should plot have (1 or 2)
-i_diffPlot = 0 # Draw plot showing difference filtered - unfiltered # TODO
+i_diffPlot = 1 # Draw plot showing difference filtered - unfiltered # TODO
 plotOutDir = '../00_plots'
 #plotOutDir = '../00_plots/04_coldPools/zFQVy'
 plotName = 'test.png'
@@ -115,12 +116,12 @@ an.i_resolutions = i_resolutions
 # RUN ANALYSIS
 an.run()
 
-for res in an.resolutions:
-    for mode in an.modes:
-        print(res+mode)
-        topo = an.vars['cHSURF'].ncos[mode+res].field.vals
-        print(topo)
-quit()
+#for res in an.resolutions:
+#    for mode in an.modes:
+#        print(res+mode)
+#        topo = an.vars['cHSURF'].ncos[mode+res].field.vals
+#        print(topo)
+#quit()
 
 
 import matplotlib
@@ -128,11 +129,11 @@ if i_plot == 2:
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-#for res in an.resolutions:
-#    for mode in an.modes:
-#        print(res+mode)
-#        nco = an.vars['cHSURF'].ncos[res+mode]
-#        print(np.max(nco.field.vals))
+for res in an.resolutions:
+    for mode in an.modes:
+        print(res+mode)
+        nco = an.vars[fieldNames[0]].ncos[mode+res]
+        print(np.nanmean(nco.field.vals))
 #quit()
 #
 #quit()
