@@ -9,6 +9,7 @@ dest=../topocut
 models=(RAW4 SM4 RAW2 SM2 RAW1 SM1)
 #models=(RAW4 SM4 RAW2 SM2)
 #models=(SM1 RAW1)
+models=(RAW4)
 #models=(OBS4 OBS2 OBS1)
 
 # zlev
@@ -19,7 +20,7 @@ vars=(U V QV QC QR QI QS W T P)
 
 # calc
 vars=(FQVy EQPOTT FQVZ FQVY RH RHO)
-vars=(WVP_0_10 WVP_0_2 WVP_0_4 WVP_2_4 WVP_4_10)
+vars=(WVP_0_10 WVP_0_2 WVP_0_4 WVP_2_4 WVP_4_10 WVP_2_10)
 vars=(LWP_0_10 LWP_0_2 LWP_2_4 LWP_4_10)
 
 # mlev
@@ -31,10 +32,10 @@ vars=(TOT_PREC)
 
 # selection
 #vars=(ATT_TOT ATT_ADV ATT_ZADV ATT_TURB ATT_MIC ATT_RAD)
-vars=(ATT_MIC ATT_RAD)
+vars=(WVP_2_10)
 
-var_grp=zlev
-#var_grp=calc
+#var_grp=zlev
+var_grp=calc
 #var_grp=mlev
 #var_grp=obs
 

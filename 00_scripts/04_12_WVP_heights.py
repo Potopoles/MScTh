@@ -33,11 +33,12 @@ inpPath = '../02_fields/diurnal'
 var = 'WVP'
 #var = 'LWP'
 
-plot_vars = ['z'+var+'_0_4']
-#plot_vars = ['z'+var+'_0_2']
+plot_vars = ['z'+var+'_2_10']
+plot_vars = ['z'+var+'_0_2']
+#plot_vars = ['z'+var+'_0_4']
 #plot_vars = ['z'+var+'_2_4']
 #plot_vars = ['z'+var+'_4_10']
-#plot_vars = ['z'+var+'_0_10']
+plot_vars = ['z'+var+'_0_10']
 #plot_vars = ['z'+var+'_0_2','z'+var+'_2_4','z'+var+'_4_10']
 
 vars_meta = {
@@ -47,7 +48,7 @@ vars_meta = {
         'title_append':'0-4 km',
     },
     'zWVP_0_2':{
-        'Mticks':np.arange(5,22,0.5),
+        'Mticks':np.arange(7,21.1,0.5),
         'path_append':'0_2',
         'title_append':'0-2 km',
     },
@@ -60,6 +61,12 @@ vars_meta = {
         'Mticks':np.arange(3,9,0.2),
         'path_append':'4_10',
         'title_append':'4-10 km',
+    },
+    'zWVP_2_10':{
+        #'Mticks':np.arange(10,22,0.5),
+        'Mticks':np.arange(7,21.1,0.5),
+        'path_append':'2_10',
+        'title_append':'2-10 km',
     },
     'zWVP_0_10':{
         'Mticks':np.arange(20,38.1,1),
@@ -149,7 +156,7 @@ if i_plot == 2:
 import matplotlib.pyplot as plt
 
 for tI in subSpaceIndsIN['diurnal']:
-    print(tI)
+    print('######### time ' + str(tI))
     plot_name = var+'_'+dts[tI]
 
     fig, axes = plt.subplots(len(plot_vars), 2, 
@@ -181,7 +188,10 @@ for tI in subSpaceIndsIN['diurnal']:
             ax.contourf(dimx.vals, dimy.vals, topo.field.vals, tTicks,
                 cmap='binary', alpha=0.7)
 
+
             wvp = an.vars[plot_var].ncos[model].field.vals[tI,:,:]
+            print(model + ' mean:')
+            print(round(np.mean(wvp),2))
             CF = ax.contourf(dimx.vals, dimy.vals, wvp.squeeze(),
                 vars_meta[plot_var]['Mticks'],
                 cmap='jet', alpha=0.7)

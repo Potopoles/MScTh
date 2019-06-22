@@ -37,6 +37,7 @@ else:
 models=['RAW4', 'SM4', 'RAW2', 'SM2' ,'RAW1', 'SM1']
 #models=['OBS4', 'OBS2', 'OBS1']
 models=['RAW1', 'SM1','RAW4', 'SM4', 'RAW2', 'SM2']
+models=['RAW4', 'SM4', 'RAW2', 'SM2']
 
 #####################################################################		
 dx = {'RAW4':4.4, 'SM4':4.4, 'OBS4':4.4,

@@ -1,8 +1,16 @@
-#################################
-# Calculate domain Average Precipitation
-# author: Christoph Heim
-# date: 21 10 2017
-#################################
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+title			:QV_cross_sects.py
+description	    :Plot lat/lon-altitude cross-sections of water vapor.
+author			:Christoph Heim
+date created    :20190510
+date changed    :20190611
+usage			:no args
+notes			:
+python_version	:3.7.1
+==============================================================================
+"""
 import os
 os.chdir('00_scripts/')
 
@@ -95,7 +103,7 @@ cs = [
 
 
 counts = range(0,len(cs))
-counts = [2]
+counts = [3]
 
 for count in counts:
     lon = cs[count]['lon']

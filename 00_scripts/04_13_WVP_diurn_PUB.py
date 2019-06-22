@@ -15,7 +15,7 @@ import os
 os.chdir('00_scripts/')
 
 i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 
 widthStretch = 10.6
@@ -53,6 +53,8 @@ WVP_heights = '2_4'
 Mticks = np.arange(5,15,0.5)
 WVP_heights = '4_10'
 Mticks = np.arange(3,9,0.2)
+WVP_heights = '2_10'
+Mticks = np.arange(10,22,0.5)
 plotName = 'WVP_'+WVP_heights+'_diurnal'
 fieldNames = ['cHSURF', 'zWVP_'+WVP_heights]
 #####################################################################		
@@ -101,7 +103,8 @@ import matplotlib.pyplot as plt
 nts = len(diurn_hours)
 fig, axes = plt.subplots(nts, 2, figsize=(widthStretch,nts*heightStretch))
 
-dts = an.vars['zWVP_'+WVP_heights].ncos['RAW'+an.resolutions[0]].dims['diurnal'].vals
+dts = an.vars['zWVP_'+WVP_heights].ncos[
+                    'RAW'+an.resolutions[0]].dims['diurnal'].vals
 for tI,dhr in enumerate(diurn_hours):
     rI = tI
     dhr_string = '{:02d}00'.format(dhr)
@@ -117,7 +120,8 @@ for tI,dhr in enumerate(diurn_hours):
     ax.contourf(dimx.vals, dimy.vals, topo.field.vals, tTicks,
         cmap='binary', alpha=0.7)
 
-    wvp = an.vars['zWVP_'+WVP_heights].ncos['SM'+an.resolutions[0]].field.vals[dhr,:,:]
+    wvp = an.vars['zWVP_'+WVP_heights].ncos[
+                        'SM'+an.resolutions[0]].field.vals[dhr,:,:]
     CF = ax.contourf(dimx.vals, dimy.vals, wvp.squeeze(), Mticks,
         cmap='jet', alpha=0.7)
 
