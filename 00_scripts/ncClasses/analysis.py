@@ -12,13 +12,7 @@ from datetime import datetime, timedelta
 class analysis:
     from netCDF4 import Dataset
 
-    modes = ['SM', 'RAW'] # '' = raw, 'f' = filtered
-    modeNames = ['SM', 'RAW']
-    #### TODO TMP
-    #modes = ['SM', 'RAW', 'OBS'] # '' = raw, 'f' = filtered
-    #modeNames = ['SM', 'RAW', 'OBS']
-
-    def __init__(self, inpPath, varNames):
+    def __init__(self, inpPath, varNames, use_obs=False):
         self.inpPath = inpPath
         self.varNames = varNames
 
@@ -26,6 +20,15 @@ class analysis:
         # (example: inpFileNames: 'zW.nc' and fileType: 'z')
         self.inpFileNames, self.fileTypes = self._getInpFileNames(
                                             self.varNames)
+
+        if use_obs:
+            self.modes = ['SM', 'RAW', 'OBS'] # '' = raw, 'f' = filtered
+            self.modeNames = ['SM', 'RAW', 'OBS']
+            #self.modes = ['RAW'] # '' = raw, 'f' = filtered
+            #self.modeNames = ['RAW']
+        else:
+            self.modes = ['SM', 'RAW'] # '' = raw, 'f' = filtered
+            self.modeNames = ['SM', 'RAW']
         
         # CREATE VARIABLE INSTANCES
         self.vars = {}
@@ -78,6 +81,14 @@ class analysis:
                 if self.i_info >= 3:
                     print('\t\tload models')
 
+                # TODO quick fix
+                #if ncoKey in ['SM1', 'RAW1']:
+                #    #inpFilePath = self.inpPath + '/' + ncoKey+'_1' + '/' + self.inpFileNames[i]
+                #    #inpFilePath = self.inpPath + '/' + ncoKey+'_2' + '/' + self.inpFileNames[i]
+                #    inpFilePath = self.inpPath + '/' + ncoKey+'_3' + '/' + self.inpFileNames[i]
+                #else:
+                #    inpFilePath = self.inpPath + '/' + ncoKey + '/' + self.inpFileNames[i]
+                # TODO old version
                 inpFilePath = self.inpPath + '/' + ncoKey + '/' + self.inpFileNames[i]
                 name = ncoKey
                 self.vars[vN].ncos[ncoKey] = ncObject.ncObject(inpFilePath,

@@ -6,8 +6,8 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
+i_resolutions = 1 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 1 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -19,6 +19,7 @@ import ncClasses.analysis as analysis
 from ncClasses.subdomains import setSSI
 from datetime import datetime
 from functions import *
+from package import nl_plot_global
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
 #inpPath = '../02_fields/subDomDiur'
@@ -94,6 +95,9 @@ an.i_resolutions = i_resolutions
 # RUN ANALYSIS
 an.run()
 
+for key,nco in an.vars['nTOT_PREC'].ncos.items():
+    nco.field.vals /= 9
+
 
 import matplotlib
 if i_plot == 2:
@@ -139,11 +143,12 @@ else:
 	raise ValueError('ERROR: CANNOT MAKE ' + str(nDPlot) + 'D-PLOT WITH ' +
 	str(someField.nNoneSingleton) + ' NON-SINGLETON DIMS!')
 
+from matplotlib.lines import Line2D
 # PRECIP MEAN DAILY SUM
 x = 1
-yTop = 0.85
-dy = 0.12
-size = 12
+dy = 0.019
+yTop = 0.16-dy
+size = 13
 for rowInd,mode in enumerate(an.modes):
     if ncs.orientation == 'VER':
         ax = ncs.axes[rowInd,0]
@@ -153,30 +158,54 @@ for rowInd,mode in enumerate(an.modes):
         ax.text(x, yTop+dy, 'Sum:', size=size,
                 bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
     # PLOT ADJUSTMENTS
-    ax.set_xlabel('Hour',fontsize=12)
-    if mode == '':
-        #ax.legend_.remove()
-        ax.set_ylabel('',fontsize=12)
+    ax.set_xlabel('Time (UTC)',fontsize=16)
+    if mode == 'RAW':
+        ax.set_ylabel('',fontsize=16)
+        ax.set_title('RAW', fontsize=18)
     else:
-        ax.set_ylabel(r'Rain Rate $[mm$ $h^{-1}]$',fontsize=12)
-    ax.set_ylim(0,1.7)
+        ax.set_ylabel(r'Rain Rate $[mm$ $h^{-1}]$',fontsize=16)
+        ax.set_title('SM', fontsize=18)
+    ax.set_ylim(0,0.3)
     for rI,res in enumerate(ncs.ress):
         # GET VALUES AND DIMENSIONS				
-        fld = an.vars['nTOT_PREC'].ncos[str(res+mode)].field
-        if mode != 'd':
-            sum = str(round(np.sum(fld.vals),1)) + ' mm' 
-            ax.text(x, yTop-dy*rI, sum, color=ncs.colrs[rI], size=size,
-                    bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+        fld = an.vars['nTOT_PREC'].ncos[str(mode+res)].field
+        sum = str(round(np.sum(fld.vals),2)) + ' mm' 
+        ax.text(x, yTop-dy*rI, sum, color=ncs.colrs[rI], size=size,
+                bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+
+    lines = [Line2D([0], [0], color='black', lw=1.5),
+             Line2D([0], [0], color='blue', lw=1.5),
+             Line2D([0], [0], color='red', lw=1.5),]
+    print(mode)
+    if mode == 'RAW':
+        ax.legend(lines, ['RAW4', 'RAW2', 'RAW1'], loc='upper left', fontsize=12)
+    else:
+        ax.legend(lines, ['SM4', 'SM2', 'SM1'], loc='upper left', fontsize=12)
         
+    ncs.fig.set_size_inches((9,4))
+    ncs.fig.subplots_adjust(left=0.10, right=0.98, bottom=0.15, top=0.91,
+                            wspace=0.2)
+
+
+panel_labels = ['a)','b)', 'c)', 'd)', 'e)', 'f)']
+lind = 0
+for ax in ncs.axes[0,:]:
+    # make panel label
+    pan_lab_x = ax.get_xlim()[0]
+    pan_lab_y = ax.get_ylim()[1] + (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.04
+    ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=15, weight='bold')
+    lind += 1
 	
 if i_plot == 1:
 	plt.show()
 elif i_plot == 2:
     plotPath = plotOutDir + '/' + plotName+'.png'
+    print(plotPath)
     plt.savefig(plotPath, format='png', bbox_inches='tight')
     plt.close('all')
 elif i_plot == 3:
     plotPath = plotOutDir + '/' + plotName+'.pdf'
+    print(plotPath)
     plt.savefig(plotPath, format='pdf', bbox_inches='tight')
     plt.close('all')
 

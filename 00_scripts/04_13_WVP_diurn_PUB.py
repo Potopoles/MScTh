@@ -1,21 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-title			WVP_diurn.py
 description	    Plot water vapor path over Po Valley.
 author			Christoph Heim
-date created    20190606
-date changed    20190607
+date created    06.06.2019
+date changed    12.11.2019
 usage			no args
-notes			
-python_version	3.7.1
-==============================================================================
 """
+##############################################################################
 import os
 os.chdir('00_scripts/')
 
 i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 
 widthStretch = 10.6
@@ -23,7 +20,8 @@ heightStretch = 4
 
 xpos_mem = 340
 ypos_mem = 430
-xpos_time = 618
+#xpos_time = 618
+xpos_time = 548
 ypos_time = 228
 
 
@@ -47,14 +45,14 @@ from functions import *
 inpPath = '../02_fields/diurnal'
 WVP_heights = '0_10'
 Mticks = np.arange(20,38.1,1) 
-WVP_heights = '0_2'
-Mticks = np.arange(5,22,0.5)
-WVP_heights = '2_4'
-Mticks = np.arange(5,15,0.5)
-WVP_heights = '4_10'
-Mticks = np.arange(3,9,0.2)
-WVP_heights = '2_10'
-Mticks = np.arange(10,22,0.5)
+#WVP_heights = '0_2'
+#Mticks = np.arange(5,22,0.5)
+#WVP_heights = '2_4'
+#Mticks = np.arange(5,15,0.5)
+#WVP_heights = '4_10'
+#Mticks = np.arange(3,9,0.2)
+#WVP_heights = '2_10'
+#Mticks = np.arange(10,22,0.5)
 plotName = 'WVP_'+WVP_heights+'_diurnal'
 fieldNames = ['cHSURF', 'zWVP_'+WVP_heights]
 #####################################################################		
@@ -105,9 +103,13 @@ fig, axes = plt.subplots(nts, 2, figsize=(widthStretch,nts*heightStretch))
 
 dts = an.vars['zWVP_'+WVP_heights].ncos[
                     'RAW'+an.resolutions[0]].dims['diurnal'].vals
+panel_labels = ['a)','b)', 'c)', 'd)', 'e)', 'f)', 'g)', 'h)', 'i)', 'j)', 'k)', 'l)']
+lind = 0
 for tI,dhr in enumerate(diurn_hours):
     rI = tI
-    dhr_string = '{:02d}00'.format(dhr)
+    dhr_string = '{:02d}00 UTC'.format(dhr)
+    print(dhr_string)
+    ##################################################################
     ########SMOOOTHED
     cI = 0
     ax = axes[rI,cI]
@@ -122,6 +124,8 @@ for tI,dhr in enumerate(diurn_hours):
 
     wvp = an.vars['zWVP_'+WVP_heights].ncos[
                         'SM'+an.resolutions[0]].field.vals[dhr,:,:]
+    sm_wvp_sum = wvp.sum()
+    print('SM {}'.format(sm_wvp_sum))
     CF = ax.contourf(dimx.vals, dimy.vals, wvp.squeeze(), Mticks,
         cmap='jet', alpha=0.7)
 
@@ -139,6 +143,13 @@ for tI,dhr in enumerate(diurn_hours):
 
     ax.tick_params(labelsize=tick_labelsize)
 
+    # make panel label
+    pan_lab_x = ax.get_xlim()[0] - (ax.get_xlim()[1] - ax.get_xlim()[0]) * 0.00
+    pan_lab_y = ax.get_ylim()[1] + (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.05
+    ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=20, weight='bold')
+    lind += 1
+
+    ##################################################################
     ############ RAW
     cI = 1
     ax = axes[rI,cI]
@@ -152,6 +163,9 @@ for tI,dhr in enumerate(diurn_hours):
         cmap='binary', alpha=0.7)
 
     wvp = an.vars['zWVP_'+WVP_heights].ncos['RAW'+an.resolutions[0]].field.vals[dhr,:,:]
+    print('RAW {}'.format(wvp.sum()))
+    print('RAW-SM {}'.format((wvp.sum() - sm_wvp_sum)/1E6))
+    print('RAW/SM {}'.format(wvp.sum() / sm_wvp_sum))
     CF = ax.contourf(dimx.vals, dimy.vals, wvp.squeeze(), Mticks,
         cmap='jet', alpha=0.7)
 
@@ -169,6 +183,11 @@ for tI,dhr in enumerate(diurn_hours):
 
     ax.tick_params(labelsize=tick_labelsize)
 
+    # make panel label
+    pan_lab_x = ax.get_xlim()[0] - (ax.get_xlim()[1] - ax.get_xlim()[0]) * 0.00
+    pan_lab_y = ax.get_ylim()[1] + (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.05
+    ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=20, weight='bold')
+    lind += 1
 
     ############ colorbar
     xPosLeft = 0.10
@@ -188,5 +207,6 @@ if i_plot == 1:
     plt.show()
 elif i_plot == 2:
     plotPath = plotOutDir + '/' + plotName+'.png'
+    print(plotPath)
     plt.savefig(plotPath, format='png', bbox_inches='tight')
 

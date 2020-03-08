@@ -37,12 +37,17 @@ else:
 models=['RAW4', 'SM4', 'RAW2', 'SM2' ,'RAW1', 'SM1']
 #models=['OBS4', 'OBS2', 'OBS1']
 models=['RAW1', 'SM1','RAW4', 'SM4', 'RAW2', 'SM2']
-models=['RAW4', 'SM4', 'RAW2', 'SM2']
+#models=['RAW4', 'SM4', 'RAW2', 'SM2']
+models=['RAW1_1', 'SM1_1']
+models=['RAW1_2', 'SM1_2', 'RAW1_3', 'SM1_3']
 
 #####################################################################		
 dx = {'RAW4':4.4, 'SM4':4.4, 'OBS4':4.4,
-        'RAW2':2.2, 'SM2':2.2, 'OBS2':2.2,
-        'RAW1':1.1, 'SM1':1.1, 'OBS1':1.1,}
+      'RAW2':2.2, 'SM2':2.2, 'OBS2':2.2,
+      'RAW1':1.1, 'SM1':1.1, 'OBS1':1.1,
+      'RAW1_1':1.1, 'SM1_1':1.1,
+      'RAW1_2':1.1, 'SM1_2':1.1,
+      'RAW1_3':1.1, 'SM1_3':1.1, 'OBS1':1.1,}
 
 for fieldName in fieldNames:
     print(fieldName)

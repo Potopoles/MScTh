@@ -4,12 +4,13 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 import copy as copy
+from matplotlib.colors import LinearSegmentedColormap
 
 from functions import round_sig
 
 class ncSubplots():
     
-    def __init__(self, an, nDPlot, i_diffPlot, orientation):
+    def __init__(self, an, nDPlot, i_diffPlot, orientation, geo_plot=False):
         self.an = an
         self.an.prepareForPlotting()
         self.ress = an.resolutions
@@ -17,12 +18,13 @@ class ncSubplots():
         self.nRes = len(self.ress)
         self.i_diffPlot = i_diffPlot
         self.orientation = orientation
+        self.geo_plot = geo_plot
 
         self.plotMode = ''
         self.plotMode = 'LATLON'
 
-        self.MAG = 1.3
-        #self.MAG = 1.0
+        #self.MAG = 1.3
+        self.MAG = 0.8
        
         if orientation == 'HOR': 
             if i_diffPlot:
@@ -30,6 +32,7 @@ class ncSubplots():
                 self.nrows = 3
             else:
                 self.ncols = self.nRes
+                #self.ncols = 4
                 self.nrows = 2
         elif orientation == 'VER':            
             if i_diffPlot:
@@ -100,6 +103,8 @@ class ncSubplots():
         #quit()
 
         # MAIN LOOP
+        panel_labels = ['a)','b)', 'c)', 'd)', 'e)', 'f)']
+        lind = 0
         for colInd,mode in enumerate(var.modes):
             for rowInd,res in enumerate(self.ress):
                 if self.orientation == 'VER':
@@ -113,6 +118,13 @@ class ncSubplots():
                 fld = var.ncos[str(mode+res)].field
                 dims = fld.noneSingletonDims			
                 dimx, dimy, fld = self._prepareDimAndFields(dims, fld)
+
+                # make panel label
+                pan_lab_x = dimx.vals[0] - (dimx.vals[-1] - dimx.vals[0]) * 0.0
+                pan_lab_y = dimy.vals[0] + (dimy.vals[-1] - dimy.vals[0]) * 1.05
+                ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=15, weight='bold')
+                lind += 1
+
 
                 vals = copy.deepcopy(fld.vals)
                 if hasattr(self, 'absMax'):
@@ -159,6 +171,7 @@ class ncSubplots():
                         if self.Mmask:
                             vals = np.ma.masked_where(vals <= levels[0], vals) 
                         
+                self.levels = levels
 
                 cmap = plt.get_cmap(cmap)
 
@@ -172,8 +185,26 @@ class ncSubplots():
                 elif i_plotType == 1:
                     [gridx, gridy] = np.meshgrid(dimx.vals, dimy.vals)
                     from matplotlib.colors import BoundaryNorm
-                    norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
-                    CF = ax.pcolormesh(gridx, gridy, vals.squeeze(), cmap=cmap, norm=norm)
+                    if not self.geo_plot:
+                        norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+                        #import cartopy.crs as ccrs
+                        CF = ax.pcolormesh(gridx, gridy, vals.squeeze(), cmap=cmap, norm=norm)
+                        #quit()
+                    else:
+                        levels = np.arange(0.1,4300,100)
+                        norm = BoundaryNorm(levels, ncolors=cmap.N, clip=False)
+                        vals[vals < levels[0]] = np.nan
+                        cmap = plt.get_cmap('cubehelix')
+                        #cmap = plt.get_cmap('ocean')
+                        #cmap = plt.get_cmap('nipy_spectral')
+                        #cmap = plt.get_cmap(cmap)
+                        #colors = cmap(np.linspace(0.2, 1.0, cmap.N // 2))
+                        colors = cmap(np.linspace(0.15, 1.0, cmap.N // 2))
+                        cmap = LinearSegmentedColormap.from_list('test', colors)
+                        cmap.set_bad('royalblue')
+                        CF = ax.pcolormesh(gridx, gridy, vals.squeeze(), cmap=cmap, norm=norm)
+
+
                     
                 if self.orientation == 'VER':
                     self.plts[rowInd][colInd] = CF
@@ -188,7 +219,8 @@ class ncSubplots():
                     ax.set_yticks([0,6,12,18,24])
 
                 # SUBPLOT TITLE
-                titl = ax.set_title(var.modeNames[colInd]+res, fontsize=23*self.MAG)
+                titl = ax.set_title(var.modeNames[colInd]+res, 
+                                    fontsize=23*self.MAG)
                 titl.set_position([0.5, 1.+0.01*self.MAG])
                 
                 # AXES UNITS AND LABELS
@@ -309,6 +341,7 @@ class ncSubplots():
         cHeight = 0.03
 
         cax = self.fig.add_axes([xPosLeft, cPosBot, width, cHeight])
+        self.cax = cax
         MCB = plt.colorbar(mappable=CF, cax=cax,
                     orientation='horizontal')
         cax.tick_params(labelsize=13*self.MAG)
@@ -339,7 +372,7 @@ class ncSubplots():
                         left=0.2, right=0.85, bottom=0.25, top=0.90)
             else:
                 self.fig.subplots_adjust(wspace=0.13, hspace=0.3,
-                        left=0.07, right=0.96, bottom=0.20, top=0.90)
+                        left=0.07, right=0.96, bottom=0.21, top=0.91)
                     
         if 'DCB' in locals():
             return(self.fig, self.axes, MCB, DCB)
@@ -430,7 +463,6 @@ class ncSubplots():
         else:
             self.Mticks = ticks
 
-        
         # MAIN LOOP
         for colInd,mode in enumerate(self.an.modes):
             for rowInd,res in enumerate(self.an.resolutions):

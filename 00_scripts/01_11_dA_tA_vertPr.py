@@ -6,14 +6,14 @@
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 3 # 0 = no plot, 1 = show plot, 2 = save plot
-i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
+i_resolutions = 1 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
+i_info = 1 # output some information [from 0 (off) to 5 (all you can read)]
 
 
 import matplotlib
-if i_plot > 1:
-    matplotlib.use('Agg')
+if i_plot == 2:
+	matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import ncClasses.analysis as analysis
 from datetime import datetime
@@ -42,7 +42,7 @@ fieldNames = ['zQV']
 
 ####################### NAMELIST DIMENSIONS #######################
 i_subDomain = 1 # 0: full domain, 1: alpine region
-ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
+ssI, domainName = setSSI(i_subDomain, {'4':{}, '2':{}, '1':{}}) 
 #quit() ## PROBLEM WITH SUBDOMAIN!!!
 
 startHght = 0

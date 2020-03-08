@@ -4,19 +4,22 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 import copy as copy
+from matplotlib.colors import LinearSegmentedColormap
 
 from functions import round_sig
 
 class ncPlot2D():
     
-    def __init__(self, nco):
+    def __init__(self, nco, geo_plot=False):
         self.nco = nco
         nco.field.prepareForPlotting()
+        self.geo_plot = geo_plot
 
         self.mult = 1.5
         
         heightStretch = 6*self.mult
-        widthStretch = 6.36*self.mult
+        #widthStretch = 6.36*self.mult
+        widthStretch = 5.80*self.mult
         self.fig, self.ax = plt.subplots(figsize=(widthStretch,heightStretch))
 
 
@@ -52,9 +55,27 @@ class ncPlot2D():
         ticks = self.Mticks
 
         if self.plotContour in [0, 2]:
-            CF = ax.contourf(dimx.vals, dimy.vals,
-                                    fld.vals.squeeze(), ticks,
-                                    cmap=cmap)
+            if not self.geo_plot:
+                CF = ax.contourf(dimx.vals, dimy.vals,
+                                        fld.vals.squeeze(), ticks,
+                                        cmap=cmap)
+            else:
+                levels = np.arange(0.1,4300,100)
+                from matplotlib.colors import BoundaryNorm
+                cmap = plt.get_cmap(cmap)
+                norm = BoundaryNorm(levels, ncolors=cmap.N, clip=False)
+                vals = fld.vals
+                vals[vals < levels[0]] = np.nan
+                cmap = plt.get_cmap('cubehelix')
+                #cmap = plt.get_cmap('ocean')
+                #cmap = plt.get_cmap('nipy_spectral')
+                #cmap = plt.get_cmap(cmap)
+                #colors = cmap(np.linspace(0.2, 1.0, cmap.N // 2))
+                colors = cmap(np.linspace(0.15, 1.0, cmap.N // 2))
+                cmap = LinearSegmentedColormap.from_list('test', colors)
+                cmap.set_bad('royalblue')
+                [gridx, gridy] = np.meshgrid(dimx.vals, dimy.vals)
+                CF = ax.pcolormesh(gridx, gridy, vals.squeeze(), cmap=cmap, norm=norm)
 
         # SET DIURNAL AXIS TICKS 
         if dimx.agg_mode == 'DIURNAL': 
@@ -85,6 +106,7 @@ class ncPlot2D():
         width = 0.55
         cHeight = 0.03
 
+        self.CF = CF
         #CB = self.fig.colorbar(CF, ticks=self.Mticks)
         #fldUnits = self._getUnits(fld)
         #CB.set_label(fld.label + ' ' + fldUnits)

@@ -16,9 +16,13 @@ class field:
         self.meta = ncFile[name]
         # THE DIMENSIONS AS GIVEN IN THE NC FILE
         self.fileDimKeys = list(self.meta.dimensions)
+        #print(self.fileDimKeys)
+        #print(dims.keys())
         # THE DIMENSIONS AS SHOULD BE USED ACCORDING TO ncObject
         self.dimKeys = [] 
         for dK in self.fileDimKeys:
+            #print(list(dims.keys()))
+            #print(dK)
             if (dK == 'srlon') and ('rlon' in list(dims.keys())):
                 self.dimKeys.append('rlon')
             elif (dK == 'srlat') and ('rlat' in list(dims.keys())):
@@ -27,8 +31,15 @@ class field:
                 self.dimKeys.append('x_1')
             elif (dK == 'y_1') and ('y_1' in list(dims.keys())):
                 self.dimKeys.append('y_1')
+            elif (dK == 'lat') and ('rlat' in list(dims.keys())):
+                self.dimKeys.append('rlat')
+            elif (dK == 'lon') and ('rlon' in list(dims.keys())):
+                self.dimKeys.append('rlon')
             elif dK in list(dims.keys()):
                 self.dimKeys.append(dK)
+
+        #print(self.dimKeys)
+
 
         # TAKE FROM ncObject dims ONLY THOSE THAT ARE WITHIN self.dimKeys
         self.dims = {}
@@ -125,6 +136,8 @@ class field:
     def transposeToOrder(self, dimOrder):
         """Transposes field values such that the first n dimensions
             are those given by dim Order"""
+        #print(dimOrder)
+        #quit()
         dimInds = np.arange(0,len(self.dimKeys))
         oldOrder = []
         for dO in dimOrder:
@@ -199,6 +212,8 @@ class field:
     def _getDimInd(self, key):
         """For a given dimension key this function returns the index in the field."""
         """Returns None if dimension is not contained"""
+        #print(self.dimKeys)
+        #print(key)
         return(self.dimKeys.index(key))
         
                 

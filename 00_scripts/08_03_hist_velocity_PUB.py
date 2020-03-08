@@ -5,7 +5,7 @@ title			:hist_velocity.py
 description	    :Calculate histograms of vertical velocity at an altitude
 author			:Christoph Heim
 date created    :20171121
-date changed    :20190607
+date changed    :11.11.2019
 usage			:no args
 notes			:
 python_version	:3.7.1
@@ -168,13 +168,17 @@ for startHght in altInds:
         ratio[mask == 0] = np.nan
         ax.plot(binsCentred, ratio, color=colrs[rI]) 
 
+    panel_labels = ['a)','b)', 'c)', 'd)', 'e)', 'f)']
+    lind = 0
     for mI,mode in enumerate(['','f','d']):
         # SMOOTH
         ax = axes[mI]
         ax.set_xlabel('Vertical Velocity [$m$ $s^{-1}$]',fontsize=labelsize)
         if mI == 0:
             ax.set_ylabel('Frequency',fontsize=labelsize)
-            ax.legend(handles,dxs_string)
+            ax.legend(handles,['SM4', 'SM2', 'SM1'])
+        elif mI == 1:
+            ax.legend(handles,['RAW4', 'RAW2', 'RAW1'])
         elif mI == 2:
             ax.set_ylabel('Relative Difference',fontsize=labelsize)
 
@@ -188,6 +192,15 @@ for startHght in altInds:
         ax.set_title(modeStrings[mI],fontsize=titlesize)
         ax.grid()
 
+        # make panel label
+        pan_lab_x = ax.get_xlim()[0]
+        if mode in ['', 'f']:
+            pan_lab_y = ax.get_ylim()[1] * 2.2
+        else:
+            pan_lab_y = ax.get_ylim()[1] + (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.05
+        ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=15, weight='bold')
+        lind += 1
+
 
     #fig.subplots_adjust(wspace=0.23,left=0.07, right=0.95, bottom=0.15, top=0.85)
     fig.subplots_adjust(wspace=0.30,left=0.07, right=0.95, bottom=0.15, top=0.85)
@@ -195,9 +208,11 @@ for startHght in altInds:
 
     if i_plot == 2:
         outName = 'vertical_velocity_dist_and_diff_alt_'+str(altitude)+'_NEW.png'
+        print(outPath + outName)
         plt.savefig(outPath + outName)
     elif i_plot == 3:
         outName = 'vertical_velocity_dist_and_diff_alt_'+str(altitude)+'_NEW.pdf'
+        print(outPath + outName)
         plt.savefig(outPath + outName)
     elif i_plot == 1:
         plt.show()

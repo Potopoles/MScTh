@@ -1,21 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-title			radar_OLD.py
 description	    Plot radar evaluation 2D or 1D.
 author			Christoph Heim
-date created    201801010
-date changed    20190524
+date created    10.10.2018
+date changed    24.05.2019
 usage			no args
-notes			
-python_version	3.7.1
 ==============================================================================
 """
 import os, sys
 os.chdir('00_scripts/')
 
 i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 0 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 1 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -39,13 +36,13 @@ model_modes = ['RAW', 'SM']
 #ress = [4.4]
 
 i_subDomain = 1 # 0: full domain, 1: alpine region
-ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
+ssI, domainName = setSSI(i_subDomain, {'4':{}, '2':{}, '1':{}}) 
 startTime = datetime(2006,7,11,00)
 endTime = datetime(2006,7,19,23)
 ssI['time'] = [startTime,endTime] # border values (one value if only one time step desired)
 #ssI['diurnal'] = [20,21,22,23,0,1,2,3,4,5,6,7] # list values
 #ssI['diurnal'] = [8,9,10,11,12,13,14,15,16,17,18,19] # list values
-ssI['diurnal'] = [int(sys.argv[1])]
+#ssI['diurnal'] = [int(sys.argv[1])]
 #####################################################################		
 
 ####################### NAMELIST AGGREGATE #######################
@@ -60,16 +57,16 @@ ag_commnds = {}
 #####################################################################
 
 ####################### NAMELIST PLOT #######################
-nDPlot = 2 # How many dimensions should plot have (1 or 2)
+nDPlot = 1 # How many dimensions should plot have (1 or 2)
 i_diffPlot = 0 # Draw plot showing difference filtered - unfiltered # TODO
 plotOutDir = '../00_plots'
 
 # 2D PLOT
-#plotName = '10_evaluation/2D'
+plotName = '10_evaluation/radar_1D'
 #plotName = '10_evaluation/2D_night'
 #plotName = '10_evaluation/2D_day'
 #Mticks = list(np.arange(10,320,20))
-plotName = '10_evaluation/2D_hour_{:02d}'.format(ssI['diurnal'][0])
+#plotName = '10_evaluation/2D_hour_{:02d}'.format(ssI['diurnal'][0])
 Mticks = list(np.arange(1,50,5))
 # 1D PLOT
 #plotName = '10_evaluation/1D'
@@ -88,7 +85,7 @@ cmapD = 'bwr' # colormap for Difference output (bwr)
 #####################################################################
 
 
-an = analysis.analysis(inpPath, fieldNames)
+an = analysis.analysis(inpPath, fieldNames, use_obs=True)
 
 #an.subSpaceInds = subSpaceInds
 an.ag_commnds = ag_commnds
@@ -219,7 +216,7 @@ if i_plot > 0:
         xvals = np.arange(0,25)
         for mI,mode in enumerate(model_modes):
             ax = ncs.axes[0,mI]
-            vals = an.vars[fieldNames[0]].ncos['1.1r'].field.vals
+            vals = an.vars[fieldNames[0]].ncos['RAW1'].field.vals
             line, = ax.plot(xvals, vals.squeeze(), color='grey', label='OBS')
             if ax.get_legend() is not None:
                 lines = ax.get_legend().get_lines()
@@ -281,7 +278,7 @@ if i_plot > 0:
                     ax.text(x, yTop-dy*rI, sum, color=ncs.colrs[rI], size=size,
                             bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
             # RADAR
-            fld = an.vars['nTOT_PREC'].ncos[str(res)+'r'].field
+            fld = an.vars['nTOT_PREC'].ncos['RAW'+str(res)].field
             if mode != 'd':
                 sum = str(round(np.sum(fld.vals),1)) + ' mm' 
                 ax.text(x, yTop-dy*(rI+1), sum, color='grey', size=size,

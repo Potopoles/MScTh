@@ -1,15 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-title			:summary.py
-description	    :Calculate summary plot for delayed onset and Po Valley night
-                 time precipitation.
-author			:Christoph Heim
-date created    :20190120 
-date changed    :20190607
-usage			:no args
-notes			:Figure 10 in paper.
-python_version	:3.7.1
+description	    Calculate summary plot for delayed onset and Po Valley night
+                time precipitation.
+author			Christoph Heim
+date created    20.01.2019
+date changed    31.10.2019
+usage			no args
+notes			Figure 12 in paper.
 ==============================================================================
 """
 import os
@@ -17,7 +15,7 @@ from pathlib import Path
 os.chdir('00_scripts/')
 
 i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 3 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 0 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -38,7 +36,7 @@ fieldNames = ['zFQVY', 'cHSURF']#, 'zQC']
 
 ####################### NAMELIST DIMENSIONS #######################
 i_subDomain = 10 # 0: full domain, 1: alpine region
-ssI, domainName = setSSI(i_subDomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
+ssI, domainName = setSSI(i_subDomain, {'4':{}, '2':{}, '1':{}}) 
 
 startHght = 0
 endHght = 40
@@ -70,11 +68,13 @@ def set_ax_props(ax, dimy, dimz):
 
 #fig,axes_all = plt.subplots(4,3, figsize=(13,16))
 #fig,axes_all = plt.subplots(2,3, figsize=(13,9.2))
-fig,axes_all = plt.subplots(3,3, figsize=(11,4))
-fig.subplots_adjust(wspace=0.15, hspace=0.45,
+fig,axes_all = plt.subplots(3,3, figsize=(11,11))
+fig.subplots_adjust(wspace=0.15, hspace=0.50,
         left=0.05, right=0.95, bottom=0.15, top=0.90)
 
 
+panel_labels = ['a)','b)', 'c)', 'd)', 'e)', 'f)', 'g)', 'h)', 'i)']
+lind = 0
 for dI in range(0,len(diurnals)):
     print(diurnals[dI])
     axes = axes_all[dI,:]
@@ -164,12 +164,14 @@ for dI in range(0,len(diurnals)):
     DIFF[plot_var][DIFF[plot_var] > levels_diff[-1]] = levels_diff[-1]
 
 
+    ##################################################################
     # SMOOTH
+    ##################################################################
     ax = axes[0]
     if dI == 0:
         ax.text(-0.15,1.25,diurnal_labels[dI], transform=ax.transAxes, size=time_labelsize)
     else:
-        ax.text(-0.15,1.15,diurnal_labels[dI], transform=ax.transAxes, size=time_labelsize)
+        ax.text(-0.15,1.20,diurnal_labels[dI], transform=ax.transAxes, size=time_labelsize)
     if dI == 0:
         ax.set_title('SM1', fontsize=titlesize)
     CF = ax.contourf(dimy, dimz, SM[plot_var], cmap=cmap_mod, levels=levels_mod)
@@ -186,8 +188,15 @@ for dI in range(0,len(diurnals)):
     if dI == len(diurnals)-1:
         ax.set_xlabel('Latitude [km]', fontsize=labelsize)
 
+    # make panel label
+    pan_lab_x = ax.get_xlim()[0] - (ax.get_xlim()[1] - ax.get_xlim()[0]) * 0.00
+    pan_lab_y = ax.get_ylim()[1] + (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.05
+    ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=15, weight='bold')
+    lind += 1
 
+    ##################################################################
     # RAW
+    ##################################################################
     ax = axes[1]
     if dI == 0:
         ax.set_title('RAW1', fontsize=titlesize)
@@ -204,7 +213,15 @@ for dI in range(0,len(diurnals)):
     if dI == len(diurnals)-1:
         ax.set_xlabel('Latitude [km]', fontsize=labelsize)
 
+    # make panel label
+    pan_lab_x = ax.get_xlim()[0] - (ax.get_xlim()[1] - ax.get_xlim()[0]) * 0.00
+    pan_lab_y = ax.get_ylim()[1] + (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.05
+    ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=15, weight='bold')
+    lind += 1
+
+    ##################################################################
     # DIFF
+    ##################################################################
     ax = axes[2]
     if dI == 0:
         ax.set_title('RAW1 - SM1', fontsize=titlesize)
@@ -219,6 +236,12 @@ for dI in range(0,len(diurnals)):
     ax.tick_params(labelsize=tick_labelsize)
     if dI == len(diurnals)-1:
         ax.set_xlabel('Latitude [km]', fontsize=labelsize)
+
+    # make panel label
+    pan_lab_x = ax.get_xlim()[0] - (ax.get_xlim()[1] - ax.get_xlim()[0]) * 0.00
+    pan_lab_y = ax.get_ylim()[1] + (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.05
+    ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=15, weight='bold')
+    lind += 1
 
 
 
@@ -249,10 +272,12 @@ if i_plot == 1:
     plt.show()
 elif i_plot == 2:
     plotPath = plotOutDir + '/' + plotName+'.png'
+    print(plotPath)
     plt.savefig(plotPath, format='png', bbox_inches='tight')
     plt.close('all')
 elif i_plot == 3:
     plotPath = plotOutDir + '/' + plotName+'.pdf'
+    print(plotPath)
     plt.savefig(plotPath, format='pdf', bbox_inches='tight')
     plt.close('all')
 #quit()

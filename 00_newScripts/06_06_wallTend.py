@@ -9,35 +9,48 @@ os.chdir('00_newScripts/')
 
 from functions import saveObj 
 
-i_save = 0
+i_save = 1
 
-ress = ['4.4', '2.2', '1.1']
-#ress = ['2.2', '1.1']
-#ress = ['1.1']
-ress = ['4']
+ress = ['4', '2', '1']
+#ress = ['4', '2']
+#ress = ['4']
+#ress = ['2']
+#ress = ['1']
 modes = ['RAW', 'SM']
 #modes = ['f']
 i_subdomain = 1
+altInds = list(range(0,26))
+#i_subdomain = 2
+#i_subdomain = 22
+#altInds = list(range(0,21))
+#altInds = list(range(0,16))
+#altInds = list(range(20,61))
+#i_subdomain = 11
+#altInds = list(range(0,26))
+##altInds = list(range(15,31))
 i_variables = 'Fqv'
 ssI, domainName = setSSI(i_subdomain, {'4.4':{}, '2.2':{}, '1.1':{}}) 
-#altInds = list(range(25,61))
-#altInds = list(range(0,26))
-#altInds = list(range(45,61))
-#altInds = list(range(50,52))
-#altInds = list(range(0,11))
-altInds = list(range(0,21))
 ssI['4.4']['altitude'] = altInds 
 ssI['2.2']['altitude'] = altInds 
 ssI['1.1']['altitude'] = altInds 
 
 ssI['4'] = ssI['4.4']
+ssI['2'] = ssI['2.2']
+ssI['1'] = ssI['1.1']
 #ssIRaw = copy.deepcopy(ssI)
 
-dxs = {'4':4.4}
+dxs = {'4':4.4, '2':2.2, '1':1.1}
 
-i_walls = ['left', 'right', 'top', 'bottom']
-i_walls = ['bottom']
-i_walls = ['top']
+i_walls = ['E', 'W', 'N', 'S', 'bottom', 'top']
+i_walls = ['E']
+i_walls = ['W']
+i_walls = ['S']
+i_walls = ['N']
+
+dt0 = datetime(2006,7,11,0)
+#dt0 = datetime(2006,7,12,0)
+dt1 = datetime(2006,7,20,0)
+#dt1 = datetime(2006,7,12,0)
 
 
 ssIRaw = ssI
@@ -46,33 +59,31 @@ for i_wall in i_walls:
     #i_wall = 'left'
     ssI = copy.deepcopy(ssIRaw)
 
-    if i_wall == 'left':
+    if i_wall == 'E':
         for res in ress:
             ssI[res]['rlon'] = [ssIRaw[res]['rlon'][0]]
             ssI[res]['srlon'] = [ssIRaw[res]['srlon'][0]]
         normVec = 1
-    elif i_wall == 'right':
+    elif i_wall == 'W':
         for res in ress:
             ssI[res]['rlon'] = [ssIRaw[res]['rlon'][-1]]
             ssI[res]['srlon'] = [ssIRaw[res]['srlon'][-1]]
         normVec = -1
-    elif i_wall == 'bottom':
+    elif i_wall == 'S':
         for res in ress:
             ssI[res]['rlat'] = [ssIRaw[res]['rlat'][0]]
-            #print(ssI[res]['rlat'])
-            #quit()
             ssI[res]['srlat'] = [ssIRaw[res]['srlat'][0]]
         normVec = 1
-    elif i_wall == 'top':
+    elif i_wall == 'N':
         for res in ress:
             ssI[res]['rlat'] = [ssIRaw[res]['rlat'][-1]]
-            #print(ssI[res]['rlat'])
-            #quit()
             ssI[res]['srlat'] = [ssIRaw[res]['srlat'][-1]]
         normVec = -1
+    elif i_wall == 'bottom':
+        normVec = 1
+    elif i_wall == 'top':
+        normVec = -1
 
-    print(i_wall)
-    print(ssI[res]['rlat'])
     #quit()
 
     # Altitude arrays
@@ -80,25 +91,16 @@ for i_wall in i_walls:
     alts = np.asarray(altInds)
     alts[altI <= 60] = altI[altI <= 60]*100
     alts[altI > 60] = (altI[altI > 60] - 60)*1000 + 6000
-    dz = np.diff(alts)
-    #altsu = unstaggerZ_1D(alts)
 
     nameString = 'alts_'+str(alts[0])+'_'+str(alts[-1])+'_'+domainName
     folder = '../06_bulk/vertSlab' +'/' + nameString
     if not os.path.exists(folder):
         os.mkdir(folder)
 
-    dt0 = datetime(2006,7,11,0)
-    #dt0 = datetime(2006,7,12,0)
-    dt1 = datetime(2006,7,20,0)
-    #dt1 = datetime(2006,7,13,0)
     dts = np.arange(dt0,dt1,timedelta(hours=1))
     inpPath = '../01_rawData/topocut/'
 
 
-    #print('#########################')
-    #print(i_variables)
-    #print('#########################')
     for res in ress:
         #dx = float(res)*1000
         dx = float(dxs[res])*1000
@@ -118,52 +120,37 @@ for i_wall in i_walls:
             Area = nlon * nlat * float(res)**2
             print('Area is: ' + str(round(Area,0)) + ' km**2')
             out['Area'] = Area
-            #quit()
-            #quit()
-            #out['altsu'] = altsu
             out['domainName'] = domainName
 
             for tCount in range(0,len(dts)):
                 ncFileName = 'lffd{0:%Y%m%d%H}z.nc'.format(dts[tCount].astype(datetime))
-                if tCount % 24 == 0:
+                if tCount % 1 == 0:
                     print('\t\t'+ncFileName)
 
-                srcNCPath = inpPath + mode+ res+ '/calc/' + ncFileName
+                calc_src_path = inpPath + mode+ res+ '/calc/'
 
-                #print(srcNCPath)
-                #quit()
-
-                #print(res)
-                #HSURF = ncField.ncField('HSURF', '../01_rawData/HSURF/'+res+'.nc', ssI[res])
-                #HSURF.loadValues()
-                #plt.contourf(HSURF.vals.squeeze())
-                #plt.show()
-                #quit()
-
-                RHOncf = ncField.ncField('RHO', srcNCPath, ssI[res])
-                RHOncf.loadValues()
-                rho = RHOncf.vals
+                #RHOncf = ncField.ncField('RHO', srcNCPath, ssI[res])
+                #RHOncf.loadValues()
+                #rho = RHOncf.vals
                 #rhou = unstaggerZ_4D(rho)
-                if i_wall in ['left', 'right']:
-                    VELncf = ncField.ncField('U', srcNCPath, ssI[res])
+                if i_wall in ['E', 'W']:
+                    ncf = ncField.ncField('FQVX', os.path.join(calc_src_path, 'FQVX',
+                                          ncFileName), ssI[res])
+                elif i_wall in ['S', 'N']:
+                    ncf = ncField.ncField('FQVY', os.path.join(calc_src_path, 'FQVY',
+                                          ncFileName), ssI[res])
                 elif i_wall in ['bottom', 'top']:
-                    VELncf = ncField.ncField('V', srcNCPath, ssI[res])
-                VELncf.loadValues()
-                vel = VELncf.vals
-                #velu = unstaggerZ_4D(vel)
-                QVncf = ncField.ncField('QV', srcNCPath, ssI[res])
-                QVncf.loadValues()
-                qv = QVncf.vals
-                #qvu = unstaggerZ_4D(qv)
+                    ncf = ncField.ncField('FQVZ', os.path.join(calc_src_path, 'FQVZ',
+                                          ncFileName), ssI[res])
+                ncf.loadValues()
 
-                #nt,nzs,ny,nx = rho.shape
+                if i_wall in ['E', 'W', 'S', 'N']:
+                    flx = ncf.vals * dx * 100 * normVec
+                elif i_wall in ['bottom', 'top']:
+                    flx = ncf.vals * dx**2 * normVec
 
-                vel = vel*normVec
-
-                Fqv = dx*100*vel*qv*rho
-                sumFqv = np.nansum(Fqv)
-                #print(sumFqv)
-                out['Fqv'][tCount] = sumFqv
+                flx_sum = np.nansum(flx)
+                out['Fqv'][tCount] = flx_sum
 
             
             name = 'Fqv_'+i_wall+'_'+res+mode

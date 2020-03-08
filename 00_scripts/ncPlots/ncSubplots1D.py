@@ -69,6 +69,8 @@ class ncSubplots():
         #mpl.rcParams.update({'xtick.labelsize': BIG})
         #plt.rc('font', size=BIG)
         #SIZE_LABEL = 14
+        panel_labels = ['a)','b)', 'c)', 'd)', 'e)', 'f)']
+        lind = 0
         
 
         ######################## MAIN LOOP ######################
@@ -133,6 +135,12 @@ class ncSubplots():
                         ax.set_ylabel(dim.label + ' ' + yUnits)
                     else:
                         ax.set_xlabel(dim.label + ' ' + xUnits)
+
+            ## make panel label
+            #pan_lab_x = ax.get_xlim()[0]
+            #pan_lab_y = ax.get_ylim()[1] + (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.05
+            #ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=15, weight='bold')
+            #lind += 1
         ######################################################    
 
         ######### DIFF PLOT

@@ -14,6 +14,10 @@ class ncObject:
         self.fieldName = fieldName
         #print(self.inpFilePath)
         self.ncFile = self.Dataset(self.inpFilePath,'r')
+        #print(self.ncFile)
+        #self.lon = self.ncFile['lon'][:]
+        #print(self.lon)
+        #quit()
         self.dims = self._loadDims()
         
         self.subSpaceInds = None
@@ -31,6 +35,15 @@ class ncObject:
         for key,inds in self.subSpaceInds.items():
             if key in self.dims.keys():
                 self.dims[key].cutToSubspace(inds)
+
+        print('lon0 {} , lon1 {}'.format(
+                self.field.dims['rlon'].latlon[0],
+                self.field.dims['rlon'].latlon[-1]))
+        print('lat0 {} , lat1 {}'.format(
+                self.field.dims['rlat'].latlon[0],
+                self.field.dims['rlat'].latlon[-1]))
+        #print(self.field.dims['rlon'].vals)
+        #quit()
             
     def extractSubspace(self, subSpaceInds):
         """extracts a dimension subspace of currently loaded field"""
@@ -125,6 +138,10 @@ class ncObject:
             if key == 'srlon':
                 key = 'rlon'
             elif key == 'srlat':
+                key = 'rlat'
+            elif key == 'lon':
+                key = 'rlon'
+            elif key == 'lat':
                 key = 'rlat'
             # ADD DIMENSION TO LIST IF IT EXISTS (SEE EXCEPTION ABOVE)
             try:

@@ -15,7 +15,7 @@ import os
 os.chdir('00_scripts/')
 
 i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 1 # output some information [from 0 (off) to 5 (all you can read)]
 import matplotlib
 if i_plot == 2:
@@ -81,6 +81,8 @@ an.i_resolutions = i_resolutions
 an.run()
 
 
+
+
 import matplotlib
 if i_plot == 2:
     matplotlib.use('Agg')
@@ -99,7 +101,7 @@ if i_plot > 0:
     
     if nDPlot == 2 and someField.nNoneSingleton == 2:
         import ncPlots.ncSubplots2D as ncSubplots
-        ncs = ncSubplots.ncSubplots(an, nDPlot, i_diffPlot, 'HOR')
+        ncs = ncSubplots.ncSubplots(an, nDPlot, i_diffPlot, 'HOR', geo_plot=True)
 
         ncs.contourTranspose = contourTranspose
         ncs.plotContour = plotContour
@@ -121,6 +123,7 @@ if i_plot > 0:
             for mI,mode in enumerate(an.modes):
                 print(res+mode)
                 nco = an.vars['cHSURF'].ncos[mode+res]
+                print(np.mean(nco.field.vals))
                 maxHght = np.max(nco.field.vals)
                 axes[mI,rI].text(830,190, '{:d}'.format(maxHght.astype(np.int)),
                             fontsize=16*ncs.MAG, color='w')

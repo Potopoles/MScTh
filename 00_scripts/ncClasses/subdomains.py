@@ -14,10 +14,16 @@ def setSSI(i_subdomain, ssI):
         lat1 = 155
     elif i_subdomain == 2:
         domainName = 'Northern_Italy'
-        lon0 = 95 
-        lon1 = 160 
-        lat0 = 60 
-        lat1 = 100 
+        lon0 = 102 
+        lon1 = 150 
+        lat0 = 65 
+        lat1 = 97 
+    elif i_subdomain == 22:
+        domainName = 'Northern_Italy2'
+        lon0 = 100 
+        lon1 = 150 
+        lat0 = 71
+        lat1 = 94
     elif i_subdomain == 3:
         domainName = 'South_Western_Alps'
         lon0 = 50 
@@ -57,6 +63,18 @@ def setSSI(i_subdomain, ssI):
         lon1 = 135
         lat0 = 52
         lat1 = 135 
+    elif i_subdomain == 11:
+        domainName = 'Alpine_Ridge'
+        lon0 = 110 
+        lon1 = 150 
+        lat0 = 110 
+        lat1 = 120 
+    elif i_subdomain == 12:
+        domainName = 'Alpine_Ridge_Vert_Prof'
+        lon0 = 100 
+        lon1 = 160
+        lat0 = 100
+        lat1 = 125
 
     ssI['lon0'] = lon0
     ssI['lon1'] = lon1

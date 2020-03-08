@@ -1,14 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-title			:hist_cloud_size.py
 description	    :Calculate histograms of cloud sizes (convective clouds)
 author			:Christoph Heim
-date created    :20171121
-date changed    :20190607
+date created    :21.11.2017
+date changed    :20.11.2019
 usage			:no args
-notes			:
-python_version	:3.7.1
 ==============================================================================
 """
 from pathlib import Path
@@ -20,6 +17,7 @@ day0 = 11
 day1 = 19 
 #day1 = 12 
 ress = ['4', '2', '1']
+#ress = ['4']
 dxs = {'4':4.4,'2':2.2,'1':1.1}
 modes = ['RAW', 'SM']
 i_plot = 3
@@ -29,12 +27,23 @@ plotName = 'cloud_size_absFreq_dist_and_diff_NEW'
 nbins = 40
 minNClouds = 30
 i_subdomain = 1
-from ncClasses.subdomains import setSSI
-ssI, domainName = setSSI(i_subdomain, {'4':{}, '2':{}, '1':{}}) 
+i_norm_by_cloud_cover = 0
 
 colrs = [(0,0,0), (0,0,1), (1,0,0)]
 labelsize = 13
 titlesize = 16
+
+if i_norm_by_cloud_cover:
+    plotName += '_norm'
+    nbins /= 2
+    panel_labels = ['d)', 'e)', 'f)']
+    xlabel = 'Normalized Cloud Size'
+else:
+    panel_labels = ['a)','b)', 'c)', 'd)', 'e)', 'f)']
+    xlabel = 'Cloud Size [$km^2$]'
+
+from ncClasses.subdomains import setSSI
+ssI, domainName = setSSI(i_subdomain, {'4':{}, '2':{}, '1':{}}) 
 
 import matplotlib
 if i_plot > 1:
@@ -85,6 +94,14 @@ for res in ress:
             sizes.extend(size)
         sizes = np.asarray(sizes)
         print('n clouds: ' + str(sizes.shape[0]))
+
+        # normalize cloud size by total cloud cover if desired
+        if i_norm_by_cloud_cover:
+            norm_factor = np.sum(sizes)
+        else:
+            norm_factor = 1 
+        sizes /= norm_factor
+
         #allSizes.append(sizes)
         allSizes[mode+res] = sizes
         outRess.append(res)
@@ -92,35 +109,78 @@ for res in ress:
         labels.append(mode+res)
 
 
+print('cloud cover fraction ratio')
+for res in ress:
+    print(res)
+    print(np.sum(allSizes['RAW'+res])/np.sum(allSizes['SM'+res]))
+print('number of clouds ratio')
+for res in ress:
+    print(res)
+    print(len(allSizes['RAW'+res])/len(allSizes['SM'+res]))
+print('cloud size ratio')
+for res in ress:
+    print(res)
+    print(np.mean(allSizes['RAW'+res]))
+    print(np.mean(allSizes['RAW'+res])/np.mean(allSizes['SM'+res]))
+#for mode in modes:
+#    print(mode)
+#    print('1/4')
+#    print(np.sum(allSizes[mode+'1'])/np.sum(allSizes[mode+'4']))
+#    print('2/4')
+#    print(np.sum(allSizes[mode+'2'])/np.sum(allSizes[mode+'4']))
+
 ########################################################################
 # GENERATE BINS
 ########################################################################
-# old way (same bins for every resolution)
-#bins = np.logspace(0,5,num=nbins)
-#binsCentred = bins[0:(len(bins)-1)] + np.diff(bins)/2
+min_abs = 1E0 / norm_factor
+max_abs = 1E5 / norm_factor
+#min_abs = 1E0
+#max_abs = 1E5
+min_log = np.log10(min_abs)
+max_log = np.log10(max_abs)
 
-# new way (specific bins for every resolution)
-bins_res = {}
-bins_centred_res = {}
-for res in ress:
-    bins = np.logspace(0,5,num=nbins)
-    thresh_ind = np.argwhere(np.diff(bins) >= dxs[res]**2)[0][0]
-    thresh_val = bins[thresh_ind]
-    linear_spacing = []
-    i = 1
-    while dxs[res]**2*i <= thresh_val:
-        linear_spacing.append(dxs[res]**2*i - dxs[res]**2/2)
-        i += 1
-    bins = bins[thresh_ind:]
-    both = []; both.extend(linear_spacing); both.extend(bins)
-    bins_centred = both[0:(len(both)-1)] + np.diff(both)/2
-    bins_res[res] = both
-    bins_centred_res[res] = bins_centred
+if i_norm_by_cloud_cover:
+    i_comp_bins_new_way = False
+else:
+    i_comp_bins_new_way = True
 
-#print(bins_res)
-#print()
-#print(bins_centred_res)
-#quit()
+#i_comp_bins_new_way = True
+
+if not i_comp_bins_new_way:
+    # old way (same bins for every resolution)
+    bins = np.logspace(min_log,max_log,num=nbins)
+    binsCentred = bins[0:(len(bins)-1)] + np.diff(bins)/2
+    bins_res = {}
+    bins_centred_res = {}
+    for res in ress:
+        bins_res[res] = bins
+        bins_centred_res[res] = binsCentred
+
+elif i_comp_bins_new_way:
+    # new way (specific bins for every resolution)
+    bins_res = {}
+    bins_centred_res = {}
+    for res in ress:
+        bins = np.logspace(min_log,max_log,num=nbins)
+        thresh_ind = np.argwhere(np.diff(bins) >= dxs[res]**2)[0][0]
+        thresh_val = bins[thresh_ind]
+        linear_spacing = []
+        i = 1
+        while dxs[res]**2*i <= thresh_val:
+            linear_spacing.append(dxs[res]**2*i - dxs[res]**2/2)
+            i += 1
+        bins = bins[thresh_ind:]
+        both = []; both.extend(linear_spacing); both.extend(bins)
+        bins_centred = both[0:(len(both)-1)] + np.diff(both)/2
+        bins_res[res] = both
+        bins_centred_res[res] = bins_centred
+
+        #if i_norm_by_cloud_cover:
+        #    for i in range(len(bins_res)):
+        #        bins_res[res][i] /= norm_factor
+        #    for i in range(len(bins_centred_res)):
+        #        bins_centred_res[res][i] /= norm_factor
+
 
 ########################################################################
 # CALCULATE HISTOGRAMS
@@ -135,6 +195,7 @@ for res in ress:
         ncloud[ncloud < 0.9] = np.nan
 
         nclouds[mode+res] = ncloud
+
 
 ########################################################################
 #  CREATE PLOTS
@@ -156,7 +217,8 @@ for rI,res in enumerate(ress):
     handles.append(line)
 
     if rI == len(ress)-1:
-        axes[0].legend(handles, ress)
+        axes[0].legend(handles, ['SM4', 'SM2', 'SM1'])
+        axes[1].legend(handles, ['RAW4', 'RAW2', 'RAW1'])
 
 
     # MASKING OF VALUES WITH SMALL AMOUNT OF CLOUDS
@@ -179,27 +241,30 @@ for rI,res in enumerate(ress):
     sumRatio = sumRaw/sumSmoothed
     #ax.text(2E0, 0.8, 'raw/smoothed: '+str(np.round(sumRatio,2)))
 
-    # LABELS
-    ax = axes[1]
-    x = 1.4
-    yTop = 7E1
-    ry = 0.36
-    size = 13
-    if i == 0:
-        ax.text(x, yTop, 'RAW/SM:', size=size,
-                bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
-    ax.text(x, yTop*(ry**(rI+1)), '{:3.2f}'.format(sumRatio,2), size=size, color=colrs[rI],
-            bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+    ## LABELS
+    #ax = axes[1]
+    #x = 1.4
+    #yTop = 7E1
+    #ry = 0.36
+    #size = 13
+    #if i == 0:
+    #    ax.text(x, yTop, 'RAW/SM:', size=size,
+    #            bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
+    #ax.text(x, yTop*(ry**(rI+1)), '{:3.2f}'.format(sumRatio,2), size=size, color=colrs[rI],
+    #        bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
 
 
+
+
+lind = 0
 for j in range(0,3):
     ax = axes[j]
-    ax.set_xlabel('Cloud Size [$km^2$]',fontsize=labelsize)
+    ax.set_xlabel(xlabel,fontsize=labelsize)
     if j == 0:
         ax.set_ylabel('Number of Clouds',fontsize=labelsize)
     elif j == 2:
         ax.set_ylabel('Relative Difference',fontsize=labelsize)
-    ax.set_xlim((1E0,1E5))
+    ax.set_xlim((1E0/norm_factor,1E5/norm_factor))
     if j < 2:
         ax.set_ylim((1E0,1E6))
     elif j == 2:
@@ -209,6 +274,14 @@ for j in range(0,3):
     ax.set_title(modeStrings[j],fontsize=titlesize)
     ax.grid()
 
+    # make panel label
+    pan_lab_x = ax.get_xlim()[0]
+    if j in [0, 1]:
+        pan_lab_y = ax.get_ylim()[1] * 2.0
+    else:
+        pan_lab_y = ax.get_ylim()[1] + (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.05
+    ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=15, weight='bold')
+    lind += 1
 
 
 #plt.suptitle('Absolute Cloud Size Distribution and Relative Difference')
@@ -219,10 +292,12 @@ if i_plot == 1:
 	plt.show()
 elif i_plot == 2:
     plotPath = plotOutDir + '/' + plotName+'.png'
+    print(plotPath)
     plt.savefig(plotPath, format='png', bbox_inches='tight')
     plt.close('all')
 elif i_plot == 3:
     plotPath = plotOutDir + '/' + plotName+'.pdf'
+    print(plotPath)
     plt.savefig(plotPath, format='pdf', bbox_inches='tight')
     plt.close('all')
 

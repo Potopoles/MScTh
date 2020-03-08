@@ -40,6 +40,8 @@ class dimension:
             self.size = len(self.inds)
             # Cut values of dimension to subspace
             self.vals = np.take(self.vals, self.inds, axis=0)
+            if self.key in ['rlon', 'lon', 'rlat', 'lat']:
+                self.latlon = np.take(self.latlon, self.inds, axis=0)
         else:
             raise ValueError('Dimension' + self.key + 'is not set!')
         
@@ -75,7 +77,8 @@ class dimension:
         """Loads the dimension vals, units, label and valType from nc file"""
         """This function is highly adjusted to the nc files in use"""
 
-        horizontalKeys = ['rlon', 'rlat', 'srlon', 'srlat', 'x_1', 'y_1']
+        horizontalKeys = ['rlon', 'rlat', 'srlon', 'srlat', 'x_1', 'y_1', 'lon', 'lat']
+
         
         if self.key == 'bnds':
             pass
@@ -93,7 +96,7 @@ class dimension:
             
         elif self.key == 'diurnal':
             self.vals = self.ncFile[self.key][:]
-            self.label = 'Hour'
+            self.label = 'Time (UTC)'
             self.units = ''
             self.valType = 'DIURNAL'                
             self.agg_mode = 'DIURNAL'
@@ -110,9 +113,14 @@ class dimension:
                 self.key = 'rlon'
             elif self.key == 'y_1':
                 self.key = 'rlat'
+            elif self.key == 'lon':
+                self.key = 'rlon'
+            elif self.key == 'lat':
+                self.key = 'rlat'
 
 
             self.vals = np.arange(0,self.size)*self.dx
+            self.latlon = self.ncFile[self.key][:]
             if self.key == 'rlon':
                 self.label = 'longitude'
                 self.label = 'x'

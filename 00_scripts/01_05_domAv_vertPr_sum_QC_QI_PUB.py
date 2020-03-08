@@ -159,9 +159,11 @@ if i_plot == 1:
     plt.show()
 elif i_plot == 2:
     plotPath = plotOutDir + '/' + plotName+'.png'
+    print(plotPath)
     plt.savefig(plotPath, format='png', bbox_inches='tight')
 elif i_plot == 3:
     plotPath = plotOutDir + '/' + plotName+'.pdf'
+    print(plotPath)
     plt.savefig(plotPath, format='pdf', bbox_inches='tight')
     plt.close('all')
   

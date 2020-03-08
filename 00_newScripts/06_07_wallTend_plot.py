@@ -5,32 +5,43 @@ os.chdir('00_newScripts/')
 
 from functions import loadObj 
 
-ress = ['4.4', '2.2', '1.1']
-#ress = ['4.4', '2.2']
-#ress = ['4.4']
-modes = ['f', '', 'd']
+ress = ['4', '2', '1']
+#ress = ['4', '2']
+#ress = ['4']
+modes = ['SM', 'RAW', 'RAW-SM']
 #i_variables = 'QV' # 'QV' or 'T'
 #i_variables = 'T' # 'QV' or 'T'
-i_plot = 1
 
 region = 'Alpine_Region'
 #region = 'Northern_Italy'
+#region = 'Northern_Italy2'
+#region = 'Alpine_Ridge'
+
+#altitudes = '0_1500'
+#altitudes = '0_2000'
+#altitudes = '2000_6000'
+#altitudes = '1500_3000'
+#altitudes = '1500_3000'
 altitudes = '0_2500'
-#altitudes = '0_1000'
-#altitudes = '2500_8000'
-#altitudes = '2500_6000'
+
 path = 'alts_'+altitudes+'_'+region
 folder = '../06_bulk/vertSlab/' + path
 plotOutDir = '../00_plots/06_bulk'
 if not os.path.exists(plotOutDir):
     os.mkdir(plotOutDir)
 
+i_plot = 1
+
+
 modeNames = ['SM', 'RAW', 'RAW - SM']
 
 i_walls = ['left', 'right', 'top', 'bottom']
 i_walls = ['bottom', 'top']
 i_MODE = 'SUM'
+#i_MODE = 'bottom'
+#i_MODE = 'top'
 #i_MODE = 'left'
+#i_MODE = 'right'
 
 if i_MODE == 'SUM':
     plotName = 'vertSlab_'+path+'_all'
@@ -65,7 +76,7 @@ for res in ress:
             for i_wall in i_walls:
                 name = var+'_'+i_wall+'_'+res+mode
                 obj = loadObj(folder,name)  
-                if res == '4.4' and Area is None:
+                if res == '4' and Area is None:
                     #print(obj)
                     Area = obj['Area']*1E6
                 if vals is None:
@@ -101,15 +112,16 @@ for res in ress:
     increase = np.abs(max-min)*0.03
     max = max+increase
     min = min-increase
-    out[res+'d'] = out[res+''] - out[res+'f']
-    maxd = np.max(out[res+'d'])
-    mind = np.min(out[res+'d'])
-    max = np.max(out[res+'d']) if np.max(out[res+'d']) > max else max
-    min = np.min(out[res+'d']) if np.min(out[res+'d']) < min else min
+    diff_key = res+'RAW-SM'
+    out[diff_key] = out[res+'RAW'] - out[res+'SM']
+    maxd = np.max(out[diff_key])
+    mind = np.min(out[diff_key])
+    max = np.max(out[diff_key]) if np.max(out[diff_key]) > max else max
+    min = np.min(out[diff_key]) if np.min(out[diff_key]) < min else min
     #min = -40
     #max = 30
-    min = -0.4
-    max = 0.3
+    #min = -0.4
+    #max = 0.3
 
 
 # PLOT
@@ -141,6 +153,38 @@ for axI,mode in enumerate(modes):
     ax.set_title(modeNames[axI],fontsize=titlesize)
 
 
+    #day_range = np.arange(start_time, end_time+timedelta(days=1), timedelta(days=1))
+    #all_days = np.zeros((9,25))
+    #hours = np.arange(0, 25)
+    #for dayI in range(len(day_range)-1):
+    #    this_day = '{:%Y-%m-%d}-00'.format(dt64_to_dt(day_range[dayI]))
+    #    next_day = '{:%Y-%m-%d}-00'.format(dt64_to_dt(day_range[dayI+1]))
+    #    vals = vals_disagg.loc[this_day:next_day].values
+    #    all_days[dayI,:] = vals
+    ##for dayI in range(len(day_range)-1):
+    ##    ax.plot(hours, all_days[dayI,:], color=plot_dict['res_color'][res],
+    ##            label=mem_res_key, linewidth=0.5)
+    #quantiles = np.percentile(all_days, percentiles, axis=0)
+    #ax.fill_between(hours, quantiles[0,:], quantiles[1,:], color='red',
+    #                alpha=0.2, edgecolor='')
+    ## t-test
+    ##test_type = 'ttest'
+    #test_type = 'wilcox'
+    #if test_type == 'ttest':
+    #    from scipy.stats import ttest_1samp
+    #if test_type == 'wilcox':
+    #    from scipy.stats import wilcoxon
+    #if mem_key == 'DIFF':
+    #    for hI in range(len(hours)-1):
+    #        if test_type == 'ttest':
+    #            pval = ttest_1samp(all_days[:,hI], 0).pvalue
+    #        elif test_type == 'wilcox':
+    #            pval = wilcoxon(all_days[:,hI].squeeze()).pvalue
+    #        #pval = '{:2.2f}'.format(pval)
+    #        if pval < 0.05:
+    #            ax.text(hours[hI]-0.5, 0.15, '*')
+
+
 #if i_MODE == 'SUM':
 #    fig.suptitle(titleVar + ' into '+ obj['domainName'] + ' through all sidewalls between ' + altitudes + ' m.')
 #else:
@@ -148,16 +192,16 @@ for axI,mode in enumerate(modes):
 fig.subplots_adjust(wspace=0.23,
         left=0.07, right=0.95, bottom=0.15, top=0.85)
 
+plotPath = plotOutDir + '/' + plotName
+print('plot path {}'.format(plotPath))
 if i_plot == 1:
     plt.show()
     plt.close(fig)
 elif i_plot == 2:
-    plotPath = plotOutDir + '/' + plotName+'.png'
-    plt.savefig(plotPath, format='png', bbox_inches='tight')
+    plt.savefig('{}.png'.format(plotPath), format='png', bbox_inches='tight')
     plt.close(fig)
 elif i_plot == 3:
-    plotPath = plotOutDir + '/' + plotName+'.pdf'
-    plt.savefig(plotPath, format='pdf', bbox_inches='tight')
+    plt.savefig('{}.pdf'.format(plotPath), format='pdf', bbox_inches='tight')
     plt.close('all')
 
     

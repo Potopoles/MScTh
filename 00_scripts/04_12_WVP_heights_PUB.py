@@ -1,19 +1,23 @@
 # Calculate domain Average Precipitation
 # author: Christoph Heim
 # date: 21 10 2017
+# last changed: 12.11.2019
 #################################
 import os
 os.chdir('00_scripts/')
 
 i_resolutions = 5 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 2 # 0 = no plot, 1 = show plot, 2 = save plot
+i_plot = 0 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 
 labelsize = 22
-timelabelsize = 30
+timelabelsize = 25
 titlesize = 28
 tick_labelsize = 18
 suptitle_size = 35
+
+xpos_time = 578
+ypos_time = 228
 
 import matplotlib
 if i_plot == 2:
@@ -33,12 +37,15 @@ inpPath = '../02_fields/diurnal'
 var = 'WVP'
 #var = 'LWP'
 
+panel_labels = ['c)', 'd)']
+#panel_labels = ['a)', 'b)']
+
 plot_vars = ['z'+var+'_2_10']
 plot_vars = ['z'+var+'_0_2']
 #plot_vars = ['z'+var+'_0_4']
 #plot_vars = ['z'+var+'_2_4']
 #plot_vars = ['z'+var+'_4_10']
-plot_vars = ['z'+var+'_0_10']
+#plot_vars = ['z'+var+'_0_10']
 #plot_vars = ['z'+var+'_0_2','z'+var+'_2_4','z'+var+'_4_10']
 
 vars_meta = {
@@ -103,7 +110,8 @@ fieldNames.extend(plot_vars)
 models = ['SM1', 'RAW1']
 
 ####################### NAMELIST DIMENSIONS #######################
-subDomain = 2 # 0: full domain, 1: alpine region, 2: zoom in
+#TODO
+subDomain = 3 # 0: full domain, 1: alpine region, 2: zoom in
 # SUBSPACE
 subSpaceIndsIN = {}
 if subDomain == 1: # alpine region
@@ -112,6 +120,10 @@ if subDomain == 1: # alpine region
 elif subDomain == 2: # italy region
     subSpaceIndsIN['rlon'] = [80,180]
     subSpaceIndsIN['rlat'] = [50,120]
+elif subDomain == 3: # Po Valley domain
+    subSpaceIndsIN['rlon'] = [102,150]
+    subSpaceIndsIN['rlat'] = [65,97]
+
 
 subSpaceIndsIN['diurnal'] = list(range(0,24))
 #subSpaceIndsIN['diurnal'] = list(range(0,1))
@@ -155,9 +167,10 @@ if i_plot == 2:
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-for tI in subSpaceIndsIN['diurnal']:
+for tI,dhr in enumerate(subSpaceIndsIN['diurnal']):
     print('######### time ' + str(tI))
     plot_name = var+'_'+dts[tI]
+    dhr_string = '{:02d}00 UTC'.format(dhr)
 
     fig, axes = plt.subplots(len(plot_vars), 2, 
                     figsize=(widthStretch,heightStretch))
@@ -173,6 +186,7 @@ for tI in subSpaceIndsIN['diurnal']:
             plt.suptitle(var+' '+vars_meta[plot_var]['title_append']+':'+
                         str(dts[tI])+'00 UTC ', fontsize=suptitle_size)
 
+        lind = 0
         for mI,model in enumerate(models):
             if len(axes.shape) == 1:
                 ax = axes[mI]
@@ -187,6 +201,10 @@ for tI in subSpaceIndsIN['diurnal']:
                                 2500,3000,3500,4000])
             ax.contourf(dimx.vals, dimy.vals, topo.field.vals, tTicks,
                 cmap='binary', alpha=0.7)
+
+            # time label
+            ax.text(xpos_time,ypos_time,dhr_string,size=timelabelsize,color='black',
+                            bbox=dict(boxstyle='square',ec=(1,1,1,0.5),fc=(1,1,1,0.5)))
 
 
             wvp = an.vars[plot_var].ncos[model].field.vals[tI,:,:]
@@ -221,23 +239,33 @@ for tI in subSpaceIndsIN['diurnal']:
                 cax.tick_params(labelsize=tick_labelsize)
                 #MCB.set_label('Water Vapor Path $[kg$ $m^{-2}]$',fontsize=labelsize)
 
+            # make panel label
+            pan_lab_x = ax.get_xlim()[0] - (ax.get_xlim()[1] - ax.get_xlim()[0]) * 0.00
+            pan_lab_y = ax.get_ylim()[1] + (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.03
+            ax.text(pan_lab_x,pan_lab_y,panel_labels[lind], fontsize=20, weight='bold')
+            lind += 1
+
         if len(plot_vars) == 1:
             # colorbar
             xPosLeft = 0.10
-            cPosBot = 0.05
+            cPosBot = 0.12
             width = 0.80
             cHeight = 0.04
             cax = fig.add_axes([xPosLeft, cPosBot, width, cHeight])
             MCB = plt.colorbar(mappable=CF, cax=cax, orientation='horizontal')
             cax.tick_params(labelsize=tick_labelsize)
             if var == 'WVP':
-                MCB.set_label('Water Vapor Path $[kg$ $m^{-2}]$',fontsize=labelsize)
+                #MCB.set_label('Water Vapor Path $[kg$ $m^{-2}]$',fontsize=labelsize)
+                MCB.set_label('Vertically Integrated Water Vapor $[kg$ $m^{-2}]$',
+                            fontsize=labelsize)
             elif var == 'LWP':
-                MCB.set_label('Liquid Water Path $[kg$ $m^{-2}]$',fontsize=labelsize)
+                #MCB.set_label('Liquid Water Path $[kg$ $m^{-2}]$',fontsize=labelsize)
+                MCB.set_label('Vertically Integrated Liquid Water$[kg$ $m^{-2}]$',
+                            fontsize=labelsize)
 
     if len(plot_vars) == 1:
         fig.subplots_adjust(wspace=0.13, hspace=0.17,
-                left=0.07, right=0.96, bottom=0.22, top=0.80)
+                left=0.07, right=0.96, bottom=0.28, top=0.855)
     else:
         fig.subplots_adjust(wspace=0.25, hspace=0.17,
                 left=0.07, right=0.94, bottom=0.05, top=0.90)
