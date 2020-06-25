@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-title			:domAv_vert_Pr_sum_QC_QI.py
+title			:orig: 01_05_domAv_vert_Pr_sum_QC_QI_PUB.py
 description	    :Plot domain average cloud water diurnal cycle.
 author			:Christoph Heim
 date created    :20171121 

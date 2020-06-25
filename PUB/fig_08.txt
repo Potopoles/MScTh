@@ -1,0 +1,4 @@
+
+$
+
+This figure is created by phd_scripts/analyses/003_MScTh/03_calc_spectra.py

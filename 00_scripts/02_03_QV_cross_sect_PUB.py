@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
+orig: 00_scripts/02_03_QV_cross_sect_PUB.py
 description	    Plot lat/lon-altitude cross-sections of water vapor.
 author			Christoph Heim
 date created    10.05.2019
