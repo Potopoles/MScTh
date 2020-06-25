@@ -1,3 +1,6 @@
+"""
+orig: 00_scripts/04_12_WVP_heights_PUB.py
+"""
 # Calculate domain Average Precipitation
 # author: Christoph Heim
 # date: 21 10 2017

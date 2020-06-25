@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-title			:topography.py
+title			:orig: 01_00_topography_PUB.py
 description	    :Plot topographies for all 6 simulations.
 author			:Christoph Heim
 date created    :20171121 
@@ -29,7 +29,8 @@ from functions import *
 from ncClasses.subdomains import setSSI
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-inpPath = '../02_fields/topocut'
+#inpPath = '../02_fields/topocut'
+inpPath = '../02_fields/diurnal'
 fieldNames = ['cHSURF']
 #####################################################################		
 

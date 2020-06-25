@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-title			:hist_velocity.py
+title			:orig: 08_03_hist_velocity_PUB.py
 description	    :Calculate histograms of vertical velocity at an altitude
 author			:Christoph Heim
 date created    :20171121
@@ -14,8 +14,8 @@ python_version	:3.7.1
 import os
 os.chdir('00_scripts/')
 
-i_resolutions = 3 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
-i_plot = 3 # 0 = no plot, 1 = show plot, 2 = save plot
+i_resolutions = 1 # 1 = 4.4, 2 = 4.4 + 2.2, 3 = ...
+i_plot = 1 # 0 = no plot, 1 = show plot, 2 = save plot
 i_info = 2 # output some information [from 0 (off) to 5 (all you can read)]
 altInds = [10,20,30,40,50,60,61,62,63,64]
 altInds = [40]

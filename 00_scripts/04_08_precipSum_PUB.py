@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-title			:precipSum.py
+title			:orig: 04_08_precipSum_PUB.py
 description	    :Plot accumulated daytime and nighttime precipitation map.
 author			:Christoph Heim
 date created    :22.11.2017
@@ -29,7 +29,7 @@ from functions import *
 from ncClasses.subdomains import setSSI
 ####################### NAMELIST INPUTS FILES #######################
 # directory of input model folders
-inpPath = '../02_fields/subDomDiur'
+#inpPath = '../02_fields/subDomDiur'
 inpPath = '../02_fields/diurnal'
 #inpPath = '../02_fields/topocut'
 

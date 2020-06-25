@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
+orig: 00_scripts/12_00_convergence_PUB.py
 description	    Investigate diurnal cycle of convergence of moisture over
                 Alpine Region. 
 author			Christoph Heim
@@ -35,7 +36,7 @@ def unstaggering(field):
     
 if __name__ == '__main__':
     ####################### NAMELIST INPUTS FILES #######################
-    i_recompute_1 = 1
+    i_recompute_1 = 0
     i_recompute_2 = 0
     plot_path = os.path.join('..','00_plots', '14_convergence')
     resolutions = ['4', '2', '1']
